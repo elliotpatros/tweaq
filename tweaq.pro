@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = tweaq
 TEMPLATE = app
 
-
 SOURCES += \
     main.cpp\
     mainwindow.cpp \
@@ -61,6 +60,9 @@ ICON = Icons/tweaq_icon.icns
 DEFINES += __QTWEAQ_IS_DEFINED
 
 QMAKE_CXXFLAGS += -Wall
+
+DISTFILES += \
+    License
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/StaticLibs/libsndfile/lib/release/ -lsndfile
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/StaticLibs/libsndfile/lib/debug/ -lsndfile

@@ -11,10 +11,10 @@
 class LibSF
 {
 public:
+    // gets
     static bool isAudioFileValid(const QString path);
     static QString extension(const QString path);
-    static QString durationAsString(const t_uint sampleRate,
-                                    const t_uint nSamples);
+    static QString durationAsString(const t_uint sampleRate, const t_uint nSamples);
 
 
 private:

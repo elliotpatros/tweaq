@@ -79,6 +79,10 @@ QString LibSF::durationAsString(const t_uint sampleRate, const t_uint nSamples)
     return QString("%1:%2").arg(minutes, 9, 'g', -1, QChar()).arg(seconds, 5, 'f', 2, '0');
 }
 
+
+//==============================================================================
+// properties
+//==============================================================================
 QStringList LibSF::validExtensions(void)
 {
     QStringList list;

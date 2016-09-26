@@ -9,7 +9,7 @@
 #include <stdint.h>   // for uint64_t
 #include <string.h>   // for strlen, strcpy
 #include <stdlib.h>   // for *alloc, free
-#include <math.h>     // for any math stuff
+#include <math.h>     // for math stuff
 
 #ifdef __cplusplus
 #include "qtweaq.h" // libsndfile.hh and others

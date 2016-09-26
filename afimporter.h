@@ -8,7 +8,6 @@
 #include "abstractfileimporter.h"
 #include "libsf.h"
 
-
 class AFImporter : public AbstractFileImporter
 {
 public:

@@ -9,7 +9,6 @@ LibModel::LibModel(QObject* parent, const QString searchPath) :
     // append all the external libraries i can find to list
     QStringList paths;
     LibImporter().import(QList<QUrl>() << QUrl::fromLocalFile(searchPath), &paths);
-
     const t_uint nPaths = paths.size();
     for (t_uint i = 0; i < nPaths; ++i)
     {
@@ -59,34 +58,26 @@ QFunctionPointer LibModel::getFunctionPointer(const t_int index, const QString f
 //==============================================================================
 void LibModel::getExternalParameterHandles(const t_int libIndex, vector<ParameterHandle>* plist) const
 {
-    // load function from library with index
+    // load function from library with index. bail if it couldn't load.
     ExternalSetup externalSetup = reinterpret_cast<ExternalSetup>(getFunctionPointer(libIndex, QStringLiteral("setup")));
-
-    // call function
-    if (externalSetup != nullptr)
+    if (externalSetup == nullptr)
     {
-        t_uint index = TQ_NUM_DEF_ARGS;
-        std::unique_ptr<t_parameter> p(new t_parameter);
-        while (clearParameter(*p), externalSetup(index, *p))
-        {
-            plist->emplace_back(*p);
-            setNextParameterIndex(*p, &index);
-        }
+        return;
+    }
+
+    // call function (which sets the t_parameter we give it) until it returns false
+    t_uint index = TQ_NUM_DEF_ARGS;
+    std::unique_ptr<t_parameter> p(new t_parameter);
+    while (clearParameter(*p), externalSetup(index, *p))
+    {
+        plist->emplace_back(*p);
+        setNextParameterIndex(*p, &index);
     }
 }
 
 void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QString destination, QStringList* args)
 {
-    // try to load the external dsp function
-    ExternalProcessDSP dsp = reinterpret_cast<ExternalProcessDSP>(getFunctionPointer(libIndex, QStringLiteral("process")));
-
-    // bail if the function couldn't load
-    if (dsp == nullptr)
-    {
-        qDebug() << "bailed loading dsp function";
-        return;
-    }
-
+    // STEP 0
     // setup dsp function arguments
     const t_uint argc = args->size() + TQ_NUM_DEF_ARGS;
     char** argv = (char**)calloc(argc + 1, sizeof(char*));
@@ -129,6 +120,18 @@ void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QStrin
         }
     }
 
+    // STEP 1
+    // try to load the external dsp function
+    ExternalProcessDSP dsp = reinterpret_cast<ExternalProcessDSP>(getFunctionPointer(libIndex, QStringLiteral("process")));
+
+    // bail if the function couldn't load
+    if (dsp == nullptr)
+    {
+        qDebug() << "bailed loading dsp function";
+        return;
+    }
+
+    // STEP 2
     // do the DSP for each file
     const t_int nAudioFiles = rootItem->childCount();
     for (t_int row = 0; row < nAudioFiles; ++row)

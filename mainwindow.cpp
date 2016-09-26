@@ -99,7 +99,7 @@ void MainWindow::on_buttonProcessFiles_clicked()
     TqComboBox* chooseDSP = ui->comboBoxDSP;
     const t_int libIndex = chooseDSP->processIndex();
 
-    // STEP 1
+    // STEP 0
     // decide whether we're ready to process stuff
     // ...has the user picked any sounds to edit?
     if (!_afModel->areThereAnyUnprocessedAudioFiles())
@@ -122,7 +122,7 @@ void MainWindow::on_buttonProcessFiles_clicked()
         return;
     }
 
-    // STEP 2
+    // STEP 1
     // ask the external DSP what parameters it needs form the user
     vector<ParameterHandle> handles;
     _libModel->getExternalParameterHandles(libIndex, &handles);
@@ -136,7 +136,7 @@ void MainWindow::on_buttonProcessFiles_clicked()
     dialog.getEntries(&args);
 
     // whew! ok, we're ready to tweaq some shit now.
-    // STEP 3
+    // STEP 2
     _libModel->processFiles(libIndex, _afModel->rootItem(), editDest->currentValidFileLocation(), &args);
 }
 
