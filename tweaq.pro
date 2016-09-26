@@ -57,7 +57,7 @@ FORMS    += mainwindow.ui
 
 ICON = Icons/tweaq_icon.icns
 
-DEFINES += __QTWEAQ_IS_DEFINED
+DEFINES  += __QTWEAQ_IS_DEFINED
 
 QMAKE_CXXFLAGS += -Wall
 
