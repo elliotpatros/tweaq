@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="buttonExportTo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>export to...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="TqLineEdit" name="lineEditExportTo"/>
+      </item>
+      <item>
+       <widget class="TqComboBox" name="comboBoxDSP"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="TqTreeView" name="treeViewImportedFiles"/>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QPushButton" name="buttonProcessFiles">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>process files</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="TqComboBox" name="comboBoxRemoveFiles">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TqTreeView</class>
+   <extends>QTreeView</extends>
+   <header>tqtreeview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TqLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>tqlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TqComboBox</class>
+   <extends>QComboBox</extends>
+   <header>tqcombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
