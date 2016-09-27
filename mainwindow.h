@@ -21,6 +21,7 @@
 
 // Qt dialogs
 #include <QFileDialog>
+#include <QDesktopServices>
 
 namespace Ui {
 class MainWindow;
@@ -44,6 +45,8 @@ private slots:
     // application actions
     void addSoundFilesToModel(const QList<QUrl> urls);
 
+
+    void on_actionShow_export_folder_triggered();
 
 private:
     // layout (owned)

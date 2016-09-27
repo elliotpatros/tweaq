@@ -143,6 +143,10 @@ void MainWindow::on_buttonProcessFiles_clicked()
     _libModel->processFiles(libIndex, _afModel->rootItem(), editDest->currentValidFileLocation(), &args);
 }
 
+void MainWindow::on_actionShow_export_folder_triggered()
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation()));
+}
 
 //==============================================================================
 // application actions
@@ -184,3 +188,5 @@ void MainWindow::openImportDirectoryDialog(void)
     const QUrl openAt = QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation());
     addSoundFilesToModel(QFileDialog::getOpenFileUrls(this, QStringLiteral("sound files to open..."), openAt));
 }
+
+

@@ -70,6 +70,40 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>400</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionImport_Audio_Files"/>
+    <addaction name="actionChoose_Export_Folder"/>
+    <addaction name="actionShow_export_folder"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <action name="actionImport_Audio_Files">
+   <property name="text">
+    <string>import audio files...</string>
+   </property>
+  </action>
+  <action name="actionChoose_Export_Folder">
+   <property name="text">
+    <string>choose export folder...</string>
+   </property>
+  </action>
+  <action name="actionShow_export_folder">
+   <property name="text">
+    <string>show export folder...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
