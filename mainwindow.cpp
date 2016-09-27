@@ -59,6 +59,58 @@ MainWindow::~MainWindow(void)
 //==============================================================================
 void MainWindow::on_comboBoxRemoveFiles_currentIndexChanged(int)
 {
+    removeImportedFiles();
+}
+
+void MainWindow::on_buttonExportTo_clicked()
+{
+    openExportDirectoryDialog();
+}
+
+void MainWindow::on_buttonProcessFiles_clicked()
+{
+    processImportedSoundFiles();
+}
+
+void MainWindow::on_actionShow_export_folder_triggered()
+{
+    showExportFolderExternally();
+}
+
+void MainWindow::on_actionImport_Audio_Files_triggered()
+{
+    openImportDirectoryDialog();
+}
+
+void MainWindow::on_actionChoose_Export_Folder_triggered()
+{
+    openExportDirectoryDialog();
+}
+
+
+//==============================================================================
+// application actions
+//==============================================================================
+void MainWindow::addSoundFilesToModel(const QList<QUrl> urls)
+{
+    // turn off gui sorting
+    TqTreeView* w = ui->treeViewImportedFiles;
+    w->setSortingEnabled(false);
+
+    // import files
+    QStringList paths;
+    AFImporter importer;
+    importer.import(urls, &paths);
+
+    // add audio files to model
+    _afModel->addAudioFiles(paths);
+
+    // turn gui sorting back on
+    w->setSortingEnabled(true);
+}
+
+void MainWindow::removeImportedFiles(void)
+{
     // turn off gui sorting
     TqTreeView* treeView = ui->treeViewImportedFiles;
     treeView->setSortingEnabled(false);
@@ -87,12 +139,32 @@ void MainWindow::on_comboBoxRemoveFiles_currentIndexChanged(int)
     comboBox->setSelectionToTitleIndex();
 }
 
-void MainWindow::on_buttonExportTo_clicked()
+void MainWindow::openExportDirectoryDialog(void)
 {
-    openExportDirectoryDialog();
+    TqLineEdit* w = ui->lineEditExportTo;
+    QString result = QFileDialog::getExistingDirectory(
+                this,
+                QStringLiteral("save new sound files to..."),
+                w->currentValidFileLocation());
+
+    if (!result.isEmpty()) // result is empty if user canceled
+    {
+        w->setText(result);
+    }
 }
 
-void MainWindow::on_buttonProcessFiles_clicked()
+void MainWindow::openImportDirectoryDialog(void)
+{
+    const QUrl openAt = QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation());
+    addSoundFilesToModel(QFileDialog::getOpenFileUrls(this, QStringLiteral("sound files to open..."), openAt));
+}
+
+void MainWindow::showExportFolderExternally(void)
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation()));
+}
+
+void MainWindow::processImportedSoundFiles(void)
 {
     // let's find our guis
     TqLineEdit* editDest = ui->lineEditExportTo;
@@ -142,51 +214,4 @@ void MainWindow::on_buttonProcessFiles_clicked()
     // STEP 2
     _libModel->processFiles(libIndex, _afModel->rootItem(), editDest->currentValidFileLocation(), &args);
 }
-
-void MainWindow::on_actionShow_export_folder_triggered()
-{
-    QDesktopServices::openUrl(QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation()));
-}
-
-//==============================================================================
-// application actions
-//==============================================================================
-void MainWindow::addSoundFilesToModel(const QList<QUrl> urls)
-{
-    // turn off gui sorting
-    TqTreeView* w = ui->treeViewImportedFiles;
-    w->setSortingEnabled(false);
-
-    // import files
-    QStringList paths;
-    AFImporter importer;
-    importer.import(urls, &paths);
-
-    // add audio files to model
-    _afModel->addAudioFiles(paths);
-
-    // turn gui sorting back on
-    w->setSortingEnabled(true);
-}
-
-void MainWindow::openExportDirectoryDialog(void)
-{
-    TqLineEdit* w = ui->lineEditExportTo;
-    QString result = QFileDialog::getExistingDirectory(
-                this,
-                QStringLiteral("save new sound files to..."),
-                w->currentValidFileLocation());
-
-    if (!result.isEmpty()) // result is empty if user canceled
-    {
-        w->setText(result);
-    }
-}
-
-void MainWindow::openImportDirectoryDialog(void)
-{
-    const QUrl openAt = QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation());
-    addSoundFilesToModel(QFileDialog::getOpenFileUrls(this, QStringLiteral("sound files to open..."), openAt));
-}
-
 
