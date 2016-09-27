@@ -160,7 +160,8 @@ void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QStrin
         setString(argv[1], absDest.toUtf8(), TQ_MAX_ARG_LENGTH);
 
         // do DSP, update model
-        file->setProccessingStatus(dsp(argc, const_cast<const char**>(argv)));
+        const bool itWorked = dsp(argc, const_cast<const char**>(argv));
+        file->setProccessingStatus(itWorked);
     }
 
     // clean up

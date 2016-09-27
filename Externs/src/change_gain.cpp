@@ -1,7 +1,5 @@
 #include "m_tweaq.h"
 
-#define BUFFERSIZE 4096
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -59,7 +57,6 @@ extern "C"
         }
         
         // setup libsndfile stuff
-        t_float buffer[BUFFERSIZE] = {0};
         SF_INFO sfinfo;
         SNDFILE *filein, *fileout;
         memset(&sfinfo, 0, sizeof(sfinfo));
@@ -74,9 +71,18 @@ extern "C"
             return false;
         }
         
+        // setup buffer
+        const t_uint nChannels = sfinfo.channels;
+        const t_uint multiChannelBufferSize = nChannels * TQ_BUFFERSIZE;
+        t_float* buffer = nullptr;
+        if ((buffer = (t_float*)calloc(multiChannelBufferSize, sizeof(t_float))) == nullptr)
+        {
+            return false;
+        }
+        
         // do dsp
         t_uint samplesread;
-        while ((samplesread = sf_read_double(filein, buffer, BUFFERSIZE)) != 0)
+        while ((samplesread = sf_read_double(filein, buffer, multiChannelBufferSize)) != 0)
         {
             // read
             for (t_uint i = 0; i < samplesread; ++i)
@@ -91,6 +97,11 @@ extern "C"
         // clean up
         sf_close(filein);
         sf_close(fileout);
+        if (buffer != nullptr)
+        {
+            free(buffer);
+            buffer = nullptr;
+        }
         
         return true;
     }

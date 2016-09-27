@@ -1,34 +1,57 @@
 #include "m_tweaq.h"
 
-#define BUFFERSIZE 4096
-
-t_uint splitPathNameAtExtension(const char* path,
-                                char** pathPre,
-                                char** pathPost)
+void insertChannelNumberInPath(const char* input, const char* insert, char*& output)
 {
-    // find index of extension separator
-    const t_uint nPathoutChars = strlen(path);
-    t_uint sepidx = 0;
-    for (t_uint i = nPathoutChars; i >= 1; --i)
+    if ((input == nullptr) || (insert == nullptr))
     {
-        if (path[i] == '.')
+        output = nullptr; // fuck up the result and leave
+        return;
+    }
+    
+    // find index to separate input
+    const t_uint inputLen = strlen(input), insertLen = strlen(insert);
+    t_int sepidx = 0, i = inputLen;
+    while (--i > 0)
+    {
+        if (input[i] == '.')
         {
             sepidx = i;
             break;
         }
     }
     
-    // allocate memory for pre and post strings
-    const t_uint preSize = sepidx;
-    const t_uint postSize = nPathoutChars - sepidx;
-    *pathPre = (char*)calloc(preSize, sizeof(char));
-    *pathPost = (char*)calloc(postSize, sizeof(char));
+    // allocate memory in output if output == nullptr
+    const t_uint memNeeded = inputLen + insertLen + 1;
+    if (output == nullptr)
+    {
+        output = (char*)calloc(memNeeded, sizeof(char));
+    }
+    if ((output == nullptr) || (strlen(output) >= memNeeded))
+    {
+        output = nullptr; // fuck up the result and leave
+        return;
+    }
     
-    // copy results
-    strncpy(*pathPre, path, preSize * sizeof(char));
-    strncpy(*pathPost, path + sepidx, postSize * sizeof(char));
+    // copy first part of input to output
+    if (strncpy(output, input, sepidx) == nullptr)
+    {
+        output = nullptr; // fuck up the result and leave
+        return;
+    }
     
-    return nPathoutChars;
+    // append toInsert to output
+    if (strcat(output, insert) == nullptr)
+    {
+        output = nullptr; // fuck up the result and leave
+        return;
+    }
+    
+    // append the rest of input to output
+    if (strcat(output, input + sepidx) == nullptr)
+    {
+        output = nullptr; // fuck up the result and leave
+        return;
+    }
 }
 
 #ifdef __cplusplus
@@ -66,7 +89,7 @@ extern "C"
         
         // setup libsoundfile stuff
         SF_INFO sfinfo;
-        SNDFILE *filein(nullptr), *fileout(nullptr);
+        SNDFILE *filein = nullptr, *fileout = nullptr;
         memset(&sfinfo, 0, sizeof(sfinfo));
         
         // open source sound file
@@ -78,73 +101,89 @@ extern "C"
         // get pathin's number of channels
         const t_uint nChannels = sfinfo.channels;
         
-        // setup input (multichannel) and output (mono) buffers
-        const t_uint multiChannelBufferSize = BUFFERSIZE * nChannels;
-        t_float* bufferin;
+        // setup input (multichannel) buffer
+        const t_uint multiChannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        t_float* bufferin = nullptr;
         if ((bufferin = (t_float*)calloc(multiChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
         }
         
-        t_float bufferout[BUFFERSIZE] = {0};
-        
-        // split pathout at index of last file separator
-        // we're going to append the file name with the channel number that it was
-        char *pathPre, *pathPost;
-        const t_uint nPathoutChars =
-        splitPathNameAtExtension(arg.pathout, &pathPre, &pathPost);
+        // setup output (mono) buffer
+        t_float bufferout[TQ_BUFFERSIZE] = {0};
         
         // do DSP
         for (t_uint channel = 0; channel < nChannels; ++channel)
         {
-            // start reading from the beginning of the file
+            // STEP 0
+            // reopen the input file
             if (filein == nullptr)
             {
+                memset(&sfinfo, 0, sizeof(sfinfo)); // reset meta data struct
                 if ((filein = sf_open(arg.pathin, SFM_READ, &sfinfo)) == nullptr)
                 {
                     return false;
                 }
             }
             
-            // make pathout ready for mono
+            // setup pathout to be mono
             sfinfo.channels = 1;
             
-            // make file name suffix
-            char suffix[16] = {'\0'};
+            // STEP 1
+            // make channel number string
+            char suffix[8] = {'\0'};
             sprintf(suffix, "-ch%02llu", channel + 1);
-            const t_uint nSuffixChars = strlen(suffix);
             
-            // rename pathout ('dir'/'name'-ch.'ext')
-            char* newPathout;
-            newPathout = (char*)calloc(nPathoutChars + nSuffixChars, sizeof(char));
-            sprintf(newPathout, "%s%s%s", pathPre, suffix, pathPost);
+            // make the array for the new pathout, by setting this to NULL, we are asking
+            // insertChannelNumberInPath() to allocate enough memory for us
+            char* newPathout = nullptr;
+            if (nChannels > 1)
+            {
+                insertChannelNumberInPath(arg.pathout, suffix, newPathout);
+                if (newPathout == nullptr)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if ((newPathout = (char*)calloc(strlen(arg.pathout) + 1, sizeof(char))) == nullptr)
+                {
+                    return false;
+                }
+                if (strcpy(newPathout, arg.pathout) == nullptr)
+                {
+                    return false;
+                }
+            }
             
-            // open destination sound file
+            // let's create a shiney new output file
             if ((fileout = sf_open(newPathout, SFM_WRITE, &sfinfo)) == nullptr)
             {
                 return false;
             }
             
-            // copy and deinterleave incoming sound file
+            // STEP 2
+            // copy and deinterleave
             t_uint samplesread;
             while ((samplesread = sf_read_double(filein, bufferin, multiChannelBufferSize)) != 0)
             {
                 // read
-                for (t_uint sample = channel; sample < samplesread; sample += nChannels)
+                t_uint sampleout = 0;
+                for (t_uint samplein = channel; samplein < samplesread; samplein += nChannels, ++sampleout)
                 {
-                    bufferout[(sample - channel) / nChannels] = bufferin[sample];
+                    bufferout[sampleout] = bufferin[samplein];
                 }
                 
-                // write (samples read will always be an integer multiple of nChannels)
+                // write (samplesread will always be an integer multiple of nChannels)
                 sf_write_double(fileout, bufferout, samplesread / nChannels);
             }
             
-            // clean up new name
+            // clean up and get ready for the next channel
             sf_close(filein);
             sf_close(fileout);
             filein =
             fileout = nullptr;
-            
             if (newPathout != nullptr)
             {
                 free(newPathout);
@@ -152,21 +191,9 @@ extern "C"
             }
         }
         
-        // clean up
-        free(bufferin);
-        if (pathPre != nullptr)
-        {
-            free(pathPre);
-            pathPre = nullptr;
-        }
-        if (pathPost != nullptr)
-        {
-            free(pathPost);
-            pathPost = nullptr;
-        }
-        
         return true;
     }
+    
 #ifdef __cplusplus
 }
 #endif // def __cplusplus

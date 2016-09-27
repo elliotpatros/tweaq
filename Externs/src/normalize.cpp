@@ -1,7 +1,5 @@
 #include "m_tweaq.h"
 
-#define BUFFERSIZE 4096
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -59,12 +57,54 @@ extern "C"
         }
         
         // setup libsndfile stuff
-        t_float buffer[BUFFERSIZE] = {0};
         SF_INFO sfinfo;
         SNDFILE *filein, *fileout;
         memset(&sfinfo, 0, sizeof(sfinfo));
         
-        // open input and output files
+        // open input file
+        if ((filein = sf_open(arg.pathin, SFM_READ, &sfinfo)) == nullptr)
+        {
+            return false;
+        }
+        
+        // setup multichannel buffer
+        const t_uint nChannels = sfinfo.channels;
+        const t_uint multiChannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        t_float* buffer = nullptr;
+        if ((buffer = (t_float*)calloc(multiChannelBufferSize, sizeof(t_float))) == nullptr)
+        {
+            return false;
+        }
+        
+        // find max gain
+        t_float maxGain = 0.0;
+        t_uint samplesread;
+        while ((samplesread = sf_read_double(filein, buffer, multiChannelBufferSize)) != 0)
+        {
+            for (t_uint i = 0; i < samplesread; ++i)
+            {
+                const t_float sampleGain = fabs(buffer[i]);
+                if (sampleGain > maxGain)
+                {
+                    maxGain = sampleGain;
+                }
+            }
+        }
+        
+        // close filein
+        sf_close(filein);
+        filein = nullptr;
+        memset(&sfinfo, 0, sizeof(sfinfo));
+        
+        // fix up maxGain
+        if (maxGain < 0.00000001)
+        {
+            maxGain = 1.0;
+        }
+        
+        arg.gain /= maxGain;
+        
+        // reopen input file, and open output file
         if ((filein = sf_open(arg.pathin, SFM_READ, &sfinfo)) == nullptr)
         {
             return false;
@@ -74,19 +114,8 @@ extern "C"
             return false;
         }
         
-        // find input file peak amplitude
-        t_float maxGain;
-        const t_int success = sf_command(filein, SFC_CALC_NORM_SIGNAL_MAX, &maxGain, sizeof(maxGain));
-        maxGain = fabs(maxGain);
-        if ((maxGain < 0.00000001) || (success != 0))
-        {
-            maxGain = 1.0;
-        }
-        
-        arg.gain /= maxGain;
-        
-        t_uint samplesread;
-        while ((samplesread = sf_read_double(filein, buffer, BUFFERSIZE)) != 0)
+        // do DSP
+        while ((samplesread = sf_read_double(filein, buffer, multiChannelBufferSize)) != 0)
         {
             // read
             for (t_uint i = 0; i < samplesread; ++i)
@@ -101,6 +130,11 @@ extern "C"
         // clean up
         sf_close(filein);
         sf_close(fileout);
+        if (buffer != nullptr)
+        {
+            free(buffer);
+            buffer = nullptr;
+        }
         
         return true;
     }

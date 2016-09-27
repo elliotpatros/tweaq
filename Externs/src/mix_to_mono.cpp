@@ -1,7 +1,5 @@
 #include "m_tweaq.h"
 
-#define BUFFERSIZE 4096
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -71,10 +69,10 @@ extern "C"
         }
         
         // get number of input channels (to setup the read buffer)
-        t_float bufferout[BUFFERSIZE] = {0};
+        t_float bufferout[TQ_BUFFERSIZE] = {0};
         const int nChannels = sfinfo.channels;
-        const int multiChannelBufferSize = BUFFERSIZE * nChannels;
-        t_float* bufferin;
+        const int multiChannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        t_float* bufferin = nullptr;
         if ((bufferin = (t_float*)calloc(multiChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
@@ -112,7 +110,12 @@ extern "C"
         // clean up
         sf_close(filein);
         sf_close(fileout);
-        free(bufferin);
+        if (bufferin != nullptr)
+        {
+            free(bufferin);
+            bufferin = nullptr;
+        }
+        
         
         return true;
     }

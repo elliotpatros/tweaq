@@ -18,6 +18,7 @@
 #endif // __cplusplus
 
 // defines
+#define TQ_BUFFERSIZE 4096
 #define TQ_MAX_NAME_LENGTH 16
 #define TQ_MAX_NUM_LABELS 8
 #define TQ_MAX_LABEL_LENGTH 16

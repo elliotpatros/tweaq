@@ -28,14 +28,14 @@
 		B4026AE91D94A01F00C6996B /* test_externs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test_externs; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4026AEC1D94A01F00C6996B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B4026AF31D94A07100C6996B /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = ../../../StaticLibs/libsndfile/lib/libsndfile.a; sourceTree = "<group>"; };
-		B4026AF51D94A13300C6996B /* change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = change_gain.h; sourceTree = "<group>"; };
 		B4026AF61D94A58B00C6996B /* m_tweaq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = m_tweaq.cpp; path = ../../../../m_tweaq.cpp; sourceTree = "<group>"; };
 		B4026AF71D94A58B00C6996B /* m_tweaq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = m_tweaq.h; path = ../../../../m_tweaq.h; sourceTree = "<group>"; };
-		B4026AF91D94A67F00C6996B /* mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mix_to_mono.h; sourceTree = "<group>"; };
-		B4026AFA1D94AA1F00C6996B /* normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = normalize.h; sourceTree = "<group>"; };
-		B4026AFB1D94AE8400C6996B /* split_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = split_to_mono.h; sourceTree = "<group>"; };
-		B4026AFC1D94B14600C6996B /* strip_silence_at_start.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = strip_silence_at_start.h; sourceTree = "<group>"; };
-		B4026AFD1D94B57900C6996B /* strip_silence_at_end.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = strip_silence_at_end.h; sourceTree = "<group>"; };
+		B41B724C1D98AFED00B929EF /* change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = change_gain.h; sourceTree = "<group>"; };
+		B41B724D1D98AFED00B929EF /* mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mix_to_mono.h; sourceTree = "<group>"; };
+		B41B724E1D98AFED00B929EF /* normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = normalize.h; sourceTree = "<group>"; };
+		B41B724F1D98AFED00B929EF /* split_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = split_to_mono.h; sourceTree = "<group>"; };
+		B41B72501D98AFED00B929EF /* strip_silence_at_end.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = strip_silence_at_end.h; sourceTree = "<group>"; };
+		B41B72511D98AFED00B929EF /* strip_silence_at_start.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = strip_silence_at_start.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,14 +70,14 @@
 		B4026AEB1D94A01F00C6996B /* test_externs */ = {
 			isa = PBXGroup;
 			children = (
+				B41B724C1D98AFED00B929EF /* change_gain.h */,
+				B41B724D1D98AFED00B929EF /* mix_to_mono.h */,
+				B41B724E1D98AFED00B929EF /* normalize.h */,
+				B41B724F1D98AFED00B929EF /* split_to_mono.h */,
+				B41B72501D98AFED00B929EF /* strip_silence_at_end.h */,
+				B41B72511D98AFED00B929EF /* strip_silence_at_start.h */,
 				B4026AEC1D94A01F00C6996B /* main.cpp */,
-				B4026AFD1D94B57900C6996B /* strip_silence_at_end.h */,
-				B4026AFC1D94B14600C6996B /* strip_silence_at_start.h */,
-				B4026AFB1D94AE8400C6996B /* split_to_mono.h */,
-				B4026AF51D94A13300C6996B /* change_gain.h */,
 				B4026AF61D94A58B00C6996B /* m_tweaq.cpp */,
-				B4026AF91D94A67F00C6996B /* mix_to_mono.h */,
-				B4026AFA1D94AA1F00C6996B /* normalize.h */,
 				B4026AF71D94A58B00C6996B /* m_tweaq.h */,
 			);
 			path = test_externs;

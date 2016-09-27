@@ -1,7 +1,5 @@
 #include "m_tweaq.h"
 
-#define BUFFERSIZE 4096
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -57,7 +55,6 @@ extern "C"
         // setup audio stuff
         SF_INFO sfinfo;
         SNDFILE *filein, *fileout;
-        
         memset(&sfinfo, 0, sizeof(sfinfo));
         
         // open input and output files
@@ -73,8 +70,9 @@ extern "C"
         // setup input and output buffers
         const t_uint nChannels = sfinfo.channels;
         const t_uint nChannelsMinusOne = nChannels - 1;
-        const t_uint multichannelBufferSize = BUFFERSIZE * nChannels;
-        t_float *bufferin, *bufferout;
+        const t_uint multichannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        t_float *bufferin = nullptr,
+        *bufferout = nullptr;
         if ((bufferin = (t_float*)calloc(multichannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
@@ -140,8 +138,17 @@ extern "C"
         // clean up
         sf_close(filein);
         sf_close(fileout);
-        free(bufferin);
-        free(bufferout);
+        if (bufferin != nullptr)
+        {
+            free(bufferin);
+            bufferin = nullptr;
+        }
+        if (bufferout != nullptr)
+        {
+            free(bufferout);
+            bufferout = nullptr;
+        }
+        
         
         return true;
     }
