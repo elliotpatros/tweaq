@@ -85,7 +85,6 @@ void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QStrin
     // bail if memory couldn't be allocated
     if (argv == nullptr)
     {
-        qDebug() << "bailed allocating argv";
         return;
     }
 
@@ -100,7 +99,6 @@ void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QStrin
             // bail if memory couldn't be allocated
             if (&argv[i] == nullptr)
             {
-                qDebug() << "bailed allocating argv[" << i << "]";
                 return;
             }
         }

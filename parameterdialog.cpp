@@ -136,7 +136,7 @@ void ParameterDialog::getEntries(QStringList* entries)
     // if one of them wasn't used, it'll have a blank entry as text
     if(_comboBoxEntries.size() != _lineEditEntries.size())
     {
-        qDebug() << "start panicking";
+        return;
     }
 
     const t_uint nEntries = _comboBoxEntries.size();
