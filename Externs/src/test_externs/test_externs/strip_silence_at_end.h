@@ -64,9 +64,9 @@ extern "C"
         
         // setup input buffer so that we can...
         const t_uint nChannels = sfinfo.channels;
-        const t_uint multichannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        const t_uint nChannelBufferSize = TQ_BUFFERSIZE * nChannels;
         t_float* buffer = nullptr;
-        if ((buffer = (t_float*)calloc(multichannelBufferSize, sizeof(t_float))) == nullptr)
+        if ((buffer = (t_float*)calloc(nChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
         }
@@ -75,7 +75,7 @@ extern "C"
         t_uint lastLoudEnoughSample = 0,
                totalSamplesRead = 0,
                nSamplesRead = 0;
-        while ((nSamplesRead = sf_read_double(filein, buffer, multichannelBufferSize)) != 0)
+        while ((nSamplesRead = sf_read_double(filein, buffer, nChannelBufferSize)) != 0)
         {
             for (t_uint sample = 0; sample < nSamplesRead; ++sample, ++totalSamplesRead)
             {
@@ -103,7 +103,7 @@ extern "C"
         
         // do DSP
         totalSamplesRead = 0;
-        while ((nSamplesRead = sf_read_double(filein, buffer, multichannelBufferSize)) != 0)
+        while ((nSamplesRead = sf_read_double(filein, buffer, nChannelBufferSize)) != 0)
         {
             // write
             if ((totalSamplesRead += nSamplesRead) <= lastLoudEnoughSample)
@@ -112,7 +112,7 @@ extern "C"
             }
             else
             {
-                t_uint nSamplesToWrite = ((lastLoudEnoughSample % multichannelBufferSize) / nChannels + 1) * nChannels;
+                t_uint nSamplesToWrite = ((lastLoudEnoughSample % nChannelBufferSize) / nChannels + 1) * nChannels;
                 if (nSamplesToWrite > nSamplesRead)
                 {
                     nSamplesToWrite = nSamplesRead;

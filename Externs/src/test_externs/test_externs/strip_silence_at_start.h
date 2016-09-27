@@ -70,14 +70,14 @@ extern "C"
         // setup input and output buffers
         const t_uint nChannels = sfinfo.channels;
         const t_uint nChannelsMinusOne = nChannels - 1;
-        const t_uint multichannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        const t_uint nChannelBufferSize = TQ_BUFFERSIZE * nChannels;
         t_float *bufferin = nullptr,
                 *bufferout = nullptr;
-        if ((bufferin = (t_float*)calloc(multichannelBufferSize, sizeof(t_float))) == nullptr)
+        if ((bufferin = (t_float*)calloc(nChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
         }
-        if ((bufferout = (t_float*)calloc(multichannelBufferSize, sizeof(t_float))) == nullptr)
+        if ((bufferout = (t_float*)calloc(nChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
         }
@@ -86,7 +86,7 @@ extern "C"
         t_uint outptr = 0;
         bool stillTooQuiet = true;
         t_uint samplesread;
-        while ((samplesread = sf_read_double(filein, bufferin, multichannelBufferSize)) != 0)
+        while ((samplesread = sf_read_double(filein, bufferin, nChannelBufferSize)) != 0)
         {
             // go through all the samples
             for (t_uint sample = 0; sample < samplesread; ++sample)

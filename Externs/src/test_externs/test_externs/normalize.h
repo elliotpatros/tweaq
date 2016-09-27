@@ -69,9 +69,9 @@ extern "C"
 
         // setup multichannel buffer
         const t_uint nChannels = sfinfo.channels;
-        const t_uint multiChannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        const t_uint nChannelBufferSize = TQ_BUFFERSIZE * nChannels;
         t_float* buffer = nullptr;
-        if ((buffer = (t_float*)calloc(multiChannelBufferSize, sizeof(t_float))) == nullptr)
+        if ((buffer = (t_float*)calloc(nChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
         }
@@ -79,7 +79,7 @@ extern "C"
         // find max gain
         t_float maxGain = 0.0;
         t_uint samplesread;
-        while ((samplesread = sf_read_double(filein, buffer, multiChannelBufferSize)) != 0)
+        while ((samplesread = sf_read_double(filein, buffer, nChannelBufferSize)) != 0)
         {
             for (t_uint i = 0; i < samplesread; ++i)
             {
@@ -115,7 +115,7 @@ extern "C"
         }
         
         // do DSP
-        while ((samplesread = sf_read_double(filein, buffer, multiChannelBufferSize)) != 0)
+        while ((samplesread = sf_read_double(filein, buffer, nChannelBufferSize)) != 0)
         {
             // read
             for (t_uint i = 0; i < samplesread; ++i)

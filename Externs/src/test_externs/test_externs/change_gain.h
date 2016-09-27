@@ -73,16 +73,16 @@ extern "C"
         
         // setup buffer
         const t_uint nChannels = sfinfo.channels;
-        const t_uint multiChannelBufferSize = nChannels * TQ_BUFFERSIZE;
+        const t_uint nChannelBufferSize = nChannels * TQ_BUFFERSIZE;
         t_float* buffer = nullptr;
-        if ((buffer = (t_float*)calloc(multiChannelBufferSize, sizeof(t_float))) == nullptr)
+        if ((buffer = (t_float*)calloc(nChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
         }
         
         // do dsp
         t_uint samplesread;
-        while ((samplesread = sf_read_double(filein, buffer, multiChannelBufferSize)) != 0)
+        while ((samplesread = sf_read_double(filein, buffer, nChannelBufferSize)) != 0)
         {
             // read
             for (t_uint i = 0; i < samplesread; ++i)

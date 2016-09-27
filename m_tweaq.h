@@ -27,6 +27,7 @@
 #define TQ_NUM_DEF_ARGS 2
 #define TQ_TRUE 1
 #define TQ_FALSE 0
+#define TQ_PI 3.1415926535897932
 
 // common types
 typedef double   t_float;

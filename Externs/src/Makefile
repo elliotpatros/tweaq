@@ -1,6 +1,6 @@
 # targets
 so: change_gain.so mix_to_mono.so normalize.so split_to_mono.so \
-	strip_silence_at_end.so strip_silence_at_start.so
+	strip_silence_at_end.so strip_silence_at_start.so fade_in.so
 
 # the compiler
 CC = gcc

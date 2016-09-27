@@ -130,7 +130,10 @@ void MainWindow::on_buttonProcessFiles_clicked()
     // make and show the user a parameter dialog
     ParameterDialog dialog(this);
     dialog.appendParameterFields(&handles);
-    dialog.makeAndShow(_libModel->name(libIndex));
+    if (dialog.makeAndShow(_libModel->name(libIndex)) == QDialog::Rejected)
+    {
+        return;
+    }
 
     QStringList args;
     dialog.getEntries(&args);

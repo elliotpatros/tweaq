@@ -50,6 +50,8 @@ void ParameterDialog::appendParameterFields(const vector<ParameterHandle>* param
     {
         // get pointer to parameter handle
         const ParameterHandle* handle = &parameters->at(pIndex);
+        t_uint thisRow = lastRow(),
+               labelCol, labelWidth;
 
         // add a line edit
         _lineEditEntries.emplace_back(new QLineEdit(this));
@@ -60,11 +62,20 @@ void ParameterDialog::appendParameterFields(const vector<ParameterHandle>* param
         {
             editor->setPlaceholderText(QString::fromUtf8(handle->get().name));
             editor->setText(QString::number(handle->get().defaultValue));
-            _layout->addWidget(editor, lastRow(), 0, 1, _lastColumn);
+            _layout->addWidget(editor, thisRow, 0, 1, _lastColumn);
+
+            // we used the line editor, so tell the label where to go
+            labelCol = _lastColumn;
+            labelWidth = 1;
         }
         else
         {
             editor->setText(_blankEntry);
+            editor->setVisible(false);
+
+            // we didn't use the line editor, so tell the label where to go
+            labelCol = 0;
+            labelWidth = _nColumns;
         }
 
         // add label(s)
@@ -80,17 +91,18 @@ void ParameterDialog::appendParameterFields(const vector<ParameterHandle>* param
                 labels->addItem(QString::fromUtf8(handle->get().labels[i]));
             }
 
-            _layout->addWidget(labels, lastRow() - 1, _lastColumn, 1, 1);
+            _layout->addWidget(labels, thisRow, labelCol, 1, labelWidth);
         }
         else // use a static text label
         {
             QLabel* label = new QLabel(this);
             label->setText(handle->get().labels[0]);
-            _layout->addWidget(label, lastRow() - 1, 0, 1, _nColumns);
+            _layout->addWidget(label, thisRow, labelCol, 1, labelWidth);
 
             // and make sure we can tell the combo box wasn't used here
             labels->addItem(_blankEntry);
             labels->setCurrentIndex(0);
+            labels->setVisible(false);
         }
     }
 }

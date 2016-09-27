@@ -3,7 +3,8 @@
 //#include "normalize.h"
 //#include "split_to_mono.h"
 //#include "strip_silence_at_end.h"
-#include "strip_silence_at_start.h"
+//#include "strip_silence_at_start.h"
+#include "fade_in.h"
 
 #include <iostream>
 #include <memory>
@@ -88,6 +89,18 @@ int main(int argc, const char* argv[])
     itWorked = strip_silence_at_start_process(4, args);
      */
     //\strip silence at start
+    
+    // fade in
+    const char* args[128] =
+    {
+        "/Users/demo/Desktop/testout/normalized_rain_12ch.aiff",
+        "/Users/demo/Desktop/testout/fade_in_rain_12ch.aif",
+        "5000",
+        "milliseconds",
+        "S curve"
+    };
+    itWorked = fade_in_process(5, args);
+    // fade out
     
     cout << (itWorked ? "true" : "false") << endl;
     

@@ -30,6 +30,7 @@
 		B4026AF31D94A07100C6996B /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = ../../../StaticLibs/libsndfile/lib/libsndfile.a; sourceTree = "<group>"; };
 		B4026AF61D94A58B00C6996B /* m_tweaq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = m_tweaq.cpp; path = ../../../../m_tweaq.cpp; sourceTree = "<group>"; };
 		B4026AF71D94A58B00C6996B /* m_tweaq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = m_tweaq.h; path = ../../../../m_tweaq.h; sourceTree = "<group>"; };
+		B4118C2B1D99F12D00C3BEC6 /* fade_in.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fade_in.h; sourceTree = "<group>"; };
 		B41B724C1D98AFED00B929EF /* change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = change_gain.h; sourceTree = "<group>"; };
 		B41B724D1D98AFED00B929EF /* mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mix_to_mono.h; sourceTree = "<group>"; };
 		B41B724E1D98AFED00B929EF /* normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = normalize.h; sourceTree = "<group>"; };
@@ -79,6 +80,7 @@
 				B4026AEC1D94A01F00C6996B /* main.cpp */,
 				B4026AF61D94A58B00C6996B /* m_tweaq.cpp */,
 				B4026AF71D94A58B00C6996B /* m_tweaq.h */,
+				B4118C2B1D99F12D00C3BEC6 /* fade_in.h */,
 			);
 			path = test_externs;
 			sourceTree = "<group>";

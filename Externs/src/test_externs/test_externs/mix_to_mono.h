@@ -71,9 +71,9 @@ extern "C"
         // get number of input channels (to setup the read buffer)
         t_float bufferout[TQ_BUFFERSIZE] = {0};
         const int nChannels = sfinfo.channels;
-        const int multiChannelBufferSize = TQ_BUFFERSIZE * nChannels;
+        const int nChannelBufferSize = TQ_BUFFERSIZE * nChannels;
         t_float* bufferin = nullptr;
-        if ((bufferin = (t_float*)calloc(multiChannelBufferSize, sizeof(t_float))) == nullptr)
+        if ((bufferin = (t_float*)calloc(nChannelBufferSize, sizeof(t_float))) == nullptr)
         {
             return false;
         }
@@ -87,7 +87,7 @@ extern "C"
         
         // do DSP
         t_uint samplesread;
-        while ((samplesread = sf_read_double(filein, bufferin, multiChannelBufferSize)) != 0)
+        while ((samplesread = sf_read_double(filein, bufferin, nChannelBufferSize)) != 0)
         {
             // read interleaved
             for (t_uint sample = 0; sample < samplesread; sample += nChannels)
