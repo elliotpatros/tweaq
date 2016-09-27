@@ -84,6 +84,8 @@
      <string>File</string>
     </property>
     <addaction name="actionImport_Audio_Files"/>
+    <addaction name="actionImport_folder"/>
+    <addaction name="separator"/>
     <addaction name="actionChoose_Export_Folder"/>
     <addaction name="actionShow_export_folder"/>
    </widget>
@@ -145,6 +147,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionImport_folder">
+   <property name="text">
+    <string>import folder...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
    </property>
   </action>
  </widget>

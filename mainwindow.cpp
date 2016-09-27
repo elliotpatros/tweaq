@@ -79,7 +79,12 @@ void MainWindow::on_actionShow_export_folder_triggered()
 
 void MainWindow::on_actionImport_Audio_Files_triggered()
 {
-    openImportDirectoryDialog();
+    openImportFilesDialog();
+}
+
+void MainWindow::on_actionImport_folder_triggered()
+{
+    openImportFolderDialog();
 }
 
 void MainWindow::on_actionChoose_Export_Folder_triggered()
@@ -172,10 +177,17 @@ void MainWindow::openExportDirectoryDialog(void)
     }
 }
 
-void MainWindow::openImportDirectoryDialog(void)
+void MainWindow::openImportFilesDialog(void)
 {
     const QUrl openAt = QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation());
     addSoundFilesToModel(QFileDialog::getOpenFileUrls(this, QStringLiteral("sound files to open..."), openAt));
+}
+
+void MainWindow::openImportFolderDialog(void)
+{
+    const QUrl openAt = QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation());
+    const QUrl opened = QFileDialog::getExistingDirectoryUrl(this, QStringLiteral("sound files to open..."), openAt);
+    addSoundFilesToModel(QList<QUrl>() << opened);
 }
 
 void MainWindow::showExportFolderExternally(void)
@@ -195,7 +207,7 @@ void MainWindow::processImportedFiles(void)
     // ...has the user picked any sounds to edit?
     if (!_afModel->areThereAnyUnprocessedAudioFiles())
     {
-        openImportDirectoryDialog();
+        openImportFilesDialog();
         return;
     }
 
@@ -233,3 +245,4 @@ void MainWindow::processImportedFiles(void)
     // STEP 2
     _libModel->processFiles(libIndex, _afModel->rootItem(), editDest->currentValidFileLocation(), &args);
 }
+

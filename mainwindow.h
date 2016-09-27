@@ -48,6 +48,7 @@ private slots:
     void on_actionRemove_all_files_triggered();
     void on_actionRemove_finished_files_triggered();
     void on_actionProcess_triggered();
+    void on_actionImport_folder_triggered();
 
     // application actions
     void addSoundFilesToModel(const QList<QUrl> urls);
@@ -66,7 +67,8 @@ private:
     void processImportedFiles(void);
     void showExportFolderExternally(void);
     void openExportDirectoryDialog(void);
-    void openImportDirectoryDialog(void);
+    void openImportFilesDialog(void);
+    void openImportFolderDialog(void);
 };
 
 #endif // MAINWINDOW_H
