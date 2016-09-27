@@ -132,7 +132,7 @@ void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QStrin
     const t_int nAudioFiles = rootItem->childCount();
     for (t_int row = 0; row < nAudioFiles; ++row)
     {
-        // do process anything that's already been processed
+        // don't process anything that's already been processed
         AFItem* file = rootItem->child(row);
         if (file->hasBeenProcessed()) {continue; }
 
