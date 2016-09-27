@@ -29,6 +29,16 @@ public:
 
     // directories
     QString externalDirectorySearchPath(void) const;
+
+    // actions
+    enum {
+        ComboBoxTitleIndex = 0,
+        ComboBoxSeparator,
+        ComboBoxTitleItems,
+        ComboBoxRemoveAll = ComboBoxTitleItems,
+        ComboBoxRemoveSelected,
+        ComboBoxRemoveFinished
+    };
 };
 
 #endif // INSTANCEMETA_H

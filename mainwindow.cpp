@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
         w->addItems(QStringList()
                     << QStringLiteral("all")
                     << QStringLiteral("selected")
-                    << QStringLiteral("completed"));
+                    << QStringLiteral("finished"));
     }
 
     // drag and drop
@@ -57,9 +57,9 @@ MainWindow::~MainWindow(void)
 //==============================================================================
 // gui callbacks
 //==============================================================================
-void MainWindow::on_comboBoxRemoveFiles_currentIndexChanged(int)
+void MainWindow::on_comboBoxRemoveFiles_currentIndexChanged(int index)
 {
-    removeImportedFiles();
+    removeImportedFiles(index);
 }
 
 void MainWindow::on_buttonExportTo_clicked()
@@ -69,7 +69,7 @@ void MainWindow::on_buttonExportTo_clicked()
 
 void MainWindow::on_buttonProcessFiles_clicked()
 {
-    processImportedSoundFiles();
+    processImportedFiles();
 }
 
 void MainWindow::on_actionShow_export_folder_triggered()
@@ -85,6 +85,26 @@ void MainWindow::on_actionImport_Audio_Files_triggered()
 void MainWindow::on_actionChoose_Export_Folder_triggered()
 {
     openExportDirectoryDialog();
+}
+
+void MainWindow::on_actionRemove_selected_files_triggered()
+{
+    removeImportedFiles(InstanceMeta::ComboBoxRemoveSelected);
+}
+
+void MainWindow::on_actionRemove_all_files_triggered()
+{
+    removeImportedFiles(InstanceMeta::ComboBoxRemoveAll);
+}
+
+void MainWindow::on_actionRemove_finished_files_triggered()
+{
+    removeImportedFiles(InstanceMeta::ComboBoxRemoveFinished);
+}
+
+void MainWindow::on_actionProcess_triggered()
+{
+    processImportedFiles();
 }
 
 
@@ -109,23 +129,22 @@ void MainWindow::addSoundFilesToModel(const QList<QUrl> urls)
     w->setSortingEnabled(true);
 }
 
-void MainWindow::removeImportedFiles(void)
+void MainWindow::removeImportedFiles(const int index)
 {
     // turn off gui sorting
     TqTreeView* treeView = ui->treeViewImportedFiles;
     treeView->setSortingEnabled(false);
 
     // which type of remove was it?
-    TqComboBox* comboBox = ui->comboBoxRemoveFiles;
-    switch (comboBox->processIndex())
+    switch (index)
     {
-    case 0: // remove all
+    case InstanceMeta::ComboBoxRemoveAll:
         _afModel->removeAllRows();
         break;
-    case 1: // remove selected
+    case InstanceMeta::ComboBoxRemoveSelected:
         _afModel->removeSelectedRows(ui->treeViewImportedFiles->selectedRows());
         break;
-    case 2: // remove finished
+    case InstanceMeta::ComboBoxRemoveFinished:
         _afModel->removeFinishedRows();
         break;
     default:
@@ -136,7 +155,7 @@ void MainWindow::removeImportedFiles(void)
     treeView->setSortingEnabled(true);
 
     // reset combo box title
-    comboBox->setSelectionToTitleIndex();
+    ui->comboBoxRemoveFiles->setSelectionToTitleIndex();
 }
 
 void MainWindow::openExportDirectoryDialog(void)
@@ -164,7 +183,7 @@ void MainWindow::showExportFolderExternally(void)
     QDesktopServices::openUrl(QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation()));
 }
 
-void MainWindow::processImportedSoundFiles(void)
+void MainWindow::processImportedFiles(void)
 {
     // let's find our guis
     TqLineEdit* editDest = ui->lineEditExportTo;
@@ -214,4 +233,3 @@ void MainWindow::processImportedSoundFiles(void)
     // STEP 2
     _libModel->processFiles(libIndex, _afModel->rootItem(), editDest->currentValidFileLocation(), &args);
 }
-

@@ -38,12 +38,16 @@ public:
 
 private slots:
     // gui callbacks
-    void on_comboBoxRemoveFiles_currentIndexChanged(int);
+    void on_comboBoxRemoveFiles_currentIndexChanged(int index);
     void on_buttonExportTo_clicked();
     void on_buttonProcessFiles_clicked();
     void on_actionShow_export_folder_triggered();
     void on_actionImport_Audio_Files_triggered();
     void on_actionChoose_Export_Folder_triggered();
+    void on_actionRemove_selected_files_triggered();
+    void on_actionRemove_all_files_triggered();
+    void on_actionRemove_finished_files_triggered();
+    void on_actionProcess_triggered();
 
     // application actions
     void addSoundFilesToModel(const QList<QUrl> urls);
@@ -58,8 +62,8 @@ private:
     LibModel* _libModel;
 
     // application actions
-    void removeImportedFiles(void);
-    void processImportedSoundFiles(void);
+    void removeImportedFiles(const int index);
+    void processImportedFiles(void);
     void showExportFolderExternally(void);
     void openExportDirectoryDialog(void);
     void openImportDirectoryDialog(void);
