@@ -82,7 +82,7 @@ void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QStrin
     const t_uint argc = args->size() + TQ_NUM_DEF_ARGS;
     char** argv = (char**)calloc(argc + 1, sizeof(char*));
 
-    // bail is memory couldn't be allocated
+    // bail if memory couldn't be allocated
     if (argv == nullptr)
     {
         qDebug() << "bailed allocating argv";
