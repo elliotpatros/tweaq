@@ -38,7 +38,7 @@ public:
     bool hasBeenProcessed(const t_int row) const;
 
     // sets
-    void addAudioFiles(QStringList paths);
+    void addAudioFiles(QStringList* paths);
     void appendChildToRoot(const QString path);
     void removeAllRows(void);
     void removeSelectedRows(QModelIndexList indices);

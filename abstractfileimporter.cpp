@@ -1,4 +1,5 @@
 #include "abstractfileimporter.h"
+t_uint AbstractFileImporter::_maxNumFilesICanImport = 65536; /* 2^16 */
 
 //==============================================================================
 // constructor & destructor
@@ -92,6 +93,11 @@ bool AbstractFileImporter::appendToListIfValid(const QString path)
     if (isFileValid(path))
     {
         _fileList->append(path);
+    }
+
+    if (_nFilesExamined >= _maxNumFilesICanImport)
+    {
+        return false;
     }
 
     return true;

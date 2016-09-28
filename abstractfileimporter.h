@@ -44,6 +44,7 @@ private:
 
     // how many files have we looked at since calling import(urls);
     t_uint _nFilesExamined;
+    static t_uint _maxNumFilesICanImport;
 
     // non-owned
     QStringList* _fileList;

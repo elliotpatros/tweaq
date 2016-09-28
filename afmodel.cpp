@@ -85,29 +85,30 @@ bool AFModel::areThereAnyUnprocessedAudioFiles(void) const
 //==============================================================================
 // sets
 //==============================================================================
-void AFModel::addAudioFiles(QStringList paths)
+void AFModel::addAudioFiles(QStringList* paths)
 {
-    if (paths.isEmpty()) {return; }
+    if (paths == nullptr) {return; }
+    if (paths->isEmpty())  {return; }
 
     // remove items that have already been imported
     if (rowCount() > 0)
     {
-        t_int i = paths.size();
+        t_int i = paths->size();
         while (i-- > 0)
         {
             // is there at least one new entry that matches an old entry?
-            if (!match(index(0, 0), Qt::DisplayRole, QVariant(paths.at(i)), 1).isEmpty())
+            if (!match(index(0, 0), Qt::DisplayRole, QVariant(paths->at(i)), 1).isEmpty())
             {
-                paths.removeAt(i);
+                paths->removeAt(i);
             }
         }
     }
 
     // add any remaining imported paths to model (as rows)
-    if (paths.isEmpty()) {return; }
+    if (paths->isEmpty()) {return; }
 
     // tell the model we're going to add new paths to the end
-    const t_int nPaths = paths.size();
+    const t_int nPaths = paths->size();
     const t_int newRowsStart = rowCount();
     const t_int newRowsEnd = newRowsStart + (nPaths - 1);
     beginInsertRows(QModelIndex(), newRowsStart, newRowsEnd);
@@ -115,7 +116,7 @@ void AFModel::addAudioFiles(QStringList paths)
     // add the new paths to model, and tell it when we're done
     for (t_int i = 0; i < nPaths; ++i)
     {
-        appendChildToRoot(paths.at(i));
+        appendChildToRoot(paths->at(i));
     }
 
     endInsertRows();

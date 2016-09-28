@@ -123,15 +123,18 @@ void MainWindow::addSoundFilesToModel(const QList<QUrl> urls)
     w->setSortingEnabled(false);
 
     // import files
-    QStringList paths;
+    QStringList* paths = new QStringList;
     AFImporter importer;
-    importer.import(urls, &paths);
+    importer.import(urls, paths);
 
     // add audio files to model
     _afModel->addAudioFiles(paths);
 
     // turn gui sorting back on
     w->setSortingEnabled(true);
+
+    // clean up
+    delete paths;
 }
 
 void MainWindow::removeImportedFiles(const int index)
