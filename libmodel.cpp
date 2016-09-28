@@ -12,13 +12,23 @@ LibModel::LibModel(QObject* parent, const QString searchPath) :
     const t_uint nPaths = paths.size();
     for (t_uint i = 0; i < nPaths; ++i)
     {
-        _libs.append(new LibMeta(paths.at(i)));
+        _libs.emplace_back(new LibMeta(paths.at(i)));
     }
 }
 
 LibModel::~LibModel(void)
 {
-    qDeleteAll(_libs);
+    const t_uint nLibs = _libs.size();
+    for (t_uint i = 0; i < nLibs; ++i)
+    {
+        if (_libs[i] != nullptr)
+        {
+            delete _libs[i];
+            _libs[i] = nullptr;
+        }
+    }
+
+    vector<LibMeta*>().swap(_libs);
 }
 
 
@@ -27,7 +37,12 @@ LibModel::~LibModel(void)
 //==============================================================================
 QString LibModel::name(t_int index) const
 {
-    return _libs.at(index)->libName();
+    if ((static_cast<t_uint>(index) < _libs.size()) && (index >= 0))
+    {
+        return _libs[index]->libName();
+    }
+
+    return QStringLiteral("unknown");
 }
 
 QStringList LibModel::names(void) const

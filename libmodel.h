@@ -33,7 +33,7 @@ public:
 
 private:
     // pointer to meta data about external libraries
-    QList<LibMeta*> _libs;
+    vector<LibMeta*> _libs;
 
     // external function definitions
     typedef bool (*ExternalProcessDSP)(t_uint argc, const char* argv[]);

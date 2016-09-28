@@ -69,6 +69,7 @@ private:
 
     // convenience
     bool childIndexIsValid(const t_int index) const;
+    void killAllMyChildren(void);
 };
 
 #endif // AFITEM_H

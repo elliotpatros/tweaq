@@ -43,8 +43,8 @@ AFItem::AFItem(const AFItem& other) :
     _itemData = other._itemData;
     completed = other.completed;
 
-    // kill all my own children...
-    _childItems.clear();
+    // kill all my children...
+    killAllMyChildren();
 
     // ...and steal someone else's
     const t_int nChildren = other.childCount();
@@ -56,7 +56,9 @@ AFItem::AFItem(const AFItem& other) :
 
 AFItem::~AFItem(void)
 {
-    _childItems.clear();
+    killAllMyChildren();
+    vector<AFItem*>().swap(_childItems);
+    vector<QVariant>().swap(_itemData);
 }
 
 
@@ -65,13 +67,18 @@ AFItem::~AFItem(void)
 //==============================================================================
 void AFItem::appendChild(AFItem *child)
 {
-    _childItems.push_back(child);
+    _childItems.emplace_back(child);
 }
 
 void AFItem::removeChild(t_int row)
 {
     if (childIndexIsValid(row))
     {
+        if (_childItems[row] != nullptr)
+        {
+            delete _childItems[row];
+        }
+
         _childItems.erase(_childItems.begin() + row);
     }
 }
@@ -151,4 +158,19 @@ vector<QVariant> AFItem::soundFileProperties(void)
     properties.emplace_back(QStringLiteral("directory"));
 
     return properties;
+}
+
+void AFItem::killAllMyChildren(void)
+{
+    const t_uint nChildren = _childItems.size();
+    for (t_uint i = 0; i < nChildren; ++i)
+    {
+        if (_childItems[i] != nullptr)
+        {
+            delete _childItems[i];
+            _childItems[i] = nullptr;
+        }
+    }
+
+    _childItems.clear();
 }
