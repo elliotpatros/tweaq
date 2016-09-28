@@ -4,7 +4,8 @@
 //#include "split_to_mono.h"
 //#include "strip_silence_at_end.h"
 //#include "strip_silence_at_start.h"
-#include "fade_in.h"
+//#include "fade_in.h"
+#include "fade_out.h"
 
 #include <iostream>
 #include <memory>
@@ -91,16 +92,32 @@ int main(int argc, const char* argv[])
     //\strip silence at start
     
     // fade in
+    /*
     const char* args[128] =
     {
-        "/Users/demo/Desktop/testout/normalized_rain_12ch.aiff",
-        "/Users/demo/Desktop/testout/fade_in_rain_12ch.aif",
-        "5000",
+        "/Users/demo/Desktop/testin/threeones.wav",
+        "/Users/demo/Desktop/testout/threeones.wav",
+        "50",
         "milliseconds",
-        "S curve"
+        "equal gain"
     };
     itWorked = fade_in_process(5, args);
+    */
+    //\fade in
+    
     // fade out
+    /**/
+    const char* args[128] =
+    {
+        "/Users/demo/Desktop/testin/threeones.wav",
+        "/Users/demo/Desktop/testout/threeones.wav",
+        "500",
+        "milliseconds",
+        "equal gain"
+    };
+    itWorked = fade_out_process(5, args);
+     /**/
+    //\fade out
     
     cout << (itWorked ? "true" : "false") << endl;
     

@@ -75,7 +75,7 @@ void LibModel::getExternalParameterHandles(const t_int libIndex, vector<Paramete
     }
 }
 
-void LibModel::processFiles(const t_int libIndex, AFItem *rootItem, const QString destination, QStringList* args)
+void LibModel::processFiles(const t_int libIndex, AFItem* rootItem, const QString destination, QStringList* args)
 {
     // STEP 0
     // setup dsp function arguments

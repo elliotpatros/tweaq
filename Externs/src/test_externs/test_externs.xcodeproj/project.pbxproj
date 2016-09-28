@@ -37,6 +37,7 @@
 		B41B724F1D98AFED00B929EF /* split_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = split_to_mono.h; sourceTree = "<group>"; };
 		B41B72501D98AFED00B929EF /* strip_silence_at_end.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = strip_silence_at_end.h; sourceTree = "<group>"; };
 		B41B72511D98AFED00B929EF /* strip_silence_at_start.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = strip_silence_at_start.h; sourceTree = "<group>"; };
+		B4B0CE4C1D9B2D7E00362906 /* fade_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fade_out.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +82,7 @@
 				B4026AF61D94A58B00C6996B /* m_tweaq.cpp */,
 				B4026AF71D94A58B00C6996B /* m_tweaq.h */,
 				B4118C2B1D99F12D00C3BEC6 /* fade_in.h */,
+				B4B0CE4C1D9B2D7E00362906 /* fade_out.h */,
 			);
 			path = test_externs;
 			sourceTree = "<group>";

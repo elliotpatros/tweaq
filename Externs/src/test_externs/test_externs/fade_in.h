@@ -33,7 +33,7 @@ extern "C"
                 return true;
             case kFadeType:
                 setParameterName(p, "type of fade");
-                setParameterLabels(p, 3, "linear power", "linear gain", "S curve");
+                setParameterLabels(p, 3, "equal power", "equal gain", "S curve");
                 return true;
             default:
                 return false;
@@ -109,7 +109,7 @@ extern "C"
         }
         
         // linear power
-        if (strcmp(arg.fadeType, "linear power") == 0)
+        if (strcmp(arg.fadeType, "equal power") == 0)
         {
             for (t_uint i = 0; i < arg.durationFrames; ++i)
             {
@@ -138,11 +138,13 @@ extern "C"
             // dsp
             for (t_uint sample = 0; sample < samplesread; ++totalFramesRead)
             {
+                const t_float fadeBy = (totalFramesRead < arg.durationFrames) ? fadeBuffer[totalFramesRead] : 1.0;
                 for (t_uint channel = 0; channel < nChannels; ++channel, ++sample)
                 {
-                    buffer[sample] *= (totalFramesRead < arg.durationFrames) ? fadeBuffer[totalFramesRead] : 1.0;
+                    buffer[sample] *= fadeBy;
                 }
             }
+            
             // write
             sf_write_double(fileout, buffer, samplesread);
         }

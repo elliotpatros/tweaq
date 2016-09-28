@@ -22,12 +22,12 @@ extern "C"
         const char* fadeType;
     };
     
-    bool fade_in_setup(const t_uint index, t_parameter& p)
+    bool fade_out_setup(const t_uint index, t_parameter& p)
     {
         switch (index)
         {
             case kDuration:
-                setParameterName(p, "fade in for");
+                setParameterName(p, "fade out for");
                 setParameterLabels(p, 3, "milliseconds", "seconds", "samples");
                 setParameterDefault(p, 100.0);
                 return true;
@@ -40,7 +40,7 @@ extern "C"
         }
     }
     
-    bool fade_in_process(const t_uint argc, const char* argv[])
+    bool fade_out_process(const t_uint argc, const char* argv[])
     {
         // check and get parameter list
         if (argc != kNumParameters)
@@ -54,8 +54,8 @@ extern "C"
         arg.durationFrames  = stringToDouble(argv[kDuration]);
         arg.durationLabel   = argv[kDurationLabel];
         arg.fadeType        = argv[kFadeType];
-        // right now, we're not assuming that arg.duration samples is
-        // a number of samples. we'll check that later after opening
+        // right now, arg.durationFrames is not necessarily
+        // a number of frames. we'll fix that later after opening
         // the input file.
         
         // setup libsndfile stuff
@@ -80,9 +80,10 @@ extern "C"
         }
         
         // make sure we're not fading past the end of the audio file
-        if (arg.durationFrames > sfinfo.frames)
+        const t_uint framesInFile = sfinfo.frames;
+        if (arg.durationFrames > framesInFile)
         {
-            arg.durationFrames = sfinfo.frames;
+            arg.durationFrames = framesInFile;
         }
         
         // setup multichannel buffer
@@ -102,10 +103,10 @@ extern "C"
         }
         
         // linear gain
-        t_float rDuration = 1.0 / (double)arg.durationFrames;
+        t_float rDuration = 1.0 / double(arg.durationFrames);
         for (t_uint i = 0; i < arg.durationFrames; ++i)
         {
-            fadeBuffer[i] = (double)i * rDuration;
+            fadeBuffer[i] = (arg.durationFrames - double(i + 1)) * rDuration;
         }
         
         // linear power
@@ -132,13 +133,19 @@ extern "C"
         }
         
         // do DSP
-        t_uint samplesread, totalFramesRead = 0;
+        t_float fadeBy = 1.0;
+        const t_uint firstFrameOfFade = framesInFile - arg.durationFrames;
+        t_uint samplesread, framesFaded = 0, totalFramesRead = 0;
         while ((samplesread = sf_read_double(filein, buffer, nChannelBufferSize)) != 0)
         {
             // dsp
             for (t_uint sample = 0; sample < samplesread; ++totalFramesRead)
             {
-                const t_float fadeBy = (totalFramesRead < arg.durationFrames) ? fadeBuffer[totalFramesRead] : 1.0;
+                if (totalFramesRead >= firstFrameOfFade)
+                {
+                    fadeBy = fadeBuffer[framesFaded++];
+                }
+                
                 for (t_uint channel = 0; channel < nChannels; ++channel, ++sample)
                 {
                     buffer[sample] *= fadeBy;
