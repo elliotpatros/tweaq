@@ -195,7 +195,7 @@ void MainWindow::openImportFolderDialog(void)
 
 void MainWindow::showExportFolderExternally(void)
 {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation()));
+    system(QString(QStringLiteral("open %1")).arg(ui->lineEditExportTo->currentValidFileLocation()).toUtf8());
 }
 
 void MainWindow::processImportedFiles(void)

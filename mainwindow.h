@@ -21,7 +21,6 @@
 
 // Qt dialogs
 #include <QFileDialog>
-#include <QDesktopServices>
 
 namespace Ui {
 class MainWindow;
