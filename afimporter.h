@@ -10,8 +10,10 @@
 
 class AFImporter : public AbstractFileImporter
 {
+    Q_OBJECT
+
 public:
-    AFImporter(void);
+    explicit AFImporter(QObject* parent = Q_NULLPTR);
 
 
 protected:

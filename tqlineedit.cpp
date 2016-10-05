@@ -86,7 +86,5 @@ void TqLineEdit::dropEvent(QDropEvent* event)
 void TqLineEdit::validateTextForUser(void)
 {
     // let folks know right away whether the folder they see written here exists.
-    setStyleSheet((isCurrentPathValid() || text().isEmpty())
-                  ? _validStyleSheet
-                  : _invalidStyleSheet);
+    setStyleSheet((isCurrentPathValid() || text().isEmpty()) ? _validStyleSheet : _invalidStyleSheet);
 }

@@ -4,13 +4,15 @@ t_uint AbstractFileImporter::_maxNumFilesICanImport = 65536; /* 2^16 */
 //==============================================================================
 // constructor & destructor
 //==============================================================================
-AbstractFileImporter::AbstractFileImporter(void)
+AbstractFileImporter::AbstractFileImporter(QObject* parent) :
+    QObject(parent)
 {
     _fileList = nullptr;
     _nFilesExamined = 0;
 }
 
-AbstractFileImporter::AbstractFileImporter(const AbstractFileImporter&)
+AbstractFileImporter::AbstractFileImporter(const AbstractFileImporter& other) :
+    QObject(other.parent())
 {
     _fileList = nullptr;
     _nFilesExamined = 0;

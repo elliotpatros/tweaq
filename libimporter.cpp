@@ -1,7 +1,7 @@
 #include "libimporter.h"
 
-LibImporter::LibImporter(void) :
-    AbstractFileImporter()
+LibImporter::LibImporter(QObject* parent) :
+    AbstractFileImporter(parent)
 {}
 
 bool LibImporter::isFileValid(const QString& path) const

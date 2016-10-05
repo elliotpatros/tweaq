@@ -21,8 +21,8 @@ class AbstractFileImporter : public QObject
 
 public:
     // constructor & destructor
-    AbstractFileImporter(void);
-    AbstractFileImporter(const AbstractFileImporter&);
+    explicit AbstractFileImporter(QObject* parent = Q_NULLPTR);
+    AbstractFileImporter(const AbstractFileImporter& other);
 
     // gets
     void import(const QList<QUrl> urls, QStringList* list);

@@ -8,7 +8,7 @@ LibModel::LibModel(QObject* parent, const QString searchPath) :
 {
     // append all the external libraries i can find to list
     QStringList paths;
-    LibImporter().import(QList<QUrl>() << QUrl::fromLocalFile(searchPath), &paths);
+    LibImporter(this).import(QList<QUrl>() << QUrl::fromLocalFile(searchPath), &paths);
     const t_uint nPaths = paths.size();
     for (t_uint i = 0; i < nPaths; ++i)
     {

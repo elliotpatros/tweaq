@@ -5,7 +5,8 @@
 //#include "strip_silence_at_end.h"
 //#include "strip_silence_at_start.h"
 //#include "fade_in.h"
-#include "fade_out.h"
+//#include "fade_out.h"
+#include "time_stretch.h"
 
 #include <iostream>
 #include <memory>
@@ -106,7 +107,7 @@ int main(int argc, const char* argv[])
     //\fade in
     
     // fade out
-    /**/
+    /*
     const char* args[128] =
     {
         "/Users/demo/Desktop/testin/threeones.wav",
@@ -116,8 +117,16 @@ int main(int argc, const char* argv[])
         "equal gain"
     };
     itWorked = fade_out_process(5, args);
-     /**/
+     */
     //\fade out
+    
+    // time stretch
+    const char* args[128] =
+    {
+        
+    };
+    itWorked = time_stretch_process(0, args);
+    //\time stretch
     
     cout << (itWorked ? "true" : "false") << endl;
     

@@ -124,7 +124,7 @@ void MainWindow::addSoundFilesToModel(const QList<QUrl> urls)
 
     // import files
     QStringList* paths = new QStringList;
-    AFImporter importer;
+    AFImporter importer(this);
     importer.import(urls, paths);
 
     // add audio files to model

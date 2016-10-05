@@ -10,8 +10,10 @@
 
 class LibImporter : public AbstractFileImporter
 {
+    Q_OBJECT
+
 public:
-    LibImporter(void);
+    explicit LibImporter(QObject* parent = Q_NULLPTR);
 
 
 protected:

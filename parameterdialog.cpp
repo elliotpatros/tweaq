@@ -8,7 +8,8 @@ t_int ParameterDialog::_lastColumn = ParameterDialog::_nColumns - 1;
 t_int ParameterDialog::_buttonSpan = ParameterDialog::_nColumns / 2;
 QString ParameterDialog::_blankEntry = QStringLiteral("_BLANK_");
 
-
+// TODO: one default argument per label. set callback to get it from parameter handle
+// TODO: default argument should be a string
 //==============================================================================
 // constructor
 //==============================================================================
@@ -50,8 +51,7 @@ void ParameterDialog::appendParameterFields(const vector<ParameterHandle>* param
     {
         // get pointer to parameter handle
         const ParameterHandle* handle = &parameters->at(pIndex);
-        t_uint thisRow = lastRow(),
-               labelCol, labelWidth;
+        t_uint labelCol, labelWidth, thisRow = lastRow();
 
         // add a line edit
         _lineEditEntries.emplace_back(new QLineEdit(this));
@@ -64,7 +64,7 @@ void ParameterDialog::appendParameterFields(const vector<ParameterHandle>* param
             editor->setText(QString::number(handle->get().defaultValue));
             _layout->addWidget(editor, thisRow, 0, 1, _lastColumn);
 
-            // we used the line editor, so tell the label where to go
+            // we're using the line editor, so tell its label where to go
             labelCol = _lastColumn;
             labelWidth = 1;
         }
@@ -73,7 +73,7 @@ void ParameterDialog::appendParameterFields(const vector<ParameterHandle>* param
             editor->setText(_blankEntry);
             editor->setVisible(false);
 
-            // we didn't use the line editor, so tell the label where to go
+            // we're not using the line editor, so tell the label where to go
             labelCol = 0;
             labelWidth = _nColumns;
         }
