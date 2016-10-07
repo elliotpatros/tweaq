@@ -11,8 +11,8 @@ class TqFileInfo
 {
 public:
     // constructors
-    TqFileInfo(void);
-    explicit TqFileInfo(const QString path);
+    explicit TqFileInfo(const QString path = QString());
+    virtual ~TqFileInfo(void) {}
 
     // gets
     virtual QString absolutePath(void) const;

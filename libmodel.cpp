@@ -95,7 +95,7 @@ void LibModel::processFiles(const t_int libIndex, AFItem* rootItem, const QStrin
     // STEP 0
     // setup dsp function arguments
     const t_uint argc = args->size() + TQ_NUM_DEF_ARGS;
-    char** argv = (char**)calloc(argc + 1, sizeof(char*));
+    char** argv = static_cast<char**>(calloc(argc + 1, sizeof(char*)));
 
     // bail if memory couldn't be allocated
     if (argv == nullptr)
@@ -109,7 +109,7 @@ void LibModel::processFiles(const t_int libIndex, AFItem* rootItem, const QStrin
         // make room for default args
         if (i < TQ_NUM_DEF_ARGS)
         {
-            argv[i] = (char*)calloc(TQ_MAX_ARG_LENGTH, sizeof(char));
+            argv[i] = static_cast<char*>(calloc(TQ_MAX_ARG_LENGTH, sizeof(char)));
 
             // bail if memory couldn't be allocated
             if (&argv[i] == nullptr)
@@ -120,7 +120,7 @@ void LibModel::processFiles(const t_int libIndex, AFItem* rootItem, const QStrin
         else // setup arguments the user gave us
         {
             const QString arg = args->value(i - TQ_NUM_DEF_ARGS);
-            argv[i] = (char*)calloc(arg.size() + 1, sizeof(char));
+            argv[i] = static_cast<char*>(calloc(arg.size() + 1, sizeof(char)));
 
             // bail if memory couldn't be allocated
             if (&argv[i] == nullptr)

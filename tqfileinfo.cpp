@@ -3,14 +3,13 @@
 //==============================================================================
 // constructors
 //==============================================================================
-TqFileInfo::TqFileInfo(void)
-{
-    _absolutePath.clear();
-}
-
 TqFileInfo::TqFileInfo(const QString path)
 {
-    _absolutePath = QFileInfo(path).canonicalFilePath();
+    _absolutePath.clear();
+    if (!path.isEmpty())
+    {
+        _absolutePath = QFileInfo(path).canonicalFilePath();
+    }
 }
 
 

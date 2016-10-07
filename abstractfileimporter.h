@@ -23,6 +23,7 @@ public:
     // constructor & destructor
     explicit AbstractFileImporter(QObject* parent = Q_NULLPTR);
     AbstractFileImporter(const AbstractFileImporter& other);
+    virtual ~AbstractFileImporter(void) {}
 
     // gets
     void import(const QList<QUrl> urls, QStringList* list);

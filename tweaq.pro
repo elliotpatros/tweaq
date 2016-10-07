@@ -32,7 +32,7 @@ SOURCES += \
     parameterhandle.cpp \
     parameterdialog.cpp
 
-HEADERS  += \
+HEADERS += \
     mainwindow.h \
     tqtreeview.h \
     m_tweaq.h \
@@ -53,26 +53,20 @@ HEADERS  += \
     qtweaq.h \
     parameterdialog.h
 
-FORMS    += mainwindow.ui
+FORMS += mainwindow.ui
 
 ICON = Icons/tweaq_icon.icns
 
-DEFINES  += __QTWEAQ_IS_DEFINED
+DEFINES += __QTWEAQ_IS_DEFINED
 
-QMAKE_CXXFLAGS += -Wall
+QMAKE_CXXFLAGS += -Wall -Wextra -pedantic -Weffc++ -Wold-style-cast \
+-Wdelete-non-virtual-dtor -Wnon-virtual-dtor -Winit-self -Wunreachable-code
 
 DISTFILES += \
     License
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/StaticLibs/libsndfile/lib/release/ -lsndfile
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/StaticLibs/libsndfile/lib/debug/ -lsndfile
-else:unix: LIBS += -L$$PWD/StaticLibs/libsndfile/lib/ -lsndfile
-
 INCLUDEPATH += $$PWD/StaticLibs/libsndfile/include
 DEPENDPATH += $$PWD/StaticLibs/libsndfile/include
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/StaticLibs/libsndfile/lib/release/libsndfile.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/StaticLibs/libsndfile/lib/debug/libsndfile.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/StaticLibs/libsndfile/lib/release/sndfile.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/StaticLibs/libsndfile/lib/debug/sndfile.lib
-else:unix: PRE_TARGETDEPS += $$PWD/StaticLibs/libsndfile/lib/libsndfile.a
+LIBS += -L$$PWD/StaticLibs/libsndfile/lib/ -lsndfile
+PRE_TARGETDEPS += $$PWD/StaticLibs/libsndfile/lib/libsndfile.a
