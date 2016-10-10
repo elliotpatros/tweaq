@@ -27,7 +27,7 @@ QString InstanceMeta::appNameAndVersion(void) const
 //==============================================================================
 QSize InstanceMeta::minWindowSize(void) const
 {
-    return QSize(800, 312);
+    return QSize(800, 300);
 }
 
 QSize InstanceMeta::maxWindowSize(void) const
@@ -40,7 +40,7 @@ QSize InstanceMeta::maxWindowSize(void) const
 
 QSize InstanceMeta::preferredWindowSize(void) const
 {
-    return maxWindowSize() * 0.75;
+    return minWindowSize() * 1.25;
 }
 
 
