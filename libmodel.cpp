@@ -86,7 +86,7 @@ void LibModel::getExternalParameterHandles(const t_int libIndex, vector<Paramete
     while (clearParameter(*p), externalSetup(index, *p))
     {
         plist->emplace_back(*p);
-        setNextParameterIndex(*p, &index);
+        setNextParameterIndex(*p, index);
     }
 }
 

@@ -59,7 +59,7 @@ t_float dBToGain(const t_float dB);
 
 // t_parameter function prototypes
 t_uint nDefaultParameters(void);
-void setNextParameterIndex(t_parameter& p, t_uint *currentIndex);
+void setNextParameterIndex(t_parameter& p, t_uint& currentIndex);
 void setParameterName(t_parameter& p, const char* name);
 void setParameterLabels(t_parameter& p, t_uint nLabels, ...);
 void setParameterDefault(t_parameter& p, t_float value);

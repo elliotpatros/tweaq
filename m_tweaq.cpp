@@ -39,16 +39,16 @@ void setString(char* destination, const char* source, const t_uint maxsize)
     }
 }
 
-void setNextParameterIndex(t_parameter& p, t_uint* currentIndex)
+void setNextParameterIndex(t_parameter& p, t_uint& currentIndex)
 {
     if (p.shouldUseDefault == TQ_TRUE)
     {
-        ++(*currentIndex);
+        ++currentIndex;
     }
 
     if (p.nLabels > 1)
     {
-        ++(*currentIndex);
+        ++currentIndex;
     }
 }
 
