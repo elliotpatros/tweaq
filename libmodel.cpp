@@ -92,6 +92,7 @@ void LibModel::getExternalParameterHandles(const t_int libIndex, vector<Paramete
 
 void LibModel::processFiles(const t_int libIndex, AFItem* rootItem, const QString destination, QStringList* args)
 {
+    // TODO: consider moving this business to the main window and threading it.
     // STEP 0
     // setup dsp function arguments
     const t_uint argc = args->size() + TQ_NUM_DEF_ARGS;
