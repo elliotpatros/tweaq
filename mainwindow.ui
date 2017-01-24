@@ -7,16 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>323</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayoutTop">
       <item>
        <widget class="QPushButton" name="buttonExportTo">
         <property name="sizePolicy">
@@ -26,45 +26,52 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>export to...</string>
+         <string>export to</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="TqLineEdit" name="lineEditExportTo"/>
+       <widget class="LineEditExportTo" name="lineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="TqComboBox" name="comboBoxDSP"/>
+       <widget class="ComboBoxDSP" name="comboBoxDSP"/>
       </item>
      </layout>
     </item>
     <item>
-     <widget class="TqTreeView" name="treeViewImportedFiles"/>
+     <widget class="TreeViewAudioFile" name="treeView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayoutBottom">
       <item>
-       <widget class="QPushButton" name="buttonProcessFiles">
+       <widget class="QPushButton" name="buttonProcess">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>process files</string>
+         <string>process</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="TqComboBox" name="comboBoxRemoveFiles">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+       <widget class="ComboBoxRemove" name="comboBoxRemove"/>
       </item>
      </layout>
     </item>
@@ -83,26 +90,34 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImport_Audio_Files"/>
-    <addaction name="actionImport_folder"/>
+    <addaction name="actionImportAudioFiles"/>
+    <addaction name="actionImportFolder"/>
     <addaction name="separator"/>
-    <addaction name="actionChoose_Export_Folder"/>
-    <addaction name="actionShow_export_folder"/>
+    <addaction name="actionChooseExportFolder"/>
+    <addaction name="actionShowExportFolder"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionRemove_all_files"/>
-    <addaction name="actionRemove_selected_files"/>
-    <addaction name="actionRemove_finished_files"/>
+    <addaction name="actionRemoveAll"/>
+    <addaction name="actionRemoveSelected"/>
+    <addaction name="actionRemoveFinished"/>
     <addaction name="separator"/>
     <addaction name="actionProcess"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionCloseTweaq"/>
+    <addaction name="actionMinimize"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuWindow"/>
   </widget>
-  <action name="actionImport_Audio_Files">
+  <action name="actionImportAudioFiles">
    <property name="text">
     <string>import audio files...</string>
    </property>
@@ -110,46 +125,7 @@
     <string>Ctrl+I</string>
    </property>
   </action>
-  <action name="actionChoose_Export_Folder">
-   <property name="text">
-    <string>choose export folder...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+E</string>
-   </property>
-  </action>
-  <action name="actionShow_export_folder">
-   <property name="text">
-    <string>show export folder</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="actionRemove_selected_files">
-   <property name="text">
-    <string>remove selected</string>
-   </property>
-  </action>
-  <action name="actionRemove_all_files">
-   <property name="text">
-    <string>remove all</string>
-   </property>
-  </action>
-  <action name="actionRemove_finished_files">
-   <property name="text">
-    <string>remove finished</string>
-   </property>
-  </action>
-  <action name="actionProcess">
-   <property name="text">
-    <string>process...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+P</string>
-   </property>
-  </action>
-  <action name="actionImport_folder">
+  <action name="actionImportFolder">
    <property name="text">
     <string>import folder...</string>
    </property>
@@ -157,23 +133,92 @@
     <string>Ctrl+Shift+I</string>
    </property>
   </action>
+  <action name="actionChooseExportFolder">
+   <property name="text">
+    <string>choose export folder...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionShowExportFolder">
+   <property name="text">
+    <string>show export folder...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionRemoveAll">
+   <property name="text">
+    <string>remove all</string>
+   </property>
+   <property name="toolTip">
+    <string>remove all imported files</string>
+   </property>
+  </action>
+  <action name="actionRemoveSelected">
+   <property name="text">
+    <string>remove selected</string>
+   </property>
+   <property name="toolTip">
+    <string>remove selected audio files</string>
+   </property>
+  </action>
+  <action name="actionRemoveFinished">
+   <property name="text">
+    <string>remove finished</string>
+   </property>
+   <property name="toolTip">
+    <string>remove finished audio files</string>
+   </property>
+  </action>
+  <action name="actionProcess">
+   <property name="text">
+    <string>process</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionCloseTweaq">
+   <property name="text">
+    <string>close tweaq</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionMinimize">
+   <property name="text">
+    <string>minimize</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>TqTreeView</class>
+   <class>TreeViewAudioFile</class>
    <extends>QTreeView</extends>
-   <header>tqtreeview.h</header>
+   <header>treeviewaudiofile.h</header>
   </customwidget>
   <customwidget>
-   <class>TqLineEdit</class>
+   <class>LineEditExportTo</class>
    <extends>QLineEdit</extends>
-   <header>tqlineedit.h</header>
+   <header>lineeditexportto.h</header>
   </customwidget>
   <customwidget>
-   <class>TqComboBox</class>
+   <class>ComboBoxDSP</class>
    <extends>QComboBox</extends>
-   <header>tqcombobox.h</header>
+   <header>comboboxdsp.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ComboBoxRemove</class>
+   <extends>QComboBox</extends>
+   <header>comboboxremove.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

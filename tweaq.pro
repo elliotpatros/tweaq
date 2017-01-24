@@ -1,72 +1,71 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-09-23T12:06:33
-#
-#-------------------------------------------------
-
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = tweaq
+TARGET = tweaq2
 TEMPLATE = app
 
-SOURCES += \
-    main.cpp\
+
+SOURCES += main.cpp\
     mainwindow.cpp \
-    tqtreeview.cpp \
-    m_tweaq.cpp \
-    tqlineedit.cpp \
-    instancemeta.cpp \
-    tqcombobox.cpp \
-    tqfileinfo.cpp \
+    treeviewaudiofile.cpp \
+    lineeditexportto.cpp \
+    comboboxtweaq.cpp \
     libsf.cpp \
-    afmeta.cpp \
-    afitem.cpp \
-    afmodel.cpp \
-    abstractfileimporter.cpp \
-    afimporter.cpp \
-    libmeta.cpp \
-    libmodel.cpp \
-    libimporter.cpp \
+    af_properties.cpp \
+    af_item.cpp \
+    af_model.cpp \
+    fileimporter.cpp \
+    comboboxdsp.cpp \
+    comboboxremove.cpp \
+    tweaqapi.cpp \
+    parameterdialog.cpp \
+    parameterdialoglayout.cpp \
     parameterhandle.cpp \
-    parameterdialog.cpp
+    externalinterface.cpp \
+    externalinterfacemanager.cpp
 
-HEADERS += \
-    mainwindow.h \
-    tqtreeview.h \
-    m_tweaq.h \
-    tqlineedit.h \
-    instancemeta.h \
-    tqcombobox.h \
-    tqfileinfo.h \
+HEADERS  += mainwindow.h \
+    tweaq.h \
+    treeviewaudiofile.h \
+    lineeditexportto.h \
+    comboboxtweaq.h \
     libsf.h \
-    afmeta.h \
-    afitem.h \
-    afmodel.h \
-    abstractfileimporter.h \
-    afimporter.h \
-    libmeta.h \
-    libmodel.h \
-    libimporter.h \
+    af_properties.h \
+    af_item.h \
+    af_model.h \
+    fileimporter.h \
+    comboboxdsp.h \
+    comboboxremove.h \
+    mainwindowhelper.h \
+    tweaqapi.h \
+    parameterdialog.h \
+    parameterdialoglayout.h \
     parameterhandle.h \
-    qtweaq.h \
-    parameterdialog.h
+    externalinterface.h \
+    externalinterfacemanager.h
 
-FORMS += mainwindow.ui
+APP_QML_FILES.path  = Contents/Resources/extern
+APP_QML_FILES.files = \
+    $$PWD/extern/libchange_gain.so \
+    $$PWD/extern/libmix_to_mono.so \
+    $$PWD/extern/libnormalize.so \
+    $$PWD/extern/libdeinterleave.so
 
-ICON = Icons/tweaq_icon.icns
+QMAKE_BUNDLE_DATA += APP_QML_FILES
 
-DEFINES += __QTWEAQ_IS_DEFINED
+FORMS    += mainwindow.ui
 
-QMAKE_CXXFLAGS += -Wall -Wextra -pedantic -Weffc++ -Wold-style-cast \
--Wdelete-non-virtual-dtor -Wnon-virtual-dtor -Winit-self -Wunreachable-code
+ICON = icons/tweaq_icon.icns
 
-DISTFILES += \
-    License
+DISTFILES += License
 
-INCLUDEPATH += $$PWD/StaticLibs/libsndfile/include
-DEPENDPATH += $$PWD/StaticLibs/libsndfile/include
+QMAKE_CXXFLAGS += \
+    -W -Wall -Wpointer-arith -fno-exceptions -O2 -flto
 
-LIBS += -L$$PWD/StaticLibs/libsndfile/lib/ -lsndfile
-PRE_TARGETDEPS += $$PWD/StaticLibs/libsndfile/lib/libsndfile.a
+macx: LIBS += \
+    -L$$PWD/staticlibs/libsndfile/lib/ -lsndfile.1 \
+    -W -Wall -Wpointer-arith -dead_strip -fno-exceptions -O2 -flto
+
+INCLUDEPATH += $$PWD/staticlibs/libsndfile/include
+DEPENDPATH += $$PWD/staticlibs/libsndfile/include

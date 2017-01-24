@@ -1,159 +1,117 @@
 #include "parameterdialog.h"
 
-//==============================================================================
-// static members
-//==============================================================================
-t_int ParameterDialog::_nColumns = 2;
-t_int ParameterDialog::_lastColumn = ParameterDialog::_nColumns - 1;
-t_int ParameterDialog::_buttonSpan = ParameterDialog::_nColumns / 2;
-QString ParameterDialog::_blankEntry = QStringLiteral("_BLANK_");
-
-// TODO: one default argument per label. set callback to get it from parameter handle
-// TODO: default argument should be a string
-//==============================================================================
-// constructor
-//==============================================================================
-ParameterDialog::ParameterDialog(QWidget *parent, Qt::WindowFlags flags) :
-    QDialog(parent, flags)
+ParameterDialog::ParameterDialog(const QString title, QWidget* parent) :
+    QDialog(parent, Qt::WindowFlags()),
+    _layout(new ParameterDialogLayout(this)),
+    _label(new QLabel(this)),
+    _buttonAccept(new QPushButton(this)),
+    _buttonCancel(new QPushButton(this))
 {
-    // make child widgets
-    _label = new QLabel(this);
-    _layout = new QGridLayout(this);
-    _buttonAccept = new QPushButton(this);
-    _buttonCancel = new QPushButton(this);
+    // custom connection rules
+    disconnect();
+    _layout->disconnect();
+    _label->disconnect();
+    _buttonCancel->disconnect();
+    _buttonAccept->disconnect();
+    connect(_buttonCancel, SIGNAL(released()), this, SLOT(reject()));
+    connect(_buttonAccept, SIGNAL(released()), this, SLOT(accept()));
 
-    // setup...
-    // ...main layout
+    // setup layout
     setLayout(_layout);
 
-    // ...window title
-    _label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    _layout->addWidget(_label, 0, 0, 1, _nColumns);
-
-    // ...confirm & cancel button row (but wait to add them until last)
-    _buttonCancel->setText(QStringLiteral("Cancel"));
-    _buttonCancel->disconnect();
-    connect(_buttonCancel, SIGNAL(released()), this, SLOT(reject()));
-
-    _buttonAccept->setText(QStringLiteral("Ok"));
-    _buttonAccept->disconnect();
-    connect(_buttonAccept, SIGNAL(released()), this, SLOT(accept()));
-}
-
-
-//==============================================================================
-// sets
-//==============================================================================
-void ParameterDialog::appendParameterFields(const vector<ParameterHandle>* parameters)
-{
-    const t_uint nParameters = parameters->size();
-    for (t_uint pIndex = 0; pIndex < nParameters; ++pIndex)
-    {
-        // get pointer to parameter handle
-        const ParameterHandle* handle = &parameters->at(pIndex);
-        t_uint labelCol, labelWidth, thisRow = lastRow();
-
-        // add a line edit
-        _lineEditEntries.emplace_back(new QLineEdit(this));
-        QLineEdit* editor = _lineEditEntries.back();
-
-        // should we use the line editor?
-        if (handle->get().shouldUseDefault == TQ_TRUE)
-        {
-            editor->setPlaceholderText(QString::fromUtf8(handle->get().name));
-            editor->setText(QString::number(handle->get().defaultValue));
-            _layout->addWidget(editor, thisRow, 0, 1, _lastColumn);
-
-            // we're using the line editor, so tell its label where to go
-            labelCol = _lastColumn;
-            labelWidth = 1;
-        }
-        else
-        {
-            editor->setText(_blankEntry);
-            editor->setVisible(false);
-
-            // we're not using the line editor, so tell the label where to go
-            labelCol = 0;
-            labelWidth = _nColumns;
-        }
-
-        // add label(s)
-        _comboBoxEntries.emplace_back(new QComboBox(this));
-        QComboBox* labels = _comboBoxEntries.back();
-
-        // should we use a combo box or a label?
-        const t_uint nLabels = handle->get().nLabels;
-        if (nLabels > 1)
-        {   // add a combo box
-            for (t_uint i = 0; i < nLabels; ++i)
-            {
-                labels->addItem(QString::fromUtf8(handle->get().labels[i]));
-            }
-
-            _layout->addWidget(labels, thisRow, labelCol, 1, labelWidth);
-        }
-        else // use a static text label
-        {
-            QLabel* label = new QLabel(this);
-            label->setText(handle->get().labels[0]);
-            _layout->addWidget(label, thisRow, labelCol, 1, labelWidth);
-
-            // and make sure we can tell the combo box wasn't used here
-            labels->addItem(_blankEntry);
-            labels->setCurrentIndex(0);
-            labels->setVisible(false);
-        }
-    }
-}
-
-t_int ParameterDialog::makeAndShow(const QString title)
-{
-    // set title text
+    // setup label
+    _label->setAlignment(Qt::AlignHCenter);
     _label->setText(title);
+    _layout->addRow(_label);
 
-    // add confirmation button layout to this dialog ("ok" and "cancel")
-    _layout->addWidget(_buttonCancel, lastRow(), 0, 1, _buttonSpan);
-    _layout->addWidget(_buttonAccept, lastRow() - 1, _buttonSpan, 1, _buttonSpan);
+    // setup buttons
+    _buttonCancel->setText("Cancel");
+    _buttonAccept->setText("Ok");
+}
 
-    // show yourself
+
+// gets
+vector<QString> ParameterDialog::entries() const
+{
+    const size_t nLineEdits  = _lineEdits.size();
+    const size_t nComboBoxes = _comboBoxes.size();
+
+    vector<QString> list;
+    if (nLineEdits != nComboBoxes) return list;
+
+    list.reserve(nLineEdits + nComboBoxes);
+    for (size_t i = 0; i < nLineEdits; i++)
+    {
+        if (_lineEdits [i] != nullptr) list.emplace_back(_lineEdits [i]->text());
+        if (_comboBoxes[i] != nullptr) list.emplace_back(_comboBoxes[i]->currentText());
+    }
+
+    return list;
+}
+
+
+// sets
+int ParameterDialog::show(vector<ParameterHandle> handles)
+{
+    // add parameter fields to layout
+    for (const auto& handle : handles)
+    {   // setup a new line editor and combo box
+        setupLineEdit(handle);
+        setupComboBox(handle);
+
+        // add the widgets to the layout
+        _layout->addRow(_lineEdits.back(), _comboBoxes.back());
+    }
+
+    // add cancel and ok buttons to layout
+    _layout->addRow(_buttonCancel, _buttonAccept);
+
+    // show modal dialog
+    checkForCompletedFields();
     setWindowModality(Qt::WindowModal);
     return exec();
 }
 
-t_int ParameterDialog::lastRow(void) const
+// helpers
+void ParameterDialog::setupLineEdit(const ParameterHandle& handle)
 {
-    return _layout->rowCount();
+    _lineEdits.push_back(nullptr);
+    if (handle.hasDefaultValue())
+    {
+        _lineEdits.back() = new QLineEdit(this);
+        if (_lineEdits.back() == nullptr) return;
+
+        _lineEdits.back()->disconnect();
+        _lineEdits.back()->setPlaceholderText(handle.defaultValue());
+        _lineEdits.back()->setValidator(new QDoubleValidator(this));
+        if (handle.hasDescription()) _lineEdits.back()->setToolTip(handle.description());
+
+        connect(_lineEdits.back(), SIGNAL(textChanged(const QString&)), SLOT(checkForCompletedFields()));
+    }
 }
 
-
-//==============================================================================
-// gets
-//==============================================================================
-void ParameterDialog::getEntries(QStringList* entries)
+void ParameterDialog::setupComboBox(const ParameterHandle& handle)
 {
-    // the size of _comboBoxEntries and _lineEditEntries should be the same
-    // if one of them wasn't used, it'll have a blank entry as text
-    if(_comboBoxEntries.size() != _lineEditEntries.size())
+    _comboBoxes.push_back(nullptr);
+    if (handle.hasLabels())
     {
-        return;
-    }
+        _comboBoxes.back() = new QComboBox(this);
+        if (_comboBoxes.back() == nullptr) return;
 
-    const t_uint nEntries = _comboBoxEntries.size();
-    for (t_uint i = 0; i < nEntries; ++i)
+        _comboBoxes.back()->disconnect();
+        _comboBoxes.back()->addItems(handle.labels());
+        if (handle.hasDescription()) _comboBoxes.back()->setToolTip(handle.description());
+    }
+}
+
+void ParameterDialog::checkForCompletedFields() const
+{
+    const auto allTextFieldsHaveEntries = std::all_of(_lineEdits.begin(),
+                                                      _lineEdits.end(),
+                                                      [](const QLineEdit* const field)
     {
-        // check the line edit
-        QString entry = _lineEditEntries[i]->text();
-        if (entry != _blankEntry)
-        {
-            entries->append(entry);
-        }
+        return field == nullptr || !field->text().isEmpty();
+    });
 
-        // check the combo box
-        entry = _comboBoxEntries[i]->currentText();
-        if (entry != _blankEntry)
-        {
-            entries->append(entry);
-        }
-    }
+    _buttonAccept->setEnabled(allTextFieldsHaveEntries);
 }

@@ -2,24 +2,35 @@
 #define PARAMETERHANDLE_H
 
 // application header
-#include "m_tweaq.h"
+#include "tweaq.h"
+#include "tweaqapi.h"
 
 class ParameterHandle
 {
 public:
-    // constructors
-    explicit ParameterHandle(void);
-    explicit ParameterHandle(const t_parameter& p);
-    explicit ParameterHandle(std::unique_ptr<t_parameter>& p);
+    explicit ParameterHandle();
     explicit ParameterHandle(const ParameterHandle& other);
+    ParameterHandle& operator= (const ParameterHandle& other);
+    ~ParameterHandle();
 
     // gets
-    t_parameter& get(void) const;
+    bool        hasLabels()            const;
+    bool        hasDefaultValue()      const;
+    bool        hasDescription()       const;
+    bool        hasAnyFields()         const;
+    int         nFields()              const;
+    int         nLabels()              const;
+    QString     description()          const;
+    QString     defaultValue()         const;
+    QString     label(const int index) const;
+    QStringList labels()               const;
+    Parameter&  reference();
 
-    //sets
 
-    // properties
-    std::unique_ptr<t_parameter> _p;
+private:
+    Parameter p;
+
+    void copy(const ParameterHandle& other);
 };
 
 #endif // PARAMETERHANDLE_H

@@ -2,25 +2,26 @@
 #define MAINWINDOW_H
 
 // application header
-#include "m_tweaq.h"
+#include "tweaq.h"
 
 // base class
 #include <QMainWindow>
 
-// child widgets
-#include "tqlineedit.h"
-#include "tqtreeview.h"
-#include "tqcombobox.h"
+// widgets
+#include "comboboxremove.h"
+#include "comboboxdsp.h"
+#include "treeviewaudiofile.h"
 #include "parameterdialog.h"
 
-// tweaq data structures
-#include "instancemeta.h"
-#include "afmodel.h"
-#include "libmodel.h"
-#include "afimporter.h"
-
-// Qt dialogs
+// Qt classes
 #include <QFileDialog>
+#include <QThread>
+
+// tweaq classes
+#include "af_model.h"
+#include "externalinterfacemanager.h"
+#include "mainwindowhelper.h"
+#include "libsf.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,43 +32,27 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = Q_NULLPTR);
-    ~MainWindow(void);
+    explicit MainWindow(QWidget* const parent = 0);
+    ~MainWindow();
 
 
 private slots:
-    // gui callbacks
-    void on_comboBoxRemoveFiles_currentIndexChanged(int index);
-    void on_buttonExportTo_clicked();
-    void on_buttonProcessFiles_clicked();
-    void on_actionShow_export_folder_triggered();
-    void on_actionImport_Audio_Files_triggered();
-    void on_actionChoose_Export_Folder_triggered();
-    void on_actionRemove_selected_files_triggered();
-    void on_actionRemove_all_files_triggered();
-    void on_actionRemove_finished_files_triggered();
-    void on_actionProcess_triggered();
-    void on_actionImport_folder_triggered();
-
     // application actions
-    void addSoundFilesToModel(const QList<QUrl> urls);
+    void importAudioFiles(const QList<QUrl> urls);
+    void removeAllAudioFiles();
+    void removeSelectedAudioFiles();
+    void removeFinishedAudioFiles();
+    void processAudioFiles();
+    void importFilesDialog();
+    void importFolderDialog();
+    void exportFolderDialog();
+    void showExportFolder();
 
 
 private:
-    // layout (owned)
-    Ui::MainWindow *ui;
-
-    // tweaq data structures (owned but Q_OBJECT, don't manually delete)
-    AFModel* _afModel;
-    LibModel* _libModel;
-
-    // application actions
-    void removeImportedFiles(const int index);
-    void processImportedFiles(void);
-    void showExportFolderExternally(void);
-    void openExportDirectoryDialog(void);
-    void openImportFilesDialog(void);
-    void openImportFolderDialog(void);
+    Ui::MainWindow* ui;
+    AF_Model* _audioFiles;
+    unique_ptr<ExternalInterfaceManager> _externals;
 };
 
 #endif // MAINWINDOW_H

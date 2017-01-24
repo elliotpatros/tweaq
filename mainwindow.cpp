@@ -1,251 +1,143 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-//==============================================================================
-// constructor & destructor
-//==============================================================================
-MainWindow::MainWindow(QWidget *parent) :
+// constructor and destructor
+MainWindow::MainWindow(QWidget* const parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    _audioFiles(new AF_Model(this)),
+    _externals(new ExternalInterfaceManager(AppMeta::pathToBundledExternals()))
 {
-    // layout child widgets
+    // expand user interface
     ui->setupUi(this);
 
-    // setup tweaq data structures
-    InstanceMeta appInstance;
-    _afModel = new AFModel(this);
-    _libModel = new LibModel(this, appInstance.externalDirectorySearchPath());
+    // setup connection rules
+    disconnect();
 
     // setup main window
-    setWindowTitle(appInstance.appNameAndVersion());
-    setMinimumSize(appInstance.minWindowSize());
-    setMaximumSize(appInstance.maxWindowSize());
-    resize(appInstance.preferredWindowSize());
+    setWindowTitle(AppMeta::windowName());
+    resize(AppMeta::preferredWindowSize());
+    AppMeta::centerWidgetOnScreen(this);
 
-    // setup child widgets
-    {   // tree view
-        TqTreeView* w = ui->treeViewImportedFiles;
-        w->setModel(_afModel->sortProxy());
-        w->hideColumn(AFItem::AbsolutePath);
-        connect(w, SIGNAL(droppedAudioFileUrls(const QList<QUrl>)),
-                this, SLOT(addSoundFilesToModel(const QList<QUrl>)));
-    }
-    {   // combo box remove files
-        TqComboBox* w = ui->comboBoxDSP;
-        w->setTitle(QStringLiteral("choose process"));
-        w->addItems(_libModel->names());
-    }
-    {   // combo box remove files
-        TqComboBox* w = ui->comboBoxRemoveFiles;
-        w->setTitle(QStringLiteral("remove files"));
-        w->addItems(QStringList()
-                    << QStringLiteral("all")
-                    << QStringLiteral("selected")
-                    << QStringLiteral("finished"));
-    }
+    // setup tree view
+    ui->treeView->setModel(_audioFiles->sortProxy());
+    ui->treeView->hideColumn(AF_Properties::AbsolutePath);
+
+    // setup combo box dsp
+    ui->comboBoxDSP->setTitle("dsp...");
+    ui->comboBoxDSP->addItems(_externals->processNames());
+
+    // setup combo box remove
+    ui->comboBoxRemove->setTitle("remove...");
+    ui->comboBoxRemove->addNamedAction("finished", [this]{removeFinishedAudioFiles();});
+    ui->comboBoxRemove->addNamedAction("selected", [this]{removeSelectedAudioFiles();});
+    ui->comboBoxRemove->addNamedAction("everything", [this]{removeAllAudioFiles();});
+
+    // custom connection rules
+    connect(ui->buttonExportTo, SIGNAL(released()), SLOT(exportFolderDialog()));
+    connect(ui->buttonProcess, SIGNAL(released()), SLOT(processAudioFiles()));
+    connect(ui->treeView, SIGNAL(droppedUrls(QList<QUrl>)), SLOT(importAudioFiles(QList<QUrl>)));
+    connect(ui->actionChooseExportFolder, SIGNAL(triggered(bool)), SLOT(exportFolderDialog()));
+    connect(ui->actionImportAudioFiles, SIGNAL(triggered(bool)), SLOT(importFilesDialog()));
+    connect(ui->actionImportFolder, SIGNAL(triggered(bool)), SLOT(importFolderDialog()));
+    connect(ui->actionProcess, SIGNAL(triggered(bool)), SLOT(processAudioFiles()));
+    connect(ui->actionRemoveAll, SIGNAL(triggered(bool)), SLOT(removeAllAudioFiles()));
+    connect(ui->actionRemoveSelected, SIGNAL(triggered(bool)), SLOT(removeSelectedAudioFiles()));
+    connect(ui->actionShowExportFolder, SIGNAL(triggered(bool)), SLOT(showExportFolder()));
+    connect(ui->actionRemoveFinished, SIGNAL(triggered(bool)), SLOT(removeFinishedAudioFiles()));
+    connect(ui->actionCloseTweaq, SIGNAL(triggered(bool)), SLOT(close()));
+    connect(ui->actionMinimize, SIGNAL(triggered(bool)), SLOT(showMinimized()));
 
     // drag and drop
     setAcceptDrops(false);
 }
 
-MainWindow::~MainWindow(void)
+MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-
-//==============================================================================
-// gui callbacks
-//==============================================================================
-void MainWindow::on_comboBoxRemoveFiles_currentIndexChanged(int index)
-{
-    removeImportedFiles(index);
-}
-
-void MainWindow::on_buttonExportTo_clicked()
-{
-    openExportDirectoryDialog();
-}
-
-void MainWindow::on_buttonProcessFiles_clicked()
-{
-    processImportedFiles();
-}
-
-void MainWindow::on_actionShow_export_folder_triggered()
-{
-    showExportFolderExternally();
-}
-
-void MainWindow::on_actionImport_Audio_Files_triggered()
-{
-    openImportFilesDialog();
-}
-
-void MainWindow::on_actionImport_folder_triggered()
-{
-    openImportFolderDialog();
-}
-
-void MainWindow::on_actionChoose_Export_Folder_triggered()
-{
-    openExportDirectoryDialog();
-}
-
-void MainWindow::on_actionRemove_selected_files_triggered()
-{
-    removeImportedFiles(InstanceMeta::ComboBoxRemoveSelected);
-}
-
-void MainWindow::on_actionRemove_all_files_triggered()
-{
-    removeImportedFiles(InstanceMeta::ComboBoxRemoveAll);
-}
-
-void MainWindow::on_actionRemove_finished_files_triggered()
-{
-    removeImportedFiles(InstanceMeta::ComboBoxRemoveFinished);
-}
-
-void MainWindow::on_actionProcess_triggered()
-{
-    processImportedFiles();
-}
-
-
-//==============================================================================
 // application actions
-//==============================================================================
-void MainWindow::addSoundFilesToModel(const QList<QUrl> urls)
+void MainWindow::exportFolderDialog()
 {
-    // turn off gui sorting
-    TqTreeView* w = ui->treeViewImportedFiles;
-    w->setSortingEnabled(false);
+    const QString folderName = QFileDialog::getExistingDirectory(this, "save audio files to...", ui->lineEdit->path());
+    if (!folderName.isEmpty()) ui->lineEdit->setText(folderName);
+}
 
-    // import files
-    QStringList* paths = new QStringList;
-    AFImporter importer(this);
-    importer.import(urls, paths);
+void MainWindow::importFilesDialog()
+{
+    const QUrl openFolder(QUrl::fromLocalFile(ui->lineEdit->path()));
+    importAudioFiles(QFileDialog::getOpenFileUrls(this, "import audio files...", openFolder));
+}
 
-    // add audio files to model
-    _afModel->addAudioFiles(paths);
+void MainWindow::importFolderDialog()
+{
+    const QUrl openAt(QUrl::fromLocalFile(ui->lineEdit->path()));
+    const QUrl opened(QFileDialog::getExistingDirectoryUrl(this, "import folder...", openAt));
+    importAudioFiles(QList<QUrl>() << opened);
+}
 
-    // turn gui sorting back on
-    w->setSortingEnabled(true);
+void MainWindow::showExportFolder()
+{
+    system(QString("open %1").arg(ui->lineEdit->path()).toUtf8());
+}
+
+void MainWindow::importAudioFiles(const QList<QUrl> urls)
+{
+    ui->treeView->setSortingEnabled(false);
+    _audioFiles->importAudioFiles(urls);
+    ui->treeView->setSortingEnabled(true);
+    ui->treeView->clearSelection();
+}
+
+void MainWindow::removeAllAudioFiles()
+{
+    ui->treeView->setSortingEnabled(false);
+    _audioFiles->removeAllRows();
+    ui->treeView->setSortingEnabled(true);
+    ui->treeView->clearSelection();
+}
+
+void MainWindow::removeSelectedAudioFiles()
+{
+    ui->treeView->setSortingEnabled(false);
+    _audioFiles->removeSelectedRows(ui->treeView->selected());
+    ui->treeView->setSortingEnabled(true);
+    ui->treeView->clearSelection();
+}
+
+void MainWindow::removeFinishedAudioFiles()
+{
+    ui->treeView->setSortingEnabled(false);
+    _audioFiles->removeFinishedRows();
+    ui->treeView->setSortingEnabled(true);
+    ui->treeView->clearSelection();
+}
+
+void MainWindow::processAudioFiles()
+{
+    const int processId = ui->comboBoxDSP->processIndex();
+
+    // are we ready to process?
+    if (!_audioFiles->areAnyAudioFilesUnprocessed()) return importFilesDialog();
+    if (!_externals->isValid(processId))             return ui->comboBoxDSP->showPopup();
+    if (!ui->lineEdit->currentPathIsValid())         return exportFolderDialog();
+
+    // get parameter entries from user
+    ExternalInterface* external(_externals->get(processId));
+    if (external == nullptr) return;
+
+    // make a dialog window for the user to enter parameters
+    unique_ptr<ParameterDialog> dialog(new ParameterDialog(ui->comboBoxDSP->currentText(), this));
+    if (dialog.get() == nullptr) return;
+    if (dialog->show(external->setup()) == QDialog::Rejected) return;
+
+    // get entries from user
+    void* arguments = external->handleInput(dialog->entries());
+
+    // process files
+    _audioFiles->rootItem()->processAudioFiles(external->process(), ui->lineEdit->path(), arguments);
 
     // clean up
-    delete paths;
+    if (arguments != nullptr) free(arguments);
 }
-
-void MainWindow::removeImportedFiles(const int index)
-{
-    // turn off gui sorting
-    TqTreeView* treeView = ui->treeViewImportedFiles;
-    treeView->setSortingEnabled(false);
-
-    // which type of remove was it?
-    switch (index)
-    {
-    case InstanceMeta::ComboBoxRemoveAll:
-        _afModel->removeAllRows();
-        break;
-    case InstanceMeta::ComboBoxRemoveSelected:
-        _afModel->removeSelectedRows(ui->treeViewImportedFiles->selectedRows());
-        break;
-    case InstanceMeta::ComboBoxRemoveFinished:
-        _afModel->removeFinishedRows();
-        break;
-    default:
-        break;
-    }
-
-    // turn gui sorting back on
-    treeView->setSortingEnabled(true);
-
-    // reset combo box title
-    ui->comboBoxRemoveFiles->setSelectionToTitleIndex();
-}
-
-void MainWindow::openExportDirectoryDialog(void)
-{
-    TqLineEdit* w = ui->lineEditExportTo;
-    QString result = QFileDialog::getExistingDirectory(
-                this,
-                QStringLiteral("save new sound files to..."),
-                w->currentValidFileLocation());
-
-    if (!result.isEmpty()) // result is empty if user canceled
-    {
-        w->setText(result);
-    }
-}
-
-void MainWindow::openImportFilesDialog(void)
-{
-    const QUrl openAt = QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation());
-    addSoundFilesToModel(QFileDialog::getOpenFileUrls(this, QStringLiteral("sound files to open..."), openAt));
-}
-
-void MainWindow::openImportFolderDialog(void)
-{
-    const QUrl openAt = QUrl::fromLocalFile(ui->lineEditExportTo->currentValidFileLocation());
-    const QUrl opened = QFileDialog::getExistingDirectoryUrl(this, QStringLiteral("sound files to open..."), openAt);
-    addSoundFilesToModel(QList<QUrl>() << opened);
-}
-
-void MainWindow::showExportFolderExternally(void)
-{
-    system(QString(QStringLiteral("open %1")).arg(ui->lineEditExportTo->currentValidFileLocation()).toUtf8());
-}
-
-void MainWindow::processImportedFiles(void)
-{
-    // let's find our guis
-    TqLineEdit* editDest = ui->lineEditExportTo;
-    TqComboBox* chooseDSP = ui->comboBoxDSP;
-    const t_int libIndex = chooseDSP->processIndex();
-
-    // STEP 0
-    // decide whether we're ready to process stuff
-    // ...has the user picked any sounds to edit?
-    if (!_afModel->areThereAnyUnprocessedAudioFiles())
-    {
-        openImportFilesDialog();
-        return;
-    }
-
-    // ...has the user picked a valid sound file destination?
-    if (!editDest->isCurrentPathValid())
-    {
-        openExportDirectoryDialog();
-        return;
-    }
-
-    // ...has the user picked a DSP process from the combo box?
-    if (libIndex < 0)
-    {
-        chooseDSP->showPopup();
-        return;
-    }
-
-    // STEP 1
-    // ask the external DSP what parameters it needs form the user
-    vector<ParameterHandle> handles;
-    _libModel->getExternalParameterHandles(libIndex, &handles);
-
-    // make and show the user a parameter dialog
-    ParameterDialog dialog(this);
-    dialog.appendParameterFields(&handles);
-    if (dialog.makeAndShow(_libModel->name(libIndex)) == QDialog::Rejected)
-    {
-        return;
-    }
-
-    QStringList args;
-    dialog.getEntries(&args);
-
-    // whew! ok, we're ready to tweaq some shit now.
-    // STEP 2
-    _libModel->processFiles(libIndex, _afModel->rootItem(), editDest->currentValidFileLocation(), &args);
-}
-

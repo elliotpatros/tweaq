@@ -2,25 +2,29 @@
 #define LIBSF_H
 
 // application header
-#include "m_tweaq.h"
+#include "tweaq.h"
+
+// base class
+#include "sndfile.hh"
 
 // Qt classes
 #include <QFileInfo>
-#include <QVariant>
 
 class LibSF
 {
 public:
-    // gets
-    static bool isAudioFileValid(const QString path);
-    static QString extension(const QString path);
-    static QString durationAsString(const t_uint sampleRate, const t_uint nSamples);
-
+    static QString extension(const int format);
+    static bool audioFileIsValid(const QString path);
+    static QString durationAsString(const int sampleRate, const size_t nSamples);
 
 private:
-    // properties
-    static QStringList _validExtensions;
-    static QStringList validExtensions(void);
+    static vector<QString> _validExtensions;
+
+    // helpers
+    static int formatCount();
+    static bool formatExtension(const int format, SF_FORMAT_INFO* const info);
+    static bool majorFormatExtension(const int format, SF_FORMAT_INFO* const info);
+    static vector<QString> generateValidExtensions();
 };
 
 #endif // LIBSF_H
