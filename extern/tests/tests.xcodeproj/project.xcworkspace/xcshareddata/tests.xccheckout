@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>85685D8E-BCAC-4458-9B57-FE4938F89E39</string>
+	<key>IDESourceControlProjectName</key>
+	<string>tests</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>DBF8655153EA8FCF9B6CF509A0050D9E95F02B1A</key>
+		<string>https://github.com/elliotpatros/tweaq.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>extern/tests/tests.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>DBF8655153EA8FCF9B6CF509A0050D9E95F02B1A</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/elliotpatros/tweaq.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>DBF8655153EA8FCF9B6CF509A0050D9E95F02B1A</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DBF8655153EA8FCF9B6CF509A0050D9E95F02B1A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>tweaq</string>
+		</dict>
+	</array>
+</dict>
+</plist>

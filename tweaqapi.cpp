@@ -55,11 +55,10 @@ double get_max_gain(const char* path)
     }
     
     // clean up
-    if (maxGain < 0.0000001) maxGain = 1.;
     sf_close(file);
     free(buffer);
     
-    return maxGain;
+    return (maxGain > 0.0000001) ? maxGain : 1.;
 }
 
 // copies contents of source to destination
