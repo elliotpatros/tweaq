@@ -1,5 +1,5 @@
 # targets
-so: change_gain.so mix_to_mono.so normalize.so deinterleave.so
+so: change_gain.so mix_to_mono.so normalize.so deinterleave.so fade_in.so
 
 # the compiler
 CC = clang

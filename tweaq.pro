@@ -5,6 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = tweaq2
 TEMPLATE = app
 
+CONFIG += debug
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -50,7 +51,8 @@ APP_QML_FILES.files = \
     $$PWD/extern/libchange_gain.so \
     $$PWD/extern/libmix_to_mono.so \
     $$PWD/extern/libnormalize.so \
-    $$PWD/extern/libdeinterleave.so
+    $$PWD/extern/libdeinterleave.so \
+    $$PWD/extern/libfade_in.so
 
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 
@@ -60,12 +62,15 @@ ICON = icons/tweaq_icon.icns
 
 DISTFILES += License
 
-QMAKE_CXXFLAGS += \
-    -W -Wall -Wpointer-arith -fno-exceptions -O2 -flto
+QMAKE_CXXFLAGS += -W -Wall
+macx: LIBS += -L$$PWD/staticlibs/libsndfile/lib/ -lsndfile.1 \
+              -W -Wall
 
-macx: LIBS += \
-    -L$$PWD/staticlibs/libsndfile/lib/ -lsndfile.1 \
-    -W -Wall -Wpointer-arith -dead_strip -fno-exceptions -O2 -flto
+# release flags
+CONFIG(release, debug|release) {
+QMAKE_CXXFLAGS += -Wpointer-arith -fno-exceptions -O2 -flto
+macx: LIBS += -Wpointer-arith -dead_strip -fno-exceptions -O2 -flto
+}
 
 INCLUDEPATH += $$PWD/staticlibs/libsndfile/include
 DEPENDPATH += $$PWD/staticlibs/libsndfile/include

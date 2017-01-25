@@ -19,48 +19,6 @@ double gain_from_dB(const double dB)
     return pow(10.0, dB * 0.05);
 }
 
-double get_max_gain(const char* path)
-{
-    // setup libsndfile stuff
-    SF_INFO sfinfo;
-    SNDFILE *file;
-    memset(&sfinfo, 0, sizeof(SF_INFO));
-    
-    // open sound file to read
-    if ((file = sf_open(path, SFM_READ, &sfinfo)) == 0)
-    {
-        return 1.;
-    }
-    
-    // setup audio buffer
-    const size_t nChannels = sfinfo.channels;
-    const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-    double* buffer;
-    if ((buffer = (double*)calloc(buffersize, sizeof(double))) == 0)
-    {
-        sf_close(file);
-        return 1.;
-    }
-    
-    // find max gain
-    double maxGain = 0.;
-    size_t samplesread;
-    while ((samplesread = sf_read_double(file, buffer, buffersize)) != 0)
-    {
-        for (size_t i = 0; i < samplesread; i++)
-        {
-            const double sampleGain = fabs(buffer[i]);
-            if (sampleGain > maxGain) maxGain = sampleGain;
-        }
-    }
-    
-    // clean up
-    sf_close(file);
-    free(buffer);
-    
-    return (maxGain > 0.0000001) ? maxGain : 1.;
-}
-
 // copies contents of source to destination
 // if destination is a null ptr, will allocate memory
 // returns 0 if failed
@@ -159,4 +117,65 @@ void free_parameter(Parameter& p)
     free_string(p.defaultValue);
     free_string_list(p.labels, p.nLabels);
     p.nLabels = 0;
+}
+
+
+// libsndfile stuff
+SF_INFO setup_sfinfo()
+{
+    SF_INFO sfinfo;
+    memset(&sfinfo, 0, sizeof(SF_INFO));
+    return sfinfo;
+}
+
+SNDFILE* setupFilein(const char* path, SF_INFO* sfinfo)
+{
+    return sf_open(path, SFM_READ, sfinfo);
+}
+
+SNDFILE* setupFileout(const char* path, SF_INFO* sfinfo)
+{
+    return sf_open(path, SFM_WRITE, sfinfo);
+}
+
+double* setupAudioBuffer(const size_t buffersize)
+{
+    return (double*)calloc(buffersize, sizeof(double));
+}
+
+double get_max_gain(const char* path)
+{
+    // setup libsndfile stuff
+    SF_INFO sfinfo = setup_sfinfo();
+    SNDFILE* file = setupFilein(path, &sfinfo);
+    
+    if (file == 0) return 1.;
+    
+    // setup audio buffer
+    const size_t nChannels = sfinfo.channels;
+    const size_t buffersize = TQ_BUFFERSIZE * nChannels;
+    double* buffer = setupAudioBuffer(buffersize);
+    if (buffer == 0)
+    {
+        sf_close(file);
+        return 1.;
+    }
+    
+    // find max gain
+    double maxGain = 0.;
+    size_t samplesread;
+    while ((samplesread = sf_read_double(file, buffer, buffersize)) != 0)
+    {
+        for (size_t i = 0; i < samplesread; i++)
+        {
+            const double sampleGain = fabs(buffer[i]);
+            if (sampleGain > maxGain) maxGain = sampleGain;
+        }
+    }
+    
+    // clean up
+    sf_close(file);
+    free(buffer);
+    
+    return (maxGain > 0.0000001) ? maxGain : 1.;
 }

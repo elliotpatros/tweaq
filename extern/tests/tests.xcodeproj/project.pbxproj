@@ -27,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		B407BE581E3598330067B7FC /* test_mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_mix_to_mono.h; sourceTree = "<group>"; };
+		B460FECF1E37E8C600B4B668 /* test_fade_in.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_in.h; sourceTree = "<group>"; };
 		B46B0D341E36C60A00C5C35E /* test_normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_normalize.h; sourceTree = "<group>"; };
 		B47F90D11E36D4D000307D7D /* test_deinterleave.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_deinterleave.h; sourceTree = "<group>"; };
 		B49B77521E2F0E7600801E7C /* test_change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_change_gain.h; sourceTree = "<group>"; };
@@ -126,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				B4D0559F1E2ED5DE00F6AC11 /* main.cpp */,
+				B460FECF1E37E8C600B4B668 /* test_fade_in.h */,
 				B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */,
 				B49CAB861E2F3F9E00C320BA /* tweaqapi.h */,
 				B49B77521E2F0E7600801E7C /* test_change_gain.h */,

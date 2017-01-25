@@ -23,7 +23,6 @@ public:
     vector<ParameterHandle> setup() const;
     void* handleInput(const vector<QString> responses) const;
     ExternalProcess process() const;
-//    void  process(const vector<AF_Item> rootItem, const QString dest, void* args) const;
 
     // gets
     QString libraryName() const;

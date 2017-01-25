@@ -13,50 +13,63 @@
 //#include "test_change_gain.h"
 //#include "test_mix_to_mono.h"
 //#include "test_normalize.h"
-#include "test_deinterleave.h"
+//#include "test_deinterleave.h"
+#include "test_fade_in.h"
 
 using std::cout;
 using std::endl;
 using std::vector;
 
+void print_parameterlist(vector<Parameter> v)
+{
+    for (auto& p : v)
+    {
+        if (p.description != 0) cout << "description: " << p.description << endl;
+        if (p.defaultValue != 0) cout << "default value: " << p.defaultValue << endl;
+        for (int i = 0; i < p.nLabels; i++) cout << "label " << i << ": " << p.labels[i] << endl;
+        
+        free_parameter(p);
+        cout << endl;
+    }
+}
+
 int main(int argc, const char * argv[])
 {
+    // TEST _SETUP...
     vector<Parameter> v;
-    
     int field = 0;
     while (true)
     {
         Parameter p;
         init_parameter(p);
-        deinterleave_setup(field, p);
-
+        fade_in_setup(field, p);
+        
         const int lastField = field;
-        field += p.description != 0;
+        field += p.defaultValue != 0;
         field += p.nLabels != 0;
-
+        
         if (field == lastField) break;
         v.emplace_back(p);
     }
     
-//    cout << "default value = " << v[0].defaultValue << endl;
-//    cout << "labels = ";
-//    if (!v.empty()) for (int i = 0; i < v[0].nLabels; ++i) cout << v[0].labels[i] << ", ";
-//    cout << endl << "description = " << v[0].description << endl;
+    // ...printout results
+    print_parameterlist(v);
     
-    for (Parameter& p : v) free_parameter(p);
     
-    const char* responses[] = {"-3.0", "dB."};
-    const size_t nResponses = sizeof(responses) / sizeof(char*);
+    // TEST INPUT HANDLING...
+    const char* responses[] = {"100", "milliseconds", "'S' curve"};
+    void* input = fade_in_handleInput(3, responses);
     
-    cout << nResponses << " responses" << endl;
-    void* input = deinterleave_handleInput(2, responses);
-    bool success = deinterleave_process("/Users/demo/Desktop/testin/in.wav",
-                                       "/Users/demo/Desktop/testout/in.wav",
-                                       input);
     
+    // TEST PROCESSING...
+    bool success = fade_in_process("/Users/demo/Desktop/testin/quad.wav",
+                                   "/Users/demo/Desktop/testout/quad.wav",
+                                   input);
+    
+    // TEST CLEANUP...
     if (input != 0) free(input);
+    cout << (success ? "it worked!" : "oh no... :-(") << endl;
     
-    cout << (success ? "it worked!" : "it failed :-(") << endl;
     
     return 0;
 }

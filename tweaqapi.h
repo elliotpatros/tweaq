@@ -30,15 +30,13 @@ typedef void* (*ExternalHandleInput)(int argc, const char* argv[]);
 typedef bool  (*ExternalProcess)(const char* pathin, const char* pathout, void* args);
     
 // helper functions
-void* set_string(char*& destination, const char* source);
-void  set_string_list(char**& dest, const int nStrings, ...);
-void  set_string_list_private(char**& dest, const int nStrings, va_list list);
-double get_max_gain(const char* pathin);
-
-void free_string(char*& str);
-void free_string_list(char**& strings, int nStrings);
+void*  set_string(char*& destination, const char* source);
+void   set_string_list(char**& dest, const int nStrings, ...);
+void   set_string_list_private(char**& dest, const int nStrings, va_list list);
+void   free_string(char*& str);
+void   free_string_list(char**& strings, int nStrings);
 double string_to_double(const char* str);
-void dB_to_gain(double& dB);
+void   dB_to_gain(double& dB);
 double gain_from_dB(const double dB);
 
 // type parameter functions
@@ -47,6 +45,13 @@ void set_parameter_labels(Parameter& p, const int nLabels, ...);
 void set_parameter_default(Parameter& p, const char* value);
 void init_parameter(Parameter& p);
 void free_parameter(Parameter& p);
+    
+// libsndfile stuff
+SF_INFO  setup_sfinfo();
+SNDFILE* setupFilein(const char* path, SF_INFO* sfinfo);
+SNDFILE* setupFileout(const char* path, SF_INFO* sfinfo);
+double*  setupAudioBuffer(const size_t buffersize);
+double   get_max_gain(const char* path);
     
 #ifdef __cplusplus
 }

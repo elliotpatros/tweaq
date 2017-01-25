@@ -9,7 +9,7 @@
 
 // Qt classes
 //#include <QtGlobal> // for Q_ASSERT
-//#include <QDebug>
+#include <QDebug>
 #include <QStringList>
 #include <QStringBuilder>
 
