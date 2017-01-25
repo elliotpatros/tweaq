@@ -90,24 +90,21 @@ extern "C"
         Input* input = (Input*)args;
         
         // open files to read and write
-        SF_INFO sfinfo;
-        SNDFILE *filein, *fileout;
-        memset(&sfinfo, 0, sizeof(SF_INFO));
-        
-        if ((filein  = sf_open(pathin,  SFM_READ,  &sfinfo)) == 0)
-        {   // open failed, quit
-            return false;
-        }
-        if ((fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) == 0)
+        SF_INFO  sfinfo  = setup_sfinfo();
+        SNDFILE* filein  = setupFilein(pathin, &sfinfo);
+        if (filein == 0) return false;
+
+        SNDFILE* fileout = setupFileout(pathout, &sfinfo);
+        if (fileout == 0)
         {   // open failed, clean up and quit
             sf_close(filein);
             return false;
         }
         
         // setup read buffer (size must be a power of 2 * number of channels)
-        const int read_buffersize = TQ_BUFFERSIZE * sfinfo.channels;
-        double* buffer;
-        if ((buffer = (double*)calloc(read_buffersize, sizeof(double))) == 0)
+        const int buffersize = TQ_BUFFERSIZE * sfinfo.channels;
+        double* buffer = setupAudioBuffer(buffersize);
+        if (buffer == 0)
         {   // allocation failed, clean up and quit
             sf_close(filein);
             sf_close(fileout);
@@ -116,9 +113,13 @@ extern "C"
         
         // dsp
         size_t samplesread;
-        while ((samplesread = sf_read_double(filein, buffer, read_buffersize)) != 0)
+        while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
         {   // process the read buffer and write it to disk
-            for (size_t i = 0; i < samplesread; ++i) buffer[i] *= input->gain;
+            for (size_t i = 0; i < samplesread; ++i)
+            {
+                buffer[i] *= input->gain;
+            }
+            
             sf_write_double(fileout, buffer, samplesread);
         }
         

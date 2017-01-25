@@ -140,7 +140,7 @@ extern "C"
         
         // setup soundfile in
         SF_INFO  sfinfo  = setup_sfinfo();
-        SNDFILE* filein  = setupFilein (pathin, &sfinfo);
+        SNDFILE* filein  = setupFilein(pathin, &sfinfo);
         if (filein == 0) return false;
         
         // get the fade duration in samples

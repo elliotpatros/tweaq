@@ -50,22 +50,16 @@ extern "C"
     bool deinterleave_process(const char* pathin, const char* pathout, void* args)
     {
         // setup libsndfile stuff
-        SF_INFO sfinfo;
-        SNDFILE *filein, *fileout;
-        memset(&sfinfo, 0, sizeof(SF_INFO));
-        
-        // open soundfile to read
-        if ((filein = sf_open(pathin, SFM_READ, &sfinfo)) == 0)
-        {
-            return false;
-        }
+        SF_INFO sfinfo  = setup_sfinfo();
+        SNDFILE* filein = setupFilein(pathin, &sfinfo);
+        if (filein == 0) return false;
         
         // get pathin's channel count
         const size_t nChannels = sfinfo.channels;
         
         // setup input buffer
-        const size_t bufferinsize = TQ_BUFFERSIZE * nChannels;
-        double* bufferin = (double*)calloc(bufferinsize, sizeof(double));
+        const size_t buffersize = TQ_BUFFERSIZE * nChannels;
+        double* bufferin = setupAudioBuffer(buffersize);
         if (bufferin == 0)
         {
             sf_close(filein);
@@ -110,7 +104,8 @@ extern "C"
             
             // open output soundfile
             sfinfo.channels = 1;
-            if ((fileout = sf_open(mono_pathout, SFM_WRITE, &sfinfo)) == 0)
+            SNDFILE* fileout = setupFileout(mono_pathout, &sfinfo);
+            if (fileout == 0)
             {
                 free(bufferin);
                 sf_close(filein);
@@ -119,7 +114,7 @@ extern "C"
             
             // copy and deinterleave
             size_t samplesread;
-            while ((samplesread = sf_read_double(filein, bufferin, bufferinsize)) != 0)
+            while ((samplesread = sf_read_double(filein, bufferin, buffersize)) != 0)
             {
                 size_t sampleout = 0;
                 for (size_t samplein = channel; samplein < samplesread; samplein += nChannels, sampleout++)
