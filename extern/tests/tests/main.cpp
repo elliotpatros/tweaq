@@ -14,7 +14,9 @@
 //#include "test_mix_to_mono.h"
 //#include "test_normalize.h"
 //#include "test_deinterleave.h"
-#include "test_fade_in.h"
+//#include "test_fade_in.h"
+//#include "test_fade_out.h"
+#include "test_fade.h"
 
 using std::cout;
 using std::endl;
@@ -42,7 +44,7 @@ int main(int argc, const char * argv[])
     {
         Parameter p;
         init_parameter(p);
-        fade_in_setup(field, p);
+        fade_setup(field, p);
         
         const int lastField = field;
         field += p.defaultValue != 0;
@@ -57,14 +59,14 @@ int main(int argc, const char * argv[])
     
     
     // TEST INPUT HANDLING...
-    const char* responses[] = {"100", "seconds", "exponential"};
-    void* input = fade_in_handleInput(3, responses);
+    const char* responses[] = {"10", "samples", "linear", "3", "samples", "exponential"};
+    void* input = fade_handleInput(sizeof(responses) / sizeof(char*), responses);
     
     
     // TEST PROCESSING...
-    bool success = fade_in_process("/Users/demo/Desktop/testin/quad.wav",
-                                   "/Users/demo/Desktop/testout/quad.wav",
-                                   input);
+    bool success = fade_process("/Users/demo/Desktop/testin/quad.wav",
+                                "/Users/demo/Desktop/testout/quad.wav",
+                                input);
     
     // TEST CLEANUP...
     if (input != 0) free(input);

@@ -74,7 +74,7 @@ extern "C"
         Input* input = (Input*)args;
         
         // setup libsndfile stuff
-        SF_INFO sfinfo  = setup_sfinfo();
+        SF_INFO  sfinfo = setup_sfinfo();
         SNDFILE* filein = setup_filein(pathin, &sfinfo);
         if (filein == 0) return false;
         
@@ -83,25 +83,24 @@ extern "C"
         const size_t buffersize = TQ_BUFFERSIZE * sfinfo.channels;
         const double gain = calculate_gain(input, nChannels);
         
-        // open write sound file
-        sfinfo.channels = 1; // output is mono
-        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
-        if (fileout == 0)
-        {
-            sf_close(filein);
-            return false;
-        }
-        
         // allocate buffers for input and output
         double bufferout[TQ_BUFFERSIZE];
         double* bufferin = (double*)calloc(buffersize, sizeof(double));
         if (bufferin == 0)
         {
             sf_close(filein);
-            sf_close(fileout);
             return false;
         }
         
+        // open write sound file
+        sfinfo.channels = 1; // output is mono
+        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
+        if (fileout == 0)
+        {
+            sf_close(filein);
+            free(bufferin);
+            return false;
+        }
         
         size_t samplesread;
         while ((samplesread = sf_read_double(filein, bufferin, buffersize)) != 0)

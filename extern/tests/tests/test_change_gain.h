@@ -90,17 +90,10 @@ extern "C"
         if (args == 0) return false;
         Input* input = (Input*)args;
         
-        // open files to read and write
+        // open file to read
         SF_INFO  sfinfo  = setup_sfinfo();
         SNDFILE* filein  = setup_filein(pathin, &sfinfo);
         if (filein == 0) return false;
-        
-        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
-        if (fileout == 0)
-        {   // open failed, clean up and quit
-            sf_close(filein);
-            return false;
-        }
         
         // setup read buffer (size must be a power of 2 * number of channels)
         const int buffersize = TQ_BUFFERSIZE * sfinfo.channels;
@@ -108,7 +101,16 @@ extern "C"
         if (buffer == 0)
         {   // allocation failed, clean up and quit
             sf_close(filein);
-            sf_close(fileout);
+            return false;
+        }
+        
+        // open file to write to (this should happen as late as possible, to
+        // avoid leaving a bunch of empty files on our system if things go bad.
+        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
+        if (fileout == 0)
+        {   // open failed, clean up and quit
+            sf_close(filein);
+            free(buffer);
             return false;
         }
         

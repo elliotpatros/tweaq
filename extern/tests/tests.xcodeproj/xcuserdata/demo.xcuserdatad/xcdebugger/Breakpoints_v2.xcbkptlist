@@ -42,27 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "tests/test_fade_in.h"
-            timestampString = "507082955.785182"
+            timestampString = "507088581.125102"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "fade_in_process(const char* pathin, const char* pathout, void* args)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tests/test_fade_in.h"
-            timestampString = "507082955.785182"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "125"
-            endingLineNumber = "125"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
             landmarkName = "fade_in_process(const char* pathin, const char* pathout, void* args)"
             landmarkType = "7">
          </BreakpointContent>

@@ -8,14 +8,21 @@ ExternalInterfaceManager::ExternalInterfaceManager(const QString searchPath)
     ExternFileImporter().importPath(searchPath, list, false);
 
     _externals.reserve(list.size());
-    for (const auto path : list) _externals.emplace_back(path);
+    for (const auto path : list)
+    {
+        _externals.emplace_back(path);
+    }
 }
 
 // gets
 QStringList ExternalInterfaceManager::processNames() const
 {
     QStringList list;
-    for (const auto& lib : _externals) list.append(lib.readableName());
+    for (const auto& lib : _externals)
+    {
+        list.append(lib.readableName());
+    }
+
     return list;
 }
 

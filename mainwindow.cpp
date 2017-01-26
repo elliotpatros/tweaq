@@ -60,9 +60,9 @@ MainWindow::~MainWindow()
 // application actions
 void MainWindow::exportFolderDialog()
 {
-    const QString folderName = QFileDialog::getExistingDirectory(this,
-                                                                 "save audio files to...",
-                                                                 ui->lineEdit->path());
+    const QString folderName =
+            QFileDialog::getExistingDirectory(this, "save audio files to...", ui->lineEdit->path());
+
     if (!folderName.isEmpty())
     {
         ui->lineEdit->setText(folderName);

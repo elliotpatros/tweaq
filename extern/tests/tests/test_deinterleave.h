@@ -108,6 +108,7 @@ extern "C"
             if (fileout == 0)
             {
                 free(bufferin);
+                free(mono_pathout);
                 sf_close(filein);
                 return false;
             }
@@ -128,11 +129,13 @@ extern "C"
             // clean up
             sf_close(filein);
             sf_close(fileout);
-            filein = 0;
             free(mono_pathout);
+            filein = 0;
         }
         
         // clean up
+        free(bufferin);
+        
         return true;
     }
     

@@ -43,7 +43,11 @@ void* ExternalInterface::handleInput(const vector<QString> responses) const
     char** argv = (char**)calloc(argc, sizeof(char*));
     if (argv == nullptr) return nullptr;
 
-    for (int i = 0; i < argc; i++) set_string(argv[i], responses[i].toUtf8());
+    for (int i = 0; i < argc; i++)
+    {
+        set_string(argv[i], responses[i].toUtf8());
+    }
+
     void* argList = functionHandleInput()(argc, const_cast<const char**>(argv));
     free_string_list(argv, argc);
 

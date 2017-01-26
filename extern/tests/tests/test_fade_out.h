@@ -24,7 +24,7 @@ extern "C"
     static const CurveType Curves[] = {curve_log, curve_exp, curve_lin, curve_s};
     static const size_t nCurveTypes = sizeof(Curves) / sizeof(CurveType);
     
-    void fade_in_setup(const int fieldNumber, Parameter& p)
+    void fade_out_setup(const int fieldNumber, Parameter& p)
     {
         switch (fieldNumber)
         {
@@ -41,7 +41,7 @@ extern "C"
         }
     }
     
-    void* fade_in_handleInput(int argc, const char* argv[])
+    void* fade_out_handleInput(int argc, const char* argv[])
     {
         if (argc != kNumParameters) return 0;
         
@@ -49,7 +49,7 @@ extern "C"
         if (input == 0) return input;
         
         // get duration as double
-        input->fadeDuration = fabs(string_to_double(argv[kDuration]));
+        input->fadeDuration = string_to_double(argv[kDuration]);
         
         // get time type (ms, sec, samples)
         input->timeType = (TimeType)0;
@@ -76,7 +76,7 @@ extern "C"
         return input;
     }
     
-    bool fade_in_process(const char* pathin, const char* pathout, void* args)
+    bool fade_out_process(const char* pathin, const char* pathout, void* args)
     {
         if (args == 0) return false;
         Input* input = (Input*)args;
@@ -88,7 +88,9 @@ extern "C"
         
         // get the fade duration in samples
         to_samples(input->fadeDuration, input->timeType, sfinfo.samplerate);
-        clip_double(input->fadeDuration, 2., sfinfo.frames - 1);
+        clip_double(input->fadeDuration, 0., sfinfo.frames - 1);
+        const double startFadeout = sfinfo.frames - (input->fadeDuration + 1.);
+        std::cout << "fade duration = " << input->fadeDuration << std::endl;
         
         // setup audiosample buffer
         const size_t nChannels = sfinfo.channels;
@@ -116,14 +118,16 @@ extern "C"
         {
             for (size_t sample = 0; sample < samplesread; framesread += 1.)
             {
-                const double fadeBy = (framesread < input->fadeDuration)
-                    ? input->fade(framesread / input->fadeDuration)
+                const double fadeBy = (framesread > startFadeout)
+                    ? (1. - input->fade((framesread - startFadeout) / input->fadeDuration))
                     : 1.;
                 
                 for (size_t channel = 0; channel < nChannels; channel++, sample++)
                 {
                     buffer[sample] *= fadeBy;
                 }
+                
+                std::cout << "sample " << framesread << "... fade by " << fadeBy << std::endl;
             }
             
             sf_write_double(fileout, buffer, samplesread);

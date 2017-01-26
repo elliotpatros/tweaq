@@ -89,8 +89,14 @@ void ParameterHandle::copy(const ParameterHandle& other)
 {
     init_parameter(p);
 
-    if (other.hasDescription())  set_parameter_description(p, other.p.description);
-    if (other.hasDefaultValue()) set_parameter_default(p, other.p.defaultValue);
+    if (other.hasDescription())
+    {
+        set_parameter_description(p, other.p.description);
+    }
+    if (other.hasDefaultValue())
+    {
+        set_parameter_default(p, other.p.defaultValue);
+    }
 
     p.nLabels = other.nLabels();
     if (!hasLabels()) return;
