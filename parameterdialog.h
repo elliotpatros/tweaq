@@ -23,7 +23,7 @@ class ParameterDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ParameterDialog(const QString title = QString(), QWidget* parent = 0);
+    explicit ParameterDialog(const QString title = QString(), QWidget* parent = nullptr);
 
     // gets
     vector<QString> entries() const;

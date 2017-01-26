@@ -20,7 +20,7 @@ class LineEditExportTo : public QLineEdit
 
 public:
     // constructor
-    explicit LineEditExportTo(QWidget* parent = 0);
+    explicit LineEditExportTo(QWidget* parent = nullptr);
 
     // gets
     QString path() const;

@@ -12,7 +12,7 @@ class ParameterDialogLayout : public QGridLayout
     Q_OBJECT
 
 public:
-    explicit ParameterDialogLayout(QWidget* parent);
+    explicit ParameterDialogLayout(QWidget* parent = nullptr);
 
     void addRow(QWidget* const widget);
     void addRow(QWidget* const lhsWidget, QWidget* const rhsWidget);

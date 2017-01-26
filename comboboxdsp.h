@@ -12,7 +12,7 @@ class ComboBoxDSP : public ComboBoxTweaq
     Q_OBJECT
 
 public:
-    explicit ComboBoxDSP(QWidget* const parent = 0);
+    explicit ComboBoxDSP(QWidget* const parent = nullptr);
 
     // gets
     bool processHasBeenChosen() const;

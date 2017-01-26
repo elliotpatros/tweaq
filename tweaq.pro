@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     parameterdialoglayout.cpp \
     parameterhandle.cpp \
     externalinterface.cpp \
-    externalinterfacemanager.cpp
+    externalinterfacemanager.cpp \
+    backgroundworker.cpp
 
 HEADERS  += mainwindow.h \
     tweaq.h \
@@ -44,7 +45,8 @@ HEADERS  += mainwindow.h \
     parameterdialoglayout.h \
     parameterhandle.h \
     externalinterface.h \
-    externalinterfacemanager.h
+    externalinterfacemanager.h \
+    backgroundworker.h
 
 APP_QML_FILES.path  = Contents/Resources/extern
 APP_QML_FILES.files = \

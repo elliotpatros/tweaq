@@ -24,7 +24,7 @@ class AF_Model : public QAbstractItemModel
 
 public:
     // constructor and destructor
-    explicit AF_Model(QObject* parent = 0);
+    explicit AF_Model(QObject* parent = nullptr);
     explicit AF_Model(const AF_Model& other);
     AF_Model& operator= (const AF_Model& other);
 

@@ -14,7 +14,7 @@ class ComboBoxRemove : public ComboBoxTweaq
     Q_OBJECT
 
 public:
-    explicit ComboBoxRemove(QWidget* const parent = 0);
+    explicit ComboBoxRemove(QWidget* const parent = nullptr);
 
     // sets
     void addNamedAction(const QString name, TweaqAction action);

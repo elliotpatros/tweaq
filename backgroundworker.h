@@ -1,12 +1,41 @@
-#ifndef BACKGROUNDTHREAD_H
-#define BACKGROUNDTHREAD_H
+#ifndef BACKGROUNDWORKER_H
+#define BACKGROUNDWORKER_H
 
+// application class
+#include "tweaq.h"
+
+// base class
 #include <QObject>
 
-class BackgroundThread
+// Qt classes
+#include <QThread>
+#include "ui_mainwindow.h"
+
+// tweaq classes
+#include "af_model.h"
+
+class BackgroundWorker : public QObject
 {
+    Q_OBJECT
+
 public:
-    BackgroundThread();
+    explicit BackgroundWorker(const QList<QUrl> urls = QList<QUrl>(),
+                              QObject* parent = nullptr);
+    ~BackgroundWorker();
+
+
+public slots:
+    void process();
+    void importAudioFiles();
+
+
+signals:
+    void finished();
+    void error(QString errorMessage);
+
+
+private:
+    const QList<QUrl> _urls;
 };
 
-#endif // BACKGROUNDTHREAD_H
+#endif // BACKGROUNDWORKER_H

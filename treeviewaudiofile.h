@@ -18,7 +18,7 @@ class TreeViewAudioFile : public QTreeView
     Q_OBJECT
 
 public:
-    explicit TreeViewAudioFile(QWidget* const parent = 0);
+    explicit TreeViewAudioFile(QWidget* const parent = nullptr);
 
     // gets
     QModelIndexList selected() const;

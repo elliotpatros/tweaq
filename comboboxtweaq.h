@@ -12,7 +12,7 @@ class ComboBoxTweaq : public QComboBox
     Q_OBJECT
 
 public:
-    explicit ComboBoxTweaq(QWidget* const parent = 0);
+    explicit ComboBoxTweaq(QWidget* const parent = nullptr);
 
     // sets
     void setTitle(const QString title);

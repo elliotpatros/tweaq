@@ -15,13 +15,13 @@
 
 // Qt classes
 #include <QFileDialog>
-#include <QThread>
 
 // tweaq classes
 #include "af_model.h"
 #include "externalinterfacemanager.h"
 #include "mainwindowhelper.h"
 #include "libsf.h"
+#include "backgroundworker.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,7 +32,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* const parent = 0);
+    explicit MainWindow(QWidget* const parent = nullptr);
     ~MainWindow();
 
 
@@ -48,9 +48,14 @@ private slots:
     void exportFolderDialog();
     void showExportFolder();
 
+    // test deleteme
+//    void importOnBackgroundThread(const QList<QUrl> urls);
+    void testBackgroundThread();
+    void errorString(QString msg);
+
 
 private:
-    Ui::MainWindow* ui;
+    Ui::MainWindow* _ui;
     AF_Model* _audioFiles;
     unique_ptr<ExternalInterfaceManager> _externals;
 };
