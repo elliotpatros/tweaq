@@ -57,7 +57,7 @@ int main(int argc, const char * argv[])
     
     
     // TEST INPUT HANDLING...
-    const char* responses[] = {"100", "milliseconds", "'S' curve"};
+    const char* responses[] = {"100", "seconds", "exponential"};
     void* input = fade_in_handleInput(3, responses);
     
     

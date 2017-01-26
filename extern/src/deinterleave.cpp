@@ -51,7 +51,7 @@ extern "C"
     {
         // setup libsndfile stuff
         SF_INFO sfinfo  = setup_sfinfo();
-        SNDFILE* filein = setupFilein(pathin, &sfinfo);
+        SNDFILE* filein = setup_filein(pathin, &sfinfo);
         if (filein == 0) return false;
         
         // get pathin's channel count
@@ -59,7 +59,7 @@ extern "C"
         
         // setup input buffer
         const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-        double* bufferin = setupAudioBuffer(buffersize);
+        double* bufferin = (double*)calloc(buffersize, sizeof(double));
         if (bufferin == 0)
         {
             sf_close(filein);
@@ -75,8 +75,8 @@ extern "C"
             // reopen input file
             if (filein == 0)
             {
-                memset(&sfinfo, 0, sizeof(SF_INFO));
-                if ((filein = sf_open(pathin, SFM_READ, &sfinfo)) == 0)
+                filein = setup_filein(pathin, &sfinfo);
+                if (filein == 0)
                 {
                     free(bufferin);
                     return false;
@@ -104,10 +104,11 @@ extern "C"
             
             // open output soundfile
             sfinfo.channels = 1;
-            SNDFILE* fileout = setupFileout(mono_pathout, &sfinfo);
+            SNDFILE* fileout = setup_fileout(mono_pathout, &sfinfo);
             if (fileout == 0)
             {
                 free(bufferin);
+                free(mono_pathout);
                 sf_close(filein);
                 return false;
             }
@@ -128,11 +129,13 @@ extern "C"
             // clean up
             sf_close(filein);
             sf_close(fileout);
-            filein = 0;
             free(mono_pathout);
+            filein = 0;
         }
         
         // clean up
+        free(bufferin);
+        
         return true;
     }
     

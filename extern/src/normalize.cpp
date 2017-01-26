@@ -15,12 +15,14 @@ extern "C"
         double gain;
     };
     
+    static const char* labels[] = {"dB.", "gain"};
+    
     void normalize_setup(const int fieldNumber, Parameter& p)
     {
         switch (fieldNumber)
         {
             case kGain:
-                set_parameter_labels(p, 2, "dB.", "gain");
+                set_parameter_labels(p, 2, labels);
                 set_parameter_description(p, "normalize to a peak volume");
                 set_parameter_default(p, "0.0");
                 break;
@@ -49,13 +51,13 @@ extern "C"
         
         // setup libsndfile stuff
         SF_INFO sfinfo  = setup_sfinfo();
-        SNDFILE* filein = setupFilein(pathin, &sfinfo);
+        SNDFILE* filein = setup_filein(pathin, &sfinfo);
         if (filein == 0) return false;
         
         // setup soundfile buffer
         const size_t nChannels = sfinfo.channels;
         const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-        double* buffer = setupAudioBuffer(buffersize);
+        double* buffer = (double*)calloc(buffersize, sizeof(double));
         if (buffer == 0)
         {
             sf_close(filein);
@@ -63,7 +65,7 @@ extern "C"
         }
         
         // setup soundfile to write
-        SNDFILE* fileout = setupFileout(pathout, &sfinfo);
+        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
         if (fileout  == 0)
         {
             sf_close(filein);

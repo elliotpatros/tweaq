@@ -31,8 +31,6 @@ typedef bool  (*ExternalProcess)(const char* pathin, const char* pathout, void* 
     
 // helper functions
 void*  set_string(char*& destination, const char* source);
-void   set_string_list(char**& dest, const int nStrings, ...);
-void   set_string_list_private(char**& dest, const int nStrings, va_list list);
 void   free_string(char*& str);
 void   free_string_list(char**& strings, int nStrings);
 double string_to_double(const char* str);
@@ -41,17 +39,19 @@ double gain_from_dB(const double dB);
 
 // type parameter functions
 void set_parameter_description(Parameter& p, const char* name);
-void set_parameter_labels(Parameter& p, const int nLabels, ...);
+void set_parameter_labels(Parameter& p, const int nLabels, const char** labels);
 void set_parameter_default(Parameter& p, const char* value);
 void init_parameter(Parameter& p);
 void free_parameter(Parameter& p);
     
 // libsndfile stuff
 SF_INFO  setup_sfinfo();
-SNDFILE* setupFilein(const char* path, SF_INFO* sfinfo);
-SNDFILE* setupFileout(const char* path, SF_INFO* sfinfo);
-double*  setupAudioBuffer(const size_t buffersize);
+SNDFILE* setup_filein(const char* path, SF_INFO* sfinfo);
+SNDFILE* setup_fileout(const char* path, SF_INFO* sfinfo);
 double   get_max_gain(const char* path);
+    
+// conversions
+void clamp_double(double& val, const double min, const double max);
     
 #ifdef __cplusplus
 }

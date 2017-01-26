@@ -29,7 +29,7 @@ extern "C"
         switch (fieldNumber)
         {
             case kAttenuationLabel:
-                set_parameter_labels(p, kNumChoices, choices[0], choices[1], choices[2], choices[3]); // auto-normalize (slower)
+                set_parameter_labels(p, kNumChoices, choices); // auto-normalize (slower)
                 set_parameter_description(p, "set attenuation");
                 break;
             default: break;
@@ -74,8 +74,8 @@ extern "C"
         Input* input = (Input*)args;
         
         // setup libsndfile stuff
-        SF_INFO sfinfo  = setup_sfinfo();
-        SNDFILE* filein = setupFilein(pathin, &sfinfo);
+        SF_INFO  sfinfo = setup_sfinfo();
+        SNDFILE* filein = setup_filein(pathin, &sfinfo);
         if (filein == 0) return false;
         
         // get number of input channels
@@ -83,25 +83,24 @@ extern "C"
         const size_t buffersize = TQ_BUFFERSIZE * sfinfo.channels;
         const double gain = calculate_gain(input, nChannels);
         
+        // allocate buffers for input and output
+        double bufferout[TQ_BUFFERSIZE];
+        double* bufferin = (double*)calloc(buffersize, sizeof(double));
+        if (bufferin == 0)
+        {
+            sf_close(filein);
+            return false;
+        }
+        
         // open write sound file
         sfinfo.channels = 1; // output is mono
-        SNDFILE* fileout = setupFileout(pathout, &sfinfo);
+        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
         if (fileout == 0)
         {
             sf_close(filein);
+            free(bufferin);
             return false;
         }
-        
-        // allocate buffers for input and output
-        double bufferout[TQ_BUFFERSIZE];
-        double* bufferin = setupAudioBuffer(buffersize);
-        if ((bufferin = (double*)calloc(buffersize, sizeof(double))) == 0)
-        {
-            sf_close(filein);
-            sf_close(fileout);
-            return false;
-        }
-        
         
         size_t samplesread;
         while ((samplesread = sf_read_double(filein, bufferin, buffersize)) != 0)

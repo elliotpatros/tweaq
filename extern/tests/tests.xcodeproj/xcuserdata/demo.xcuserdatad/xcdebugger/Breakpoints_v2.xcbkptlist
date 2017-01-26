@@ -41,13 +41,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_normalize.h"
-            timestampString = "506908073.715293"
+            filePath = "tests/test_fade_in.h"
+            timestampString = "507082955.785182"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "46"
-            endingLineNumber = "46"
-            landmarkName = "normalize_process(const char* pathin, const char* pathout, void* args)"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "fade_in_process(const char* pathin, const char* pathout, void* args)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,13 +57,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_normalize.h"
-            timestampString = "506908074.88133"
+            filePath = "tests/test_fade_in.h"
+            timestampString = "507082955.785182"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
-            landmarkName = "normalize_handleInput(int argc, const char* argv[])"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "fade_in_process(const char* pathin, const char* pathout, void* args)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -73,13 +73,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_normalize.h"
-            timestampString = "506908077.068417"
+            filePath = "tests/test_fade_in.h"
+            timestampString = "507082955.785182"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "20"
-            endingLineNumber = "20"
-            landmarkName = "normalize_setup(const int fieldNumber, Parameter&amp; p)"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "fade_in_setup(const int fieldNumber, Parameter&amp; p)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -89,13 +89,45 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_normalize.h"
-            timestampString = "506908078.44605"
+            filePath = "../src/ExternalHelpers.c"
+            timestampString = "507081023.248548"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "12"
+            endingLineNumber = "12"
+            landmarkName = "curve_s()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/ExternalHelpers.c"
+            timestampString = "507081024.456374"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
+            landmarkName = "curve_lin()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/ExternalHelpers.c"
+            timestampString = "507081025.61271"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "23"
             endingLineNumber = "23"
-            landmarkName = "normalize_setup(const int fieldNumber, Parameter&amp; p)"
+            landmarkName = "curve_log()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -105,13 +137,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_deinterleave.h"
-            timestampString = "506915888.457429"
+            filePath = "../src/ExternalHelpers.c"
+            timestampString = "507081026.590672"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "deinterleave_process(const char* pathin, const char* pathout, void* args)"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "curve_exp()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -121,29 +153,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_deinterleave.h"
-            timestampString = "506913178.717506"
+            filePath = "tests/test_fade_in.h"
+            timestampString = "507082955.785182"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7"
-            endingLineNumber = "7"
-            landmarkName = "insertChannelNumber(const char* input, const size_t channel, char*&amp; output)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tests/test_deinterleave.h"
-            timestampString = "506915888.457429"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
-            landmarkName = "deinterleave_process(const char* pathin, const char* pathout, void* args)"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "fade_in_handleInput(int argc, const char* argv[])"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

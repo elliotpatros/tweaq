@@ -5,7 +5,7 @@ extern "C"
 {
 #endif // def __cplusplus
     
-    enum ParameterFields {
+    enum ParameterFields{
         kGain = 0,
         kGainLabel,
         kNumParameters
@@ -16,6 +16,7 @@ extern "C"
     };
     
     static const char* description = "enter a value by which to change the volume.";
+    static const char* labels[] = {"dB.", "gain"};
     
     /*
      * this function (_setup) is called after the user presses the "process"
@@ -49,7 +50,7 @@ extern "C"
         switch (fieldNumber)
         {
             case kGain:
-                set_parameter_labels(p, 2, "dB.", "gain");
+                set_parameter_labels(p, 2, labels);
                 set_parameter_default(p, "0.0");
                 set_parameter_description(p, description);
                 break;
@@ -90,24 +91,21 @@ extern "C"
         Input* input = (Input*)args;
         
         // open files to read and write
-        SF_INFO sfinfo;
-        SNDFILE *filein, *fileout;
-        memset(&sfinfo, 0, sizeof(SF_INFO));
+        SF_INFO  sfinfo  = setup_sfinfo();
+        SNDFILE* filein  = setup_filein(pathin, &sfinfo);
+        if (filein == 0) return false;
         
-        if ((filein = sf_open(pathin,  SFM_READ,  &sfinfo)) == 0)
-        {   // open failed, quit
-            return false;
-        }
-        if ((fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) == 0)
+        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
+        if (fileout == 0)
         {   // open failed, clean up and quit
             sf_close(filein);
             return false;
         }
         
         // setup read buffer (size must be a power of 2 * number of channels)
-        const int read_buffersize = TQ_BUFFERSIZE * sfinfo.channels;
-        double* buffer;
-        if ((buffer = (double*)calloc(read_buffersize, sizeof(double))) == 0)
+        const int buffersize = TQ_BUFFERSIZE * sfinfo.channels;
+        double* buffer = (double*)calloc(buffersize, sizeof(double));
+        if (buffer == 0)
         {   // allocation failed, clean up and quit
             sf_close(filein);
             sf_close(fileout);
@@ -116,9 +114,13 @@ extern "C"
         
         // dsp
         size_t samplesread;
-        while ((samplesread = sf_read_double(filein, buffer, read_buffersize)) != 0)
+        while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
         {   // process the read buffer and write it to disk
-            for (size_t i = 0; i < samplesread; ++i) buffer[i] *= input->gain;
+            for (size_t i = 0; i < samplesread; ++i)
+            {
+                buffer[i] *= input->gain;
+            }
+            
             sf_write_double(fileout, buffer, samplesread);
         }
         
@@ -129,6 +131,7 @@ extern "C"
         
         return true;
     }
+    
 #ifdef __cplusplus
 }
 #endif // def __cplusplus

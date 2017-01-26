@@ -16,6 +16,7 @@ extern "C"
     };
     
     static const char* description = "enter a value by which to change the volume.";
+    static const char* labels[] = {"dB.", "gain"};
     
     /*
      * this function (_setup) is called after the user presses the "process"
@@ -49,7 +50,7 @@ extern "C"
         switch (fieldNumber)
         {
             case kGain:
-                set_parameter_labels(p, 2, "dB.", "gain");
+                set_parameter_labels(p, 2, labels);
                 set_parameter_default(p, "0.0");
                 set_parameter_description(p, description);
                 break;
@@ -89,25 +90,27 @@ extern "C"
         if (args == 0) return false;
         Input* input = (Input*)args;
         
-        // open files to read and write
+        // open file to read
         SF_INFO  sfinfo  = setup_sfinfo();
-        SNDFILE* filein  = setupFilein(pathin, &sfinfo);
+        SNDFILE* filein  = setup_filein(pathin, &sfinfo);
         if (filein == 0) return false;
-
-        SNDFILE* fileout = setupFileout(pathout, &sfinfo);
-        if (fileout == 0)
-        {   // open failed, clean up and quit
+        
+        // setup read buffer (size must be a power of 2 * number of channels)
+        const int buffersize = TQ_BUFFERSIZE * sfinfo.channels;
+        double* buffer = (double*)calloc(buffersize, sizeof(double));
+        if (buffer == 0)
+        {   // allocation failed, clean up and quit
             sf_close(filein);
             return false;
         }
         
-        // setup read buffer (size must be a power of 2 * number of channels)
-        const int buffersize = TQ_BUFFERSIZE * sfinfo.channels;
-        double* buffer = setupAudioBuffer(buffersize);
-        if (buffer == 0)
-        {   // allocation failed, clean up and quit
+        // open file to write to (this should happen as late as possible, to
+        // avoid leaving a bunch of empty files on our system if things go bad.
+        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
+        if (fileout == 0)
+        {   // open failed, clean up and quit
             sf_close(filein);
-            sf_close(fileout);
+            free(buffer);
             return false;
         }
         

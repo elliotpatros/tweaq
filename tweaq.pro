@@ -62,7 +62,7 @@ ICON = icons/tweaq_icon.icns
 
 DISTFILES += License
 
-QMAKE_CXXFLAGS += -W -Wall
+#QMAKE_CXXFLAGS += -W -Wall
 macx: LIBS += -L$$PWD/staticlibs/libsndfile/lib/ -lsndfile.1 \
               -W -Wall
 

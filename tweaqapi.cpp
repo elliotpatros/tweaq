@@ -36,33 +36,6 @@ void* set_string(char*& dest, const char* src)
     return strcpy(dest, src);
 }
 
-void set_string_list_private(char**& dest, const int nStrings, va_list list)
-{
-    // allocate number of strings
-    if (dest != 0) free(dest);
-    dest = (char**)calloc(nStrings, sizeof(char*));
-    if (dest == 0) return;
-
-    // set strings
-    for (int i = 0; i < nStrings; i++)
-    {
-        if (set_string(dest[i], va_arg(list, const char*)) == 0)
-        {
-            free_string_list(dest, i);
-            return;
-        }
-    }
-}
-
-void set_string_list(char**& dest, const int nStrings, ...)
-{   // todo: this function probably won't get used...
-    // ... put set_string_list_private back into set_parameter_labels
-    va_list list;
-    va_start(list, nStrings);
-    set_string_list_private(dest, nStrings, list);
-    va_end(list);
-}
-
 void free_string(char*& str)
 {
     if (str != 0)
@@ -86,19 +59,31 @@ void set_parameter_description(Parameter& p, const char* description)
     set_string(p.description, description);
 }
 
-void set_parameter_labels(Parameter& p, const int nLabels, ...)
+void set_parameter_labels(Parameter& p, const int nLabels, const char** labels)
 {
     // allocate number of labels
-    if (p.labels != 0) free(p.labels);
-    p.labels = (char**)calloc(nLabels, sizeof(char*));
+    if (p.labels == 0)
+    {
+        p.labels = (char**)calloc(nLabels, sizeof(char*));
+    }
+    else
+    {
+        p.labels = (char**)realloc(p.labels, nLabels * sizeof(char*));
+        memset(p.labels, 0, nLabels * sizeof(char*));
+    }
+    
     if (p.labels == 0) return;
-    p.nLabels = nLabels;
     
     // set string list
-    va_list list;
-    va_start(list, nLabels);
-    set_string_list_private(p.labels, nLabels, list);
-    va_end(list);
+    for (int i = 0; i < nLabels; i++)
+    {
+        if (set_string(p.labels[i], labels[i]) == 0)
+        {
+            return free_string_list(p.labels, i);
+        }
+    }
+    
+    p.nLabels = nLabels;
 }
 
 void set_parameter_default(Parameter& p, const char* value)
@@ -128,33 +113,28 @@ SF_INFO setup_sfinfo()
     return sfinfo;
 }
 
-SNDFILE* setupFilein(const char* path, SF_INFO* sfinfo)
+SNDFILE* setup_filein(const char* path, SF_INFO* sfinfo)
 {
     return sf_open(path, SFM_READ, sfinfo);
 }
 
-SNDFILE* setupFileout(const char* path, SF_INFO* sfinfo)
+SNDFILE* setup_fileout(const char* path, SF_INFO* sfinfo)
 {
     return sf_open(path, SFM_WRITE, sfinfo);
-}
-
-double* setupAudioBuffer(const size_t buffersize)
-{
-    return (double*)calloc(buffersize, sizeof(double));
 }
 
 double get_max_gain(const char* path)
 {
     // setup libsndfile stuff
     SF_INFO sfinfo = setup_sfinfo();
-    SNDFILE* file = setupFilein(path, &sfinfo);
+    SNDFILE* file = setup_filein(path, &sfinfo);
     
     if (file == 0) return 1.;
     
     // setup audio buffer
     const size_t nChannels = sfinfo.channels;
     const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-    double* buffer = setupAudioBuffer(buffersize);
+    double* buffer = (double*)calloc(buffersize, sizeof(double));
     if (buffer == 0)
     {
         sf_close(file);
@@ -178,4 +158,11 @@ double get_max_gain(const char* path)
     free(buffer);
     
     return (maxGain > 0.0000001) ? maxGain : 1.;
+}
+
+
+// conversions
+void clamp_double(double& val, const double min, const double max)
+{
+    val = (val > max) ? max : ((val < min) ? min : val);
 }
