@@ -8,7 +8,10 @@ vector<QString> LibSF::_validExtensions = LibSF::generateValidExtensions();
 QString LibSF::extension(const int format)
 {
     SF_FORMAT_INFO info;
-    if (formatExtension(format, &info)) return QString(info.extension);
+    if (formatExtension(format, &info))
+    {
+        return QString(info.extension);
+    }
 
     return QStringLiteral("unknown");
 }
@@ -17,7 +20,9 @@ bool LibSF::audioFileIsValid(const QString path)
 {
     // is the path safe for libsndfile to try to open?
     const QFileInfo file(path);
-    if (file.isFile() && file.isReadable() && in_sorted(file.suffix(), _validExtensions))
+    if (file.isFile() &&
+        file.isReadable() &&
+        in_sorted(file.suffix(), _validExtensions))
     {   // can libsndfile handle it?
         SF_INFO sfinfo;
         memset(&sfinfo, 0, sizeof(SF_INFO));

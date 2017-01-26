@@ -12,7 +12,10 @@ ParameterDialogLayout::ParameterDialogLayout(QWidget* parent) :
 
 void ParameterDialogLayout::addRow(QWidget* const widget)
 {
-    if (widget != nullptr) addWidget(widget, _nRows++, 0, _rowSpan, _colSpan);
+    if (widget != nullptr)
+    {
+        addWidget(widget, _nRows++, 0, _rowSpan, _colSpan);
+    }
 }
 
 void ParameterDialogLayout::addRow(QWidget* const lhsWidget, QWidget* const rhsWidget)

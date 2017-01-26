@@ -44,7 +44,10 @@ void AF_Item::appendChildren(const FileList list)
     if (list.empty()) return;
 
     _children.reserve(_children.size() + list.size());
-    for (const QString path : list) _children.emplace_back(path, this);
+    for (const QString path : list)
+    {
+        _children.emplace_back(path, this);
+    }
 }
 
 void AF_Item::removeChildren(const vector<int> list)
@@ -96,7 +99,13 @@ vector<int> AF_Item::processedChildren() const
     if (nChildren == 0) return list;
 
     list.reserve(_children.size());
-    for (size_t i = 0; i < nChildren; i++) if (_children[i].wasProcessed()) list.push_back(i);
+    for (size_t i = 0; i < nChildren; i++)
+    {
+        if (_children[i].wasProcessed())
+        {
+            list.push_back(i);
+        }
+    }
 
     return list;
 }

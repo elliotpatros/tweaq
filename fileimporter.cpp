@@ -1,11 +1,12 @@
 #include "fileimporter.h"
 
 // gets
-void FileImporter::importUrls(const QList<QUrl> urls,
-                              FileList &fileList,
-                              const bool recursive) const
+void FileImporter::importUrls(const QList<QUrl> urls, FileList &fileList, const bool recursive) const
 {
-    for (const QUrl url : urls) importPath(url.toLocalFile(), fileList, recursive);
+    for (const QUrl url : urls)
+    {
+        importPath(url.toLocalFile(), fileList, recursive);
+    }
 }
 
 void FileImporter::importPath(const QString path,
@@ -17,7 +18,10 @@ void FileImporter::importPath(const QString path,
     if (QFileInfo(path).isDir())
     {
         QDirIterator dit(path, QDir::Files | QDir::NoDotAndDotDot, searchType);
-        while (dit.hasNext()) appendIfValid(dit.next(), fileList);
+        while (dit.hasNext())
+        {
+            appendIfValid(dit.next(), fileList);
+        }
     }
     else
     {
@@ -27,5 +31,8 @@ void FileImporter::importPath(const QString path,
 
 void FileImporter::appendIfValid(const QString path, FileList& fileList) const
 {
-    if (fileIsValid(path)) fileList.emplace_back(path);
+    if (fileIsValid(path))
+    {
+        fileList.emplace_back(path);
+    }
 }
