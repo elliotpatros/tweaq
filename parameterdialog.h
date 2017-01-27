@@ -48,7 +48,6 @@ private:
     // helpers
     void setupLineEdit(const ParameterHandle& handle);
     void setupComboBox(const ParameterHandle& handle);
-//    void addParameterFields(vector<ParameterHandle>& handles);
 };
 
 #endif // PARAMETERDIALOG_H

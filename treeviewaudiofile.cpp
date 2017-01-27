@@ -1,8 +1,6 @@
 #include "treeviewaudiofile.h"
 
-/*
- * constructor
- */
+// constructor
 TreeViewAudioFile::TreeViewAudioFile(QWidget* const parent) :
     QTreeView(parent)
 {
@@ -17,6 +15,7 @@ TreeViewAudioFile::TreeViewAudioFile(QWidget* const parent) :
     setItemsExpandable(false);
     setExpandsOnDoubleClick(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
     sortByColumn(1);
 
     // setup drag and drop
@@ -31,7 +30,7 @@ QModelIndexList TreeViewAudioFile::selected() const
 }
 
 
-// drag and drop
+// events
 void TreeViewAudioFile::dragEnterEvent(QDragEnterEvent* event)
 {
     if (event->mimeData()->hasUrls())

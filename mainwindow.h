@@ -13,6 +13,7 @@
 #include "treeviewaudiofile.h"
 #include "parameterdialog.h"
 #include "progressdialog.h"
+#include "popup.h"
 
 // Qt classes
 #include <QFileDialog>
@@ -48,6 +49,8 @@ private slots:
     void importFolderDialog();
     void exportFolderDialog();
     void showExportFolder();
+    void enable();
+//    void popupNumNewFiles(const int nFiles);
 
 
 private:

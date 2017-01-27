@@ -36,6 +36,8 @@ void AF_Model::addAudioFiles(FileList fileList)
     _rootItem->appendChildren(fileList);
     endInsertRows();
     resort();
+
+//    emit nImportedFiles(fileList.size());
 }
 
 void AF_Model::removeAllRows()

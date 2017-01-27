@@ -1,19 +1,25 @@
 #include "backgroundworker.h"
 
-BackgroundWorker::BackgroundWorker(const QList<QUrl> urls, const AF_Item* root, QObject* parent) :
-    QObject(parent),
-    _urls(urls),
-    _root(root)
-
+// base class constructor
+BackgroundWorker::BackgroundWorker(QObject* parent) :
+    QObject(parent)
 {
     // don't allocate any new resources here (w/ new or similar)
     // or they'll belong to the calling thread (probably gui thread)
-
     disconnect();
     connect(this, SIGNAL(finished()), SLOT(deleteLater()));
 }
 
-void BackgroundWorker::importUrlsAsAudioFiles()
+
+// import audio files
+ImportWorker::ImportWorker(const QList<QUrl> urls,
+                           const AF_Item* root,
+                           QObject* parent) :
+    BackgroundWorker(parent),
+    _urls(urls),
+    _root(root) {}
+
+void ImportWorker::importUrlsAsAudioFiles()
 {
     // import valid files to a list
     FileList list;
@@ -23,12 +29,32 @@ void BackgroundWorker::importUrlsAsAudioFiles()
         if (_root != nullptr)
         {
             _root->filterDuplicates(list);
-//            const auto alreadyImported = [this](const QString path){return _root->hasChildPath(path); };
-//            erase_if(list, alreadyImported);
         }
 
         emit fileListReady(list);
     }
 
+    emit finished();
+}
+
+
+// process audio files
+DSP_Worker::DSP_Worker(ExternalInterface* const external,
+                       const QString destination,
+                       const vector<QString> userInput,
+                       AF_Item* root,
+                       QObject* parent) :
+    BackgroundWorker(parent),
+    _external(external),
+    _destination(destination),
+    _userInput(userInput),
+    _root(root) {}
+
+
+void DSP_Worker::processAudioFiles()
+{
+    void* arguments = _external->handleInput(_userInput);
+    _root->processAudioFiles(_external->process(), _destination, arguments);
+    free(arguments); // by standard, ok to free nullptr
     emit finished();
 }

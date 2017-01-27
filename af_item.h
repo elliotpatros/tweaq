@@ -8,7 +8,8 @@
 #include "af_properties.h"
 
 // Qt classes
-#include "QColor"
+#include <QColor>
+#include <QThread>
 
 // tweaq classes
 #include "externalinterface.h"

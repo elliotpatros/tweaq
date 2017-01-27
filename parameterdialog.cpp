@@ -20,7 +20,7 @@ ParameterDialog::ParameterDialog(const QString title, QWidget* parent) :
     setLayout(_layout);
 
     // setup label
-    _label->setAlignment(Qt::AlignHCenter);
+    _label->setAlignment(Qt::AlignCenter);
     _label->setText(title);
     _layout->addRow(_label);
 

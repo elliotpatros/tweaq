@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     backgroundworker.cpp \
     progressdialog.cpp \
     combobox.cpp \
-    fileimporter.cpp
+    fileimporter.cpp \
+    popup.cpp
 
 HEADERS  += mainwindow.h \
     tweaq.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     backgroundworker.h \
     progressdialog.h \
     combobox.h \
-    fileimporter.h
+    fileimporter.h \
+    popup.h
 
 APP_QML_FILES.path  = Contents/Resources/extern
 APP_QML_FILES.files = \

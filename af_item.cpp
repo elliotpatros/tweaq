@@ -35,6 +35,7 @@ void AF_Item::processAudioFiles(const ExternalProcess process, const QString out
 {
     for (AF_Item& file : _children)
     {
+        if (QThread::currentThread()->isInterruptionRequested()) return;
         if (file.wasProcessed()) continue;
 
         const QString input = file.absolutePath();

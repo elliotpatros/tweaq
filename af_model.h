@@ -48,6 +48,10 @@ public:
     int columnCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
 
+//signals:
+//    void nImportedFiles(const int);
+
+
 public slots:
     void addAudioFiles(FileList fileList);
 

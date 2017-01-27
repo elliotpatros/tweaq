@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget* const parent) :
     connect(ui->actionRemoveFinished, SIGNAL(triggered(bool)), SLOT(removeFinishedAudioFiles()));
     connect(ui->actionCloseTweaq, SIGNAL(triggered(bool)), SLOT(close()));
     connect(ui->actionMinimize, SIGNAL(triggered(bool)), SLOT(showMinimized()));
+//    connect(_audioFiles, SIGNAL(nImportedFiles(int)), SLOT(popupNumNewFiles(int)));
 
     // declare custom Qt meta types
     qRegisterMetaType<FileList>("FileList");
@@ -91,16 +92,17 @@ void MainWindow::showExportFolder()
 void MainWindow::importAudioFiles(const QList<QUrl> urls)
 {
     QThread* thread = new QThread;
-    BackgroundWorker* worker = new BackgroundWorker(urls, _audioFiles->rootItem());
-    ProgressDialog* dialog = new ProgressDialog(QStringLiteral("importing audio files..."), thread, this);
-
+    ImportWorker* worker = new ImportWorker(urls, _audioFiles->rootItem());
+    ProgressDialog* dialog = new ProgressDialog("importing audio files...", thread, this);
     if (thread == nullptr || worker == nullptr || dialog == nullptr)
-    {
-        // todo: handle this mess
+    {   // by standard, ok to delete nullptr
+        delete thread;
+        delete worker;
+        delete dialog;
+        return;
     }
 
     worker->moveToThread(thread);
-    dialog->setValue(0);
 
     connect(thread, SIGNAL(started()), worker, SLOT(importUrlsAsAudioFiles()));
     connect(worker, SIGNAL(fileListReady(FileList)), _audioFiles, SLOT(addAudioFiles(FileList)));
@@ -139,28 +141,54 @@ void MainWindow::removeFinishedAudioFiles()
 
 void MainWindow::processAudioFiles()
 {
-    const int processId = ui->comboBoxDSP->processIndex();
-
     // are we ready to process?
-    if (!_audioFiles->areAnyAudioFilesUnprocessed()) return importFilesDialog();
-    if (!_externals->isValid(processId))             return ui->comboBoxDSP->showPopup();
-    if (!ui->lineEdit->currentPathIsValid())         return exportFolderDialog();
+    const int processId = ui->comboBoxDSP->processIndex();
+    ExternalInterface* external = _externals->get(processId);
+    {
+        if (external == nullptr)                         return ui->comboBoxDSP->showPopup();
+        if (!_audioFiles->areAnyAudioFilesUnprocessed()) return importFilesDialog();
+        if (!ui->lineEdit->currentPathIsValid())         return exportFolderDialog();
+    }
 
-    // get parameter entries from user
-    ExternalInterface* external(_externals->get(processId));
-    if (external == nullptr) return;
+    // get process parameters from user
+    vector<QString> parameters;
+    {
+        ParameterDialog* dialog = new ParameterDialog(ui->comboBoxDSP->currentText(), this);
+        if (dialog == nullptr || dialog->show(external->setup()) == QDialog::Rejected) return;
+        parameters = dialog->entries();
+        delete dialog;
+    }
 
-    // make a dialog window for the user to enter parameters
-    unique_ptr<ParameterDialog> dialog(new ParameterDialog(ui->comboBoxDSP->currentText(), this));
-    if (dialog.get() == nullptr) return;
-    if (dialog->show(external->setup()) == QDialog::Rejected) return;
+    // process audio files on background thread
+    QThread* thread = new QThread;
+    DSP_Worker* worker = new DSP_Worker(external, ui->lineEdit->path(), parameters, _audioFiles->rootItem());
+    ProgressDialog* dialog = new ProgressDialog("processing audio files...", thread, this);
+    if (thread == nullptr || worker == nullptr || dialog == nullptr)
+    {   // by standard, ok to delete nullptr
+        delete thread;
+        delete worker;
+        delete dialog;
+        return;
+    }
 
-    // get entries from user
-    void* arguments = external->handleInput(dialog->entries());
+    worker->moveToThread(thread);
 
-    // process files
-    _audioFiles->rootItem()->processAudioFiles(external->process(), ui->lineEdit->path(), arguments);
+    connect(thread, SIGNAL(started()), worker, SLOT(processAudioFiles()));
+    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), SLOT(enable()));
 
-    // clean up
-    if (arguments != nullptr) free(arguments);
+    thread->start();
+    setEnabled(false);
 }
+
+void MainWindow::enable()
+{
+    setEnabled(true);
+}
+
+//void MainWindow::popupNumNewFiles(const int nFiles)
+//{
+//    Popup* popup = new Popup;
+//    popup->showMessage(QString("imported %1 new files").arg(nFiles));
+//}

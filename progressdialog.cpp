@@ -14,6 +14,7 @@ ProgressDialog::ProgressDialog(const QString title, QThread* thread, QWidget* pa
 
     setWindowModality(Qt::WindowModal);
     setMinimumDuration(500);
+    setValue(0);
 }
 
 void ProgressDialog::askThreadToStop()
