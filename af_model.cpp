@@ -28,7 +28,7 @@ AF_Model& AF_Model::operator= (const AF_Model& other)
 
 // sets
 void AF_Model::addAudioFiles(FileList fileList)
-{   // todo: refactor sound to audio everywhere
+{
     if (fileList.empty()) return;
 
     // add imported files to model
@@ -141,17 +141,17 @@ int AF_Model::columnCount(const QModelIndex& parent) const
 
 
 // helpers
-void AF_Model::resort() const noexcept
+void AF_Model::resort() const
 {
     _sortProxy->sort(_sortProxy->sortColumn() - 1);
 }
 
-AF_Item* AF_Model::itemAtIndex(const QModelIndex& index) const noexcept
+AF_Item* AF_Model::itemAtIndex(const QModelIndex& index) const
 {
     return reinterpret_cast<AF_Item*>(index.internalPointer());
 }
 
-AF_Item* AF_Model::itemAtParentIndex(const QModelIndex& parentIndex) const noexcept
+AF_Item* AF_Model::itemAtParentIndex(const QModelIndex& parentIndex) const
 {
     return parentIndex.isValid() ? itemAtIndex(parentIndex) : _rootItem.get();
 }

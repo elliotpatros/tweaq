@@ -17,22 +17,17 @@ void BackgroundWorker::importUrlsAsAudioFiles()
 {
     // import valid files to a list
     FileList list;
-    if (AudioFileImporter().importUrls(_urls, list) == FileImporter::Canceled)
+    if (AudioFileImporter().importUrls(_urls, list) == FileImporter::Success)
     {
-        return;
-    }
-
-    // delete any duplicate items
-    if (_root != nullptr)
-    {
-        const auto alreadyImported = [this](const QString path)
+        // delete any duplicate items
+        if (_root != nullptr)
         {
-            return _root->hasChildPath(path);
-        };
+            const auto alreadyImported = [this](const QString path){return _root->hasChildPath(path); };
+            erase_if(list, alreadyImported);
+        }
 
-        erase_if(list, alreadyImported);
+        emit fileListReady(list);
     }
 
-    emit fileListReady(list);
     emit finished();
 }

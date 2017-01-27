@@ -99,6 +99,11 @@ void MainWindow::importAudioFiles(const QList<QUrl> urls)
     BackgroundWorker* worker = new BackgroundWorker(urls, _audioFiles->rootItem());
     ProgressDialog* dialog = new ProgressDialog(QStringLiteral("importing audio files..."), thread, this);
 
+    if (thread == nullptr || worker == nullptr || dialog == nullptr)
+    {
+        // todo: handle this mess
+    }
+
     worker->moveToThread(thread);
     dialog->setValue(0);
 

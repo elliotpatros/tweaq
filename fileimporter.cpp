@@ -12,6 +12,8 @@ FileImporter::importUrls(const QList<QUrl> urls, FileList &fileList, const bool 
             return Canceled;
         }
     }
+
+    return Success;
 }
 
 FileImporter::Result
