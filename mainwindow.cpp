@@ -8,10 +8,8 @@ MainWindow::MainWindow(QWidget* const parent) :
     _audioFiles(new AF_Model(this)),
     _externals(new ExternalInterfaceManager(AppMeta::pathToBundledExternals()))
 {
-    // expand user interface
+    // setup user interface
     ui->setupUi(this);
-
-    // setup connection rules
     disconnect();
 
     // setup main window
@@ -33,12 +31,10 @@ MainWindow::MainWindow(QWidget* const parent) :
     ui->comboBoxRemove->addNamedAction("selected", [this]{removeSelectedAudioFiles();});
     ui->comboBoxRemove->addNamedAction("everything", [this]{removeAllAudioFiles();});
 
-    // custom connection rules
+    // custom connections
     connect(ui->buttonExportTo, SIGNAL(released()), SLOT(exportFolderDialog()));
     connect(ui->buttonProcess, SIGNAL(released()), SLOT(processAudioFiles()));
-
     connect(ui->treeView, SIGNAL(droppedUrls(QList<QUrl>)), SLOT(importAudioFiles(QList<QUrl>)));
-
     connect(ui->actionChooseExportFolder, SIGNAL(triggered(bool)), SLOT(exportFolderDialog()));
     connect(ui->actionImportAudioFiles, SIGNAL(triggered(bool)), SLOT(importFilesDialog()));
     connect(ui->actionImportFolder, SIGNAL(triggered(bool)), SLOT(importFolderDialog()));
@@ -49,7 +45,6 @@ MainWindow::MainWindow(QWidget* const parent) :
     connect(ui->actionRemoveFinished, SIGNAL(triggered(bool)), SLOT(removeFinishedAudioFiles()));
     connect(ui->actionCloseTweaq, SIGNAL(triggered(bool)), SLOT(close()));
     connect(ui->actionMinimize, SIGNAL(triggered(bool)), SLOT(showMinimized()));
-
 
     // declare custom Qt meta types
     qRegisterMetaType<FileList>("FileList");
@@ -67,7 +62,7 @@ MainWindow::~MainWindow()
 void MainWindow::exportFolderDialog()
 {
     const QString folderName =
-            QFileDialog::getExistingDirectory(this, "save audio files to...", ui->lineEdit->path());
+          QFileDialog::getExistingDirectory(this, "save audio files to...", ui->lineEdit->path());
 
     if (!folderName.isEmpty())
     {
@@ -77,14 +72,14 @@ void MainWindow::exportFolderDialog()
 
 void MainWindow::importFilesDialog()
 {
-    const QUrl openFolder(QUrl::fromLocalFile(ui->lineEdit->path()));
+    const QUrl openFolder = QUrl::fromLocalFile(ui->lineEdit->path());
     importAudioFiles(QFileDialog::getOpenFileUrls(this, "import audio files...", openFolder));
 }
 
 void MainWindow::importFolderDialog()
 {
-    const QUrl openAt(QUrl::fromLocalFile(ui->lineEdit->path()));
-    const QUrl opened(QFileDialog::getExistingDirectoryUrl(this, "import folder...", openAt));
+    const QUrl openAt = QUrl::fromLocalFile(ui->lineEdit->path());
+    const QUrl opened = QFileDialog::getExistingDirectoryUrl(this, "import folder...", openAt);
     importAudioFiles(QList<QUrl>() << opened);
 }
 

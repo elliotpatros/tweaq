@@ -22,8 +22,9 @@ void BackgroundWorker::importUrlsAsAudioFiles()
         // delete any duplicate items
         if (_root != nullptr)
         {
-            const auto alreadyImported = [this](const QString path){return _root->hasChildPath(path); };
-            erase_if(list, alreadyImported);
+            _root->filterDuplicates(list);
+//            const auto alreadyImported = [this](const QString path){return _root->hasChildPath(path); };
+//            erase_if(list, alreadyImported);
         }
 
         emit fileListReady(list);

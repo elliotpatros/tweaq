@@ -25,6 +25,12 @@ AF_Item& AF_Item::operator=(const AF_Item& other)
 
 
 // sets
+void AF_Item::filterDuplicates(FileList& list) const
+{
+    const auto alreadyImported = [this](const QString path){return this->hasChildPath(path); };
+    erase_if(list, alreadyImported);
+}
+
 void AF_Item::processAudioFiles(const ExternalProcess process, const QString outputDir, void* args)
 {
     for (AF_Item& file : _children)

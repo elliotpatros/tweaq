@@ -28,6 +28,7 @@ public:
     void processAudioFiles(const ExternalProcess process, const QString outputDir, void* args);
     void appendChildren(const FileList list);
     void removeChildren(const vector<int> list = vector<int>());
+    void filterDuplicates(FileList& list) const;
 
     // gets
     bool hasUnprocessedChildren() const;

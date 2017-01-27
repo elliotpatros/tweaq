@@ -7,7 +7,7 @@ TreeViewAudioFile::TreeViewAudioFile(QWidget* const parent) :
     QTreeView(parent)
 {
     // setup connection rules
-    this->disconnect();
+    disconnect();
 
     // setup look and feel
     setUniformRowHeights(true);
@@ -17,6 +17,7 @@ TreeViewAudioFile::TreeViewAudioFile(QWidget* const parent) :
     setItemsExpandable(false);
     setExpandsOnDoubleClick(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
+    sortByColumn(1);
 
     // setup drag and drop
     setAcceptDrops(true);
