@@ -5,11 +5,11 @@
 #include "tweaq.h"
 
 // base class
-#include "comboboxtweaq.h"
+#include "combobox.h"
 
 using TweaqAction = std::function<void()>;
 
-class ComboBoxRemove : public ComboBoxTweaq
+class ComboBoxRemove : public ComboBox
 {
     Q_OBJECT
 

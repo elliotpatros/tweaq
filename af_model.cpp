@@ -27,18 +27,8 @@ AF_Model& AF_Model::operator= (const AF_Model& other)
 
 
 // sets
-void AF_Model::importAudioFiles(const QList<QUrl> urls)
+void AF_Model::addAudioFiles(FileList fileList)
 {   // todo: refactor sound to audio everywhere
-    if (urls.isEmpty()) return;
-
-    // import audio files
-    FileList fileList;
-    AudioFileImporter().importUrls(urls, fileList);
-    if (fileList.empty()) return;
-
-    // remove paths that have already been imported
-    const auto alreadyImported = [this](const QString path){return _rootItem->hasChildPath(path); };
-    erase_if(fileList, alreadyImported);
     if (fileList.empty()) return;
 
     // add imported files to model

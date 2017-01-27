@@ -1,7 +1,7 @@
 #include "comboboxdsp.h"
 
 ComboBoxDSP::ComboBoxDSP(QWidget* const parent) :
-    ComboBoxTweaq(parent) {}
+    ComboBox(parent) {}
 
 bool ComboBoxDSP::processHasBeenChosen() const
 {

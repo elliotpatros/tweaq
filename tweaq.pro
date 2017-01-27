@@ -11,12 +11,10 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     treeviewaudiofile.cpp \
     lineeditexportto.cpp \
-    comboboxtweaq.cpp \
     libsf.cpp \
     af_properties.cpp \
     af_item.cpp \
     af_model.cpp \
-    fileimporter.cpp \
     comboboxdsp.cpp \
     comboboxremove.cpp \
     tweaqapi.cpp \
@@ -25,18 +23,19 @@ SOURCES += main.cpp\
     parameterhandle.cpp \
     externalinterface.cpp \
     externalinterfacemanager.cpp \
-    backgroundworker.cpp
+    backgroundworker.cpp \
+    progressdialog.cpp \
+    combobox.cpp \
+    fileimporter.cpp
 
 HEADERS  += mainwindow.h \
     tweaq.h \
     treeviewaudiofile.h \
     lineeditexportto.h \
-    comboboxtweaq.h \
     libsf.h \
     af_properties.h \
     af_item.h \
     af_model.h \
-    fileimporter.h \
     comboboxdsp.h \
     comboboxremove.h \
     mainwindowhelper.h \
@@ -46,7 +45,10 @@ HEADERS  += mainwindow.h \
     parameterhandle.h \
     externalinterface.h \
     externalinterfacemanager.h \
-    backgroundworker.h
+    backgroundworker.h \
+    progressdialog.h \
+    combobox.h \
+    fileimporter.h
 
 APP_QML_FILES.path  = Contents/Resources/extern
 APP_QML_FILES.files = \

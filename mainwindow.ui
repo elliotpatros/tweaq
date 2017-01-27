@@ -58,13 +58,6 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayoutBottom">
       <item>
-       <widget class="QPushButton" name="buttonTest">
-        <property name="text">
-         <string>test threads</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="buttonProcess">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">

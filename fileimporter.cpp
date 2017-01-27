@@ -1,17 +1,21 @@
 #include "fileimporter.h"
+#include <QThread>
 
 // gets
-void FileImporter::importUrls(const QList<QUrl> urls, FileList &fileList, const bool recursive) const
+FileImporter::Result
+FileImporter::importUrls(const QList<QUrl> urls, FileList &fileList, const bool recursive) const
 {
     for (const QUrl url : urls)
     {
-        importPath(url.toLocalFile(), fileList, recursive);
+        if (importPath(url.toLocalFile(), fileList, recursive) == Canceled)
+        {
+            return Canceled;
+        }
     }
 }
 
-void FileImporter::importPath(const QString path,
-                              FileList& fileList,
-                              const bool recursive) const
+FileImporter::Result
+FileImporter::importPath(const QString path, FileList& fileList, const bool recursive) const
 {
     const auto searchType = recursive ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
 
@@ -20,19 +24,35 @@ void FileImporter::importPath(const QString path,
         QDirIterator dit(path, QDir::Files | QDir::NoDotAndDotDot, searchType);
         while (dit.hasNext())
         {
-            appendIfValid(dit.next(), fileList);
+            if (appendIfValid(dit.next(), fileList) == Canceled)
+            {
+                return Canceled;
+            }
         }
     }
     else
     {
-        appendIfValid(path, fileList);
+        if (appendIfValid(path, fileList) == Canceled)
+        {
+            return Canceled;
+        }
     }
+
+    return Success;
 }
 
-void FileImporter::appendIfValid(const QString path, FileList& fileList) const
+FileImporter::Result
+FileImporter::appendIfValid(const QString path, FileList& fileList) const
 {
+    if (QThread::currentThread()->isInterruptionRequested())
+    {
+        return Canceled;
+    }
+
     if (fileIsValid(path))
     {
         fileList.emplace_back(path);
     }
+
+    return Success;
 }

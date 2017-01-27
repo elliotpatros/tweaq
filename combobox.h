@@ -7,12 +7,12 @@
 // base class
 #include <QComboBox>
 
-class ComboBoxTweaq : public QComboBox
+class ComboBox : public QComboBox
 {
     Q_OBJECT
 
 public:
-    explicit ComboBoxTweaq(QWidget* const parent = nullptr);
+    explicit ComboBox(QWidget* const parent = nullptr);
 
     // sets
     void setTitle(const QString title);

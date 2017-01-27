@@ -9,10 +9,10 @@
 
 // Qt classes
 #include <QThread>
-#include "ui_mainwindow.h"
 
 // tweaq classes
-#include "af_model.h"
+#include "fileimporter.h"
+#include "af_item.h"
 
 class BackgroundWorker : public QObject
 {
@@ -20,22 +20,22 @@ class BackgroundWorker : public QObject
 
 public:
     explicit BackgroundWorker(const QList<QUrl> urls = QList<QUrl>(),
+                              const AF_Item* root = nullptr,
                               QObject* parent = nullptr);
-    ~BackgroundWorker();
 
 
 public slots:
-    void process();
-    void importAudioFiles();
+    void importUrlsAsAudioFiles();
 
 
 signals:
+    void fileListReady(const FileList fileList);
     void finished();
-    void error(QString errorMessage);
 
 
 private:
     const QList<QUrl> _urls;
+    const AF_Item* _root; // non-owned
 };
 
 #endif // BACKGROUNDWORKER_H

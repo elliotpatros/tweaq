@@ -5,9 +5,9 @@
 #include "tweaq.h"
 
 // base class
-#include "comboboxtweaq.h"
+#include "combobox.h"
 
-class ComboBoxDSP : public ComboBoxTweaq
+class ComboBoxDSP : public ComboBox
 {
     Q_OBJECT
 

@@ -12,6 +12,7 @@
 #include "comboboxdsp.h"
 #include "treeviewaudiofile.h"
 #include "parameterdialog.h"
+#include "progressdialog.h"
 
 // Qt classes
 #include <QFileDialog>
@@ -48,14 +49,9 @@ private slots:
     void exportFolderDialog();
     void showExportFolder();
 
-    // test deleteme
-//    void importOnBackgroundThread(const QList<QUrl> urls);
-    void testBackgroundThread();
-    void errorString(QString msg);
-
 
 private:
-    Ui::MainWindow* _ui;
+    Ui::MainWindow* ui;
     AF_Model* _audioFiles;
     unique_ptr<ExternalInterfaceManager> _externals;
 };

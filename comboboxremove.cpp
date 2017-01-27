@@ -1,7 +1,7 @@
 #include "comboboxremove.h"
 
 ComboBoxRemove::ComboBoxRemove(QWidget * const parent) :
-    ComboBoxTweaq(parent)
+    ComboBox(parent)
 {
     // custom connection rules
     connect(this, SIGNAL(currentIndexChanged(QString)), this, SLOT(doAction(QString)));

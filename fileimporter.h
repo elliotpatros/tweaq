@@ -16,14 +16,11 @@
 class FileImporter
 {
 public:
-    // gets
-    void importUrls(const QList<QUrl> urls,
-                    FileList& fileList,
-                    const bool recursive = true) const;
+    enum Result {Success, Canceled};
 
-    void importPath(const QString path,
-                    FileList& fileList,
-                    const bool recursive = true) const;
+    // gets
+    Result importUrls(const QList<QUrl> urls, FileList& fileList, const bool recursive = true) const;
+    Result importPath(const QString path, FileList& fileList, const bool recursive = true) const;
 
 
 protected:
@@ -31,7 +28,7 @@ protected:
 
 
 private:
-    void appendIfValid(const QString path, FileList& fileList) const;
+    Result appendIfValid(const QString path, FileList& fileList) const;
 };
 
 

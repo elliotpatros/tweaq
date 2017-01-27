@@ -1,10 +1,10 @@
-#include "comboboxtweaq.h"
+#include "combobox.h"
 
 // static members
-const int ComboBoxTweaq::_nTitleItems = 2;
+const int ComboBox::_nTitleItems = 2;
 
 // constructor
-ComboBoxTweaq::ComboBoxTweaq(QWidget* const parent) :
+ComboBox::ComboBox(QWidget* const parent) :
     QComboBox(parent)
 {
     // setup connection rules
@@ -18,7 +18,7 @@ ComboBoxTweaq::ComboBoxTweaq(QWidget* const parent) :
 
 
 // sets
-void ComboBoxTweaq::setTitle(const QString title)
+void ComboBox::setTitle(const QString title)
 {
     setItemText(0, title);
 }

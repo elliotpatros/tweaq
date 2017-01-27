@@ -29,7 +29,6 @@ public:
     AF_Model& operator= (const AF_Model& other);
 
     // sets
-    void importAudioFiles(const QList<QUrl> urls);
     void removeAllRows();
     void removeFinishedRows();
     void removeSelectedRows(const QModelIndexList list);
@@ -48,15 +47,20 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
     int columnCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
+
+public slots:
+    void addAudioFiles(FileList fileList);
+
+
 private:
     // owned members
     unique_ptr<AF_Item> _rootItem;
     QSortFilterProxyModel* _sortProxy;
 
     // convenience functions
-    AF_Item* itemAtIndex(const QModelIndex& index) const noexcept;
-    AF_Item* itemAtParentIndex(const QModelIndex& parentIndex) const noexcept;
-    void resort() const noexcept;
+    AF_Item* itemAtIndex(const QModelIndex& index) const;
+    AF_Item* itemAtParentIndex(const QModelIndex& parentIndex) const;
+    void resort() const;
     void setupSortingProxy();
     vector<int> mapRowsFromSortingProxy(const QModelIndexList list) const;
     void removeAListOfRows(const vector<int> rows);
