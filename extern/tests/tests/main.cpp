@@ -10,13 +10,13 @@
 #include <vector>
 
 #include "tweaqapi.h"
-//#include "test_change_gain.h"
+#include "test_change_gain.h"
 //#include "test_mix_to_mono.h"
 //#include "test_normalize.h"
 //#include "test_deinterleave.h"
 //#include "test_fade_in.h"
 //#include "test_fade_out.h"
-#include "test_fade.h"
+//#include "test_fade_in_and_out.h"
 
 using std::cout;
 using std::endl;
@@ -44,7 +44,7 @@ int main(int argc, const char * argv[])
     {
         Parameter p;
         init_parameter(p);
-        fade_setup(field, p);
+        change_gain_setup(field, p);
         
         const int lastField = field;
         field += p.defaultValue != 0;
@@ -59,12 +59,12 @@ int main(int argc, const char * argv[])
     
     
     // TEST INPUT HANDLING...
-    const char* responses[] = {"10", "samples", "linear", "3", "samples", "exponential"};
-    void* input = fade_handleInput(sizeof(responses) / sizeof(char*), responses);
+    const char* responses[] = {"-3", "dB."};
+    void* input = change_gain_handleInput(sizeof(responses) / sizeof(char*), responses);
     
     
     // TEST PROCESSING...
-    bool success = fade_process("/Users/demo/Desktop/testin/quad.wav",
+    bool success = change_gain_process("/Users/demo/Desktop/testin/quad.wav",
                                 "/Users/demo/Desktop/testout/quad.wav",
                                 input);
     

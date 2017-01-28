@@ -13,7 +13,7 @@ ProgressDialog::ProgressDialog(const QString title, QThread* thread, QWidget* pa
     }
 
     setWindowModality(Qt::WindowModal);
-    setMinimumDuration(500);
+    setMinimumDuration(240);
     setValue(0);
 }
 

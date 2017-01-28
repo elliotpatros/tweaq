@@ -14,7 +14,7 @@ extern "C"
     };
     
     struct Input {
-        CurveType fade;
+        CurveType curve;
         TimeType  timeType;
         double    fadeDuration;
     };
@@ -50,6 +50,7 @@ extern "C"
         
         // get duration as double
         input->fadeDuration = fabs(string_to_double(argv[kDuration]));
+        if (input->fadeDuration < 2.) input->fadeDuration = 2.;
         
         // get time type (ms, sec, samples)
         input->timeType = (TimeType)0;
@@ -63,12 +64,12 @@ extern "C"
         }
         
         // set fade table
-        input->fade = Curves[0];
+        input->curve = Curves[0];
         for (int i = 1; i < nCurveTypes; i++)
         {
             if (strcmp(argv[kCurveType], curveNames[i]) == 0)
             {
-                input->fade = Curves[i];
+                input->curve = Curves[i];
                 break;
             }
         }
@@ -87,8 +88,18 @@ extern "C"
         if (filein == 0) return false;
         
         // get the fade duration in samples
-        to_samples(input->fadeDuration, input->timeType, sfinfo.samplerate);
-        clip_double(input->fadeDuration, 2., sfinfo.frames - 1);
+        if (input->timeType == Milliseconds)
+        {
+            input->fadeDuration *= sfinfo.samplerate * 0.001;
+        }
+        else if (input->timeType == Seconds)
+        {
+            input->fadeDuration *= sfinfo.samplerate;
+        }
+        if (input->fadeDuration > sfinfo.frames)
+        {
+            input->fadeDuration = sfinfo.frames - 1;
+        }
         
         // setup audiosample buffer
         const size_t nChannels = sfinfo.channels;
@@ -110,20 +121,17 @@ extern "C"
         }
         
         // do dsp
-        double framesread = 0.;
-        size_t samplesread;
+        size_t samplesread, totalFramesRead = 0;
         while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
         {
-            for (size_t sample = 0; sample < samplesread; framesread += 1.)
+            for (size_t sample = 0; sample < samplesread; totalFramesRead++)
             {
-                const double fadeBy = (framesread < input->fadeDuration)
-                    ? input->fade(framesread / input->fadeDuration)
-                    : 1.;
-                
+                const double fadeBy = input->curve((double)totalFramesRead / input->fadeDuration);
                 for (size_t channel = 0; channel < nChannels; channel++, sample++)
                 {
                     buffer[sample] *= fadeBy;
                 }
+                
             }
             
             sf_write_double(fileout, buffer, samplesread);

@@ -7,6 +7,9 @@ extern "C"
 #endif // def __cplusplus
     
     enum ParameterFields {
+        kDurationIn,
+        kTimeTypeIn,
+        kCurveTypeIn,
         kDurationOut,
         kTimeTypeOut,
         kCurveTypeOut,
@@ -14,8 +17,11 @@ extern "C"
     };
     
     struct Input {
+        CurveType fadeIn;
         CurveType fadeOut;
+        TimeType  timeTypeIn;
         TimeType  timeTypeOut;
+        double    fadeDurationIn;
         double    fadeDurationOut;
     };
     
@@ -24,10 +30,19 @@ extern "C"
     static const CurveType Curves[] = {curve_log, curve_exp, curve_lin, curve_s, curve_none};
     static const size_t nCurveTypes = sizeof(Curves) / sizeof(CurveType);
     
-    void fade_out_setup(const int fieldNumber, Parameter& p)
+    void fade_in_and_out_setup(const int fieldNumber, Parameter& p)
     {
         switch (fieldNumber)
         {
+            case kDurationIn:
+                set_parameter_description(p, "fade in for how long?");
+                set_parameter_default(p, "125.0");
+                set_parameter_labels(p, NumTimeTypes, timeTypes);
+                break;
+            case kCurveTypeIn:
+                set_parameter_description(p, "what kind of curve should the fade in have?");
+                set_parameter_labels(p, nCurveTypes, curveNames);
+                break;
             case kDurationOut:
                 set_parameter_description(p, "fade out for how long?");
                 set_parameter_default(p, "400.0");
@@ -41,7 +56,7 @@ extern "C"
         }
     }
     
-    void* fade_out_handleInput(int argc, const char* argv[])
+    void* fade_in_and_out_handleInput(int argc, const char* argv[])
     {
         if (argc != kNumParameters) return 0;
         
@@ -49,9 +64,20 @@ extern "C"
         if (input == 0) return input;
         
         // get duration as double
+        input->fadeDurationIn = string_to_double(argv[kDurationIn]);
         input->fadeDurationOut = string_to_double(argv[kDurationOut]);
         
         // get time type (ms, sec, samples)
+        input->timeTypeIn = (TimeType)0;
+        for (int i = 1; i < NumTimeTypes; i++)
+        {
+            if (strcmp(argv[kTimeTypeIn], timeTypes[i]) == 0)
+            {
+                input->timeTypeIn = (TimeType)i;
+                break;
+            }
+        }
+        
         input->timeTypeOut = (TimeType)0;
         for (int i = 1; i < NumTimeTypes; i++)
         {
@@ -63,6 +89,16 @@ extern "C"
         }
         
         // set fade table
+        input->fadeIn = Curves[0];
+        for (int i = 1; i < nCurveTypes; i++)
+        {
+            if (strcmp(argv[kCurveTypeIn], curveNames[i]) == 0)
+            {
+                input->fadeIn = Curves[i];
+                break;
+            }
+        }
+        
         input->fadeOut = Curves[0];
         for (int i = 1; i < nCurveTypes; i++)
         {
@@ -76,7 +112,7 @@ extern "C"
         return input;
     }
     
-    bool fade_out_process(const char* pathin, const char* pathout, void* args)
+    bool fade_in_and_out_process(const char* pathin, const char* pathout, void* args)
     {
         if (args == 0) return false;
         Input* input = (Input*)args;
@@ -87,6 +123,9 @@ extern "C"
         if (filein == 0) return false;
         
         // get the fade duration in samples
+        to_samples(input->fadeDurationIn, input->timeTypeIn, sfinfo.samplerate);
+        clip_double(input->fadeDurationIn, 0., sfinfo.frames - 1);
+        
         to_samples(input->fadeDurationOut, input->timeTypeOut, sfinfo.samplerate);
         clip_double(input->fadeDurationOut, 0., sfinfo.frames - 1);
         const double startFadeout = sfinfo.frames - (input->fadeDurationOut + 1.);
@@ -121,9 +160,13 @@ extern "C"
                 ? (1. - input->fadeOut((framesread - startFadeout) / input->fadeDurationOut))
                 : 1.;
                 
+                const double fadeInBy = (framesread < input->fadeDurationIn)
+                ? input->fadeIn(framesread / input->fadeDurationIn)
+                : 1.;
+                
                 for (size_t channel = 0; channel < nChannels; channel++, sample++)
                 {
-                    buffer[sample] *= fadeOutBy;
+                    buffer[sample] *= fadeInBy * fadeOutBy;
                 }
             }
             

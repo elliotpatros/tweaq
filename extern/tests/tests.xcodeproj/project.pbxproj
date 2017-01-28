@@ -27,8 +27,9 @@
 
 /* Begin PBXFileReference section */
 		B407BE581E3598330067B7FC /* test_mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_mix_to_mono.h; sourceTree = "<group>"; };
+		B4363B771E3C213600059A3A /* test_fade_in_and_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_in_and_out.h; sourceTree = "<group>"; };
 		B456EC221E39889800D86B7E /* test_fade_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_out.h; sourceTree = "<group>"; };
-		B456EC231E39942C00D86B7E /* test_fade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade.h; sourceTree = "<group>"; };
+		B456EC231E39942C00D86B7E /* _old_test_fade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _old_test_fade.h; sourceTree = "<group>"; };
 		B45F06C41E395B9400E4B26F /* ExternalHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalHelpers.h; path = ../../src/ExternalHelpers.h; sourceTree = "<group>"; };
 		B460FECF1E37E8C600B4B668 /* test_fade_in.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_in.h; sourceTree = "<group>"; };
 		B46B0D341E36C60A00C5C35E /* test_normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_normalize.h; sourceTree = "<group>"; };
@@ -129,8 +130,9 @@
 		B4D0559E1E2ED5DE00F6AC11 /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				B4363B771E3C213600059A3A /* test_fade_in_and_out.h */,
 				B4D0559F1E2ED5DE00F6AC11 /* main.cpp */,
-				B456EC231E39942C00D86B7E /* test_fade.h */,
+				B456EC231E39942C00D86B7E /* _old_test_fade.h */,
 				B460FECF1E37E8C600B4B668 /* test_fade_in.h */,
 				B456EC221E39889800D86B7E /* test_fade_out.h */,
 				B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */,

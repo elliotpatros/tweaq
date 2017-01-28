@@ -58,7 +58,9 @@ APP_QML_FILES.files = \
     $$PWD/extern/libmix_to_mono.so \
     $$PWD/extern/libnormalize.so \
     $$PWD/extern/libdeinterleave.so \
-    $$PWD/extern/libfade_in.so
+    $$PWD/extern/libfade_in.so \
+    $$PWD/extern/libfade_out.so \
+    $$PWD/extern/libfade_in_and_out.so
 
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 

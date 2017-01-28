@@ -175,13 +175,11 @@ void MainWindow::processAudioFiles()
     connect(thread, SIGNAL(started()), worker, SLOT(processAudioFiles()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), SLOT(enable()));
+    connect(thread, SIGNAL(finished()), _audioFiles, SLOT(resetInternalData()));
+    // todo: resetInternalData() is too heavy-handed. it's called here because
+    // i need to force the model to redraw itself. instead though, the process_audio
+    // function should be moved from the root item to the model, which can call dataChanged()
+    // for each item as it's processed (or for all at once at the end).
 
     thread->start();
-    setEnabled(false);
-}
-
-void MainWindow::enable()
-{
-    setEnabled(true);
 }
