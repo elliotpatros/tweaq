@@ -9,7 +9,6 @@ TreeViewAudioFile::TreeViewAudioFile(QWidget* const parent) :
 
     // setup look and feel
     setUniformRowHeights(true);
-    setAlternatingRowColors(true);
     setIndentation(0);
     setRootIsDecorated(false);
     setItemsExpandable(false);

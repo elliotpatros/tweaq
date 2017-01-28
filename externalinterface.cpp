@@ -10,7 +10,7 @@ QString ExternalInterface::libraryName() const
 
 QString ExternalInterface::readableName() const
 {
-    return libraryName().replace(QStringLiteral("_"), QStringLiteral(" "));
+    return libraryName().replace("_", " ");
 }
 
 
@@ -59,21 +59,21 @@ void* ExternalInterface::handleInput(const vector<QString> responses) const
 QFunctionPointer ExternalInterface::functionPointer(const QString functionName) const
 {
     QLibrary lib(_absolutePath);
-    const QString function(libraryName() % QStringLiteral("_") % functionName);
+    const QString function(libraryName() % "_" % functionName);
     return lib.resolve(function.toUtf8());
 }
 
 ExternalSetup ExternalInterface::functionSetup() const
 {
-    return reinterpret_cast<ExternalSetup>(functionPointer(QStringLiteral("setup")));
+    return reinterpret_cast<ExternalSetup>(functionPointer("setup"));
 }
 
 ExternalHandleInput ExternalInterface::functionHandleInput() const
 {
-    return reinterpret_cast<ExternalHandleInput>(functionPointer(QStringLiteral("handleInput")));
+    return reinterpret_cast<ExternalHandleInput>(functionPointer("handleInput"));
 }
 
 ExternalProcess ExternalInterface::process() const
 {
-    return reinterpret_cast<ExternalProcess>(functionPointer(QStringLiteral("process")));
+    return reinterpret_cast<ExternalProcess>(functionPointer("process"));
 }

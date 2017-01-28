@@ -1,7 +1,7 @@
 #include "progressdialog.h"
 
 ProgressDialog::ProgressDialog(const QString title, QThread* thread, QWidget* parent) :
-    QProgressDialog(title, QStringLiteral("Cancel"), 0, 0, parent),
+    QProgressDialog(title, "Cancel", 0, 0, parent),
     _thread(thread)
 {
     // setup custom connections

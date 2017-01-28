@@ -16,7 +16,7 @@ class ProgressDialog : public QProgressDialog
     Q_OBJECT
 
 public:
-    explicit ProgressDialog(const QString title = QStringLiteral("progress..."),
+    explicit ProgressDialog(const QString title = "progress...",
                             QThread* thread = nullptr,
                             QWidget* parent = nullptr);
 

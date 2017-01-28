@@ -84,7 +84,7 @@ vector<QString> LibSF::generateValidExtensions()
         return info.extension;
     });
 
-    list.emplace_back(QStringLiteral("aif"));
+    list.emplace_back("aif");
     std::sort(list.begin(), list.end());
     list.erase(std::unique(list.begin(), list.end()), list.end());
 
