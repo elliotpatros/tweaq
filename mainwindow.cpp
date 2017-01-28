@@ -45,7 +45,6 @@ MainWindow::MainWindow(QWidget* const parent) :
     connect(ui->actionRemoveFinished, SIGNAL(triggered(bool)), SLOT(removeFinishedAudioFiles()));
     connect(ui->actionCloseTweaq, SIGNAL(triggered(bool)), SLOT(close()));
     connect(ui->actionMinimize, SIGNAL(triggered(bool)), SLOT(showMinimized()));
-//    connect(_audioFiles, SIGNAL(nImportedFiles(int)), SLOT(popupNumNewFiles(int)));
 
     // declare custom Qt meta types
     qRegisterMetaType<FileList>("FileList");
@@ -186,9 +185,3 @@ void MainWindow::enable()
 {
     setEnabled(true);
 }
-
-//void MainWindow::popupNumNewFiles(const int nFiles)
-//{
-//    Popup* popup = new Popup;
-//    popup->showMessage(QString("imported %1 new files").arg(nFiles));
-//}

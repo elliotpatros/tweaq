@@ -50,7 +50,6 @@ private slots:
     void exportFolderDialog();
     void showExportFolder();
     void enable();
-//    void popupNumNewFiles(const int nFiles);
 
 
 private:

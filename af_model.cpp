@@ -36,8 +36,6 @@ void AF_Model::addAudioFiles(FileList fileList)
     _rootItem->appendChildren(fileList);
     endInsertRows();
     resort();
-
-//    emit nImportedFiles(fileList.size());
 }
 
 void AF_Model::removeAllRows()
@@ -57,7 +55,6 @@ void AF_Model::removeFinishedRows()
 
 void AF_Model::removeSelectedRows(const QModelIndexList list)
 {
-    if (list.isEmpty()) return;
     removeAListOfRows(mapRowsFromSortingProxy(list));
 }
 
@@ -169,6 +166,7 @@ vector<int> AF_Model::mapRowsFromSortingProxy(const QModelIndexList list) const
 {
     const int nVisibleColumns = columnCount() - 1;
     vector<int> rows(list.size() / nVisibleColumns);
+    if (rows.empty()) return rows;
 
     int i = 0;
     std::generate(rows.begin(), rows.end(), [&]
