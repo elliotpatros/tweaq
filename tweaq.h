@@ -8,6 +8,7 @@
 #include <map>
 
 // Qt classes
+#include <QDebug>
 #include <QStringList>
 #include <QStringBuilder>
 

@@ -5,7 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = tweaq
 TEMPLATE = app
 
-CONFIG += release
+CONFIG += debug
 
 SOURCES += main.cpp\
     mainwindow.cpp \
