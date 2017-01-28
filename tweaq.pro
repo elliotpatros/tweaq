@@ -2,7 +2,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = tweaq2
+TARGET = tweaq
 TEMPLATE = app
 
 CONFIG += release
@@ -26,8 +26,7 @@ SOURCES += main.cpp\
     backgroundworker.cpp \
     progressdialog.cpp \
     combobox.cpp \
-    fileimporter.cpp \
-    popup.cpp
+    fileimporter.cpp
 
 HEADERS  += mainwindow.h \
     tweaq.h \
@@ -49,8 +48,7 @@ HEADERS  += mainwindow.h \
     backgroundworker.h \
     progressdialog.h \
     combobox.h \
-    fileimporter.h \
-    popup.h
+    fileimporter.h
 
 APP_QML_FILES.path  = Contents/Resources/extern
 APP_QML_FILES.files = \

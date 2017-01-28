@@ -13,7 +13,6 @@
 #include "treeviewaudiofile.h"
 #include "parameterdialog.h"
 #include "progressdialog.h"
-#include "popup.h"
 
 // Qt classes
 #include <QFileDialog>
