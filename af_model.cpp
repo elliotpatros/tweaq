@@ -169,7 +169,7 @@ vector<int> AF_Model::mapRowsFromSortingProxy(const QModelIndexList list) const
     if (rows.empty()) return rows;
 
     int i = 0;
-    std::generate(rows.begin(), rows.end(), [&]
+    std::generate(rows.begin(), rows.end(), [this, &i, list, nVisibleColumns]
     {
         return _sortProxy->mapToSource(list[i++ * nVisibleColumns]).row();
     });
