@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget* const parent) :
     ui->treeView->hideColumn(AF_Properties::AbsolutePath);
 
     // setup combo box dsp
-    ui->comboBoxDSP->setTitle("dsp...");
+    ui->comboBoxDSP->setTitle("choose dsp...");
     ui->comboBoxDSP->addItems(_externals->processNames());
 
     // setup combo box remove
