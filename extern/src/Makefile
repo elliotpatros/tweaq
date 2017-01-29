@@ -7,7 +7,7 @@ CC = clang
 
 # compiler flags
 CFLAGS = -c -O2 -flto -fPIC -Wall -I../../
-LIBFLAGS = -O2 -flto -L../../StaticLibs/libsndfile/lib -lsndfile
+LIBFLAGS = -O2 -flto -lsndfile.1
 
 # recipe
 %.so: %.cpp

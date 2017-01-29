@@ -62,13 +62,11 @@ APP_QML_FILES.files = \
 
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 
-FORMS    += mainwindow.ui
+FORMS += mainwindow.ui
 
 ICON = icons/tweaq_icon.icns
 
 DISTFILES += License
-
-macx: LIBS += -L$$PWD/staticlibs/libsndfile/lib/ -lsndfile.1
 
 # release flags
 CONFIG(release, debug|release) {
@@ -76,5 +74,14 @@ QMAKE_CXXFLAGS += -Wpointer-arith -fno-exceptions -O2 -flto
 macx: LIBS += -Wpointer-arith -dead_strip -fno-exceptions -O2 -flto
 }
 
-INCLUDEPATH += $$PWD/staticlibs/libsndfile/include
-DEPENDPATH += $$PWD/staticlibs/libsndfile/include
+
+
+
+
+
+
+macx: LIBS += -L/usr/local/Cellar/libsndfile/1.0.26/lib/ -lsndfile.1
+INCLUDEPATH += /usr/local/Cellar/libsndfile/1.0.26/include
+DEPENDPATH += /usr/local/Cellar/libsndfile/1.0.26/include
+
+#macx: LIBS += -lsndfile.1

@@ -2,12 +2,11 @@
 #define _TWEAQAPI_H
 
 // includes
-#include <stdarg.h>     // variadic stuff
-#include <string.h>     // strlen, strcpy
 #include <stdlib.h>     // *alloc, free
+#include <string.h>     // strlen, strcpy
 #include <math.h>       // math stuff
 #include <float.h>      // FLT_EPSILON
-#include "sndfile.h"    // libsndfile
+#include <sndfile.h>    // libsndfile
 
 // defines
 #define TQ_BUFFERSIZE 4096
