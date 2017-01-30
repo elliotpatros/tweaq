@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B40203F21E3E986F00AB71A4 /* libsndfile.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */; };
 		B49CAB871E2F3F9E00C320BA /* tweaqapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */; };
-		B49CAB941E2F3FD600C320BA /* libsndfile.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B49CAB8E1E2F3FCA00C320BA /* libsndfile.1.dylib */; };
 		B4D055A01E2ED5DE00F6AC11 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4D0559F1E2ED5DE00F6AC11 /* main.cpp */; };
 		B4D055B81E2F0AFD00F6AC11 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4D055B71E2F0AFD00F6AC11 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
@@ -26,6 +26,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsndfile.1.dylib; path = ../../../../../../../../usr/local/Cellar/libsndfile/1.0.26/lib/libsndfile.1.dylib; sourceTree = "<group>"; };
+		B40203F31E3E989300AB71A4 /* test_convert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_convert.h; sourceTree = "<group>"; };
 		B407BE581E3598330067B7FC /* test_mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_mix_to_mono.h; sourceTree = "<group>"; };
 		B4363B771E3C213600059A3A /* test_fade_in_and_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_in_and_out.h; sourceTree = "<group>"; };
 		B456EC221E39889800D86B7E /* test_fade_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_out.h; sourceTree = "<group>"; };
@@ -37,13 +39,6 @@
 		B49B77521E2F0E7600801E7C /* test_change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_change_gain.h; sourceTree = "<group>"; };
 		B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tweaqapi.cpp; path = ../../../tweaqapi.cpp; sourceTree = "<group>"; };
 		B49CAB861E2F3F9E00C320BA /* tweaqapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tweaqapi.h; path = ../../../tweaqapi.h; sourceTree = "<group>"; };
-		B49CAB8B1E2F3FCA00C320BA /* sndfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sndfile.h; sourceTree = "<group>"; };
-		B49CAB8C1E2F3FCA00C320BA /* sndfile.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sndfile.hh; sourceTree = "<group>"; };
-		B49CAB8E1E2F3FCA00C320BA /* libsndfile.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libsndfile.1.dylib; sourceTree = "<group>"; };
-		B49CAB8F1E2F3FCA00C320BA /* libsndfile.1.dylib.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = libsndfile.1.dylib.dSYM; sourceTree = "<group>"; };
-		B49CAB901E2F3FCA00C320BA /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsndfile.a; sourceTree = "<group>"; };
-		B49CAB911E2F3FCA00C320BA /* libsndfile.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libsndfile.dylib; sourceTree = "<group>"; };
-		B49CAB931E2F3FCA00C320BA /* sndfile.pc */ = {isa = PBXFileReference; lastKnownFileType = text; path = sndfile.pc; sourceTree = "<group>"; };
 		B4D0559C1E2ED5DE00F6AC11 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4D0559F1E2ED5DE00F6AC11 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B4D055B71E2F0AFD00F6AC11 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -55,66 +50,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4D055B81E2F0AFD00F6AC11 /* CoreFoundation.framework in Frameworks */,
-				B49CAB941E2F3FD600C320BA /* libsndfile.1.dylib in Frameworks */,
+				B40203F21E3E986F00AB71A4 /* libsndfile.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B49CAB881E2F3FCA00C320BA /* staticlibs */ = {
-			isa = PBXGroup;
-			children = (
-				B49CAB891E2F3FCA00C320BA /* libsndfile */,
-			);
-			name = staticlibs;
-			path = ../../staticlibs;
-			sourceTree = "<group>";
-		};
-		B49CAB891E2F3FCA00C320BA /* libsndfile */ = {
-			isa = PBXGroup;
-			children = (
-				B49CAB8A1E2F3FCA00C320BA /* include */,
-				B49CAB8D1E2F3FCA00C320BA /* lib */,
-			);
-			path = libsndfile;
-			sourceTree = "<group>";
-		};
-		B49CAB8A1E2F3FCA00C320BA /* include */ = {
-			isa = PBXGroup;
-			children = (
-				B49CAB8B1E2F3FCA00C320BA /* sndfile.h */,
-				B49CAB8C1E2F3FCA00C320BA /* sndfile.hh */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		B49CAB8D1E2F3FCA00C320BA /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				B49CAB8E1E2F3FCA00C320BA /* libsndfile.1.dylib */,
-				B49CAB8F1E2F3FCA00C320BA /* libsndfile.1.dylib.dSYM */,
-				B49CAB901E2F3FCA00C320BA /* libsndfile.a */,
-				B49CAB911E2F3FCA00C320BA /* libsndfile.dylib */,
-				B49CAB921E2F3FCA00C320BA /* pkgconfig */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		B49CAB921E2F3FCA00C320BA /* pkgconfig */ = {
-			isa = PBXGroup;
-			children = (
-				B49CAB931E2F3FCA00C320BA /* sndfile.pc */,
-			);
-			path = pkgconfig;
-			sourceTree = "<group>";
-		};
 		B4D055931E2ED5DE00F6AC11 = {
 			isa = PBXGroup;
 			children = (
+				B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */,
 				B4D055B71E2F0AFD00F6AC11 /* CoreFoundation.framework */,
 				B4D0559E1E2ED5DE00F6AC11 /* tests */,
-				B49CAB881E2F3FCA00C320BA /* staticlibs */,
 				B4D0559D1E2ED5DE00F6AC11 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -142,6 +90,7 @@
 				B46B0D341E36C60A00C5C35E /* test_normalize.h */,
 				B47F90D11E36D4D000307D7D /* test_deinterleave.h */,
 				B45F06C41E395B9400E4B26F /* ExternalHelpers.h */,
+				B40203F31E3E989300AB71A4 /* test_convert.h */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -287,9 +236,16 @@
 		B4D055A41E2ED5DE00F6AC11 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/Cellar/libsndfile/1.0.26/include,
+					/usr/local/Cellar/libsamplerate/0.1.9/include,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/demo/Dropbox/tweaq2/tweaq2/staticlibs/libsndfile/lib,
+					/usr/local/Cellar/libsndfile/1.0.26/lib,
+					/usr/local/Cellar/libsamplerate/0.1.9/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -298,9 +254,16 @@
 		B4D055A51E2ED5DE00F6AC11 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/Cellar/libsndfile/1.0.26/include,
+					/usr/local/Cellar/libsamplerate/0.1.9/include,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/demo/Dropbox/tweaq2/tweaq2/staticlibs/libsndfile/lib,
+					/usr/local/Cellar/libsndfile/1.0.26/lib,
+					/usr/local/Cellar/libsamplerate/0.1.9/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -74,14 +74,6 @@ QMAKE_CXXFLAGS += -Wpointer-arith -fno-exceptions -O2 -flto
 macx: LIBS += -Wpointer-arith -dead_strip -fno-exceptions -O2 -flto
 }
 
-
-
-
-
-
-
 macx: LIBS += -L/usr/local/Cellar/libsndfile/1.0.26/lib/ -lsndfile.1
 INCLUDEPATH += /usr/local/Cellar/libsndfile/1.0.26/include
 DEPENDPATH += /usr/local/Cellar/libsndfile/1.0.26/include
-
-#macx: LIBS += -lsndfile.1

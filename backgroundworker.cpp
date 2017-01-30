@@ -5,7 +5,7 @@ BackgroundWorker::BackgroundWorker(QObject* parent) :
     QObject(parent)
 {
     // don't allocate any new resources here (w/ new or similar)
-    // or they'll belong to the calling thread (probably gui thread)
+    // or they'll belong to the calling thread
     disconnect();
     connect(this, SIGNAL(finished()), SLOT(deleteLater()));
 }
