@@ -37,7 +37,7 @@ static char* change_extension(const char* pathout, const int format)
     SF_FORMAT_INFO info;
     memset(&info, 0, sizeof(SF_FORMAT_INFO));
     info.format = format;
-
+    
     if (sf_command(NULL, SFC_GET_FORMAT_INFO, &info, sizeof(SF_FORMAT_INFO)) != SF_ERR_NO_ERROR)
     {
         return 0;
@@ -102,7 +102,6 @@ do_convertion(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio
     // initialize the sample rate converter
     if ((src_state = src_new(converter, nChannels, &error)) == 0)
     {
-        std::cout << "sample rate converter could not be initialized\n";
         src_delete(src_state);
         return 0;
     }
@@ -132,8 +131,7 @@ do_convertion(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio
         
         // check errors
         if ((error = src_process(src_state, &src_data)) != 0)
-        {   // todo: don't close files in this function
-            std::cout << "\nerror: " << src_strerror(error) << std::endl;
+        {
             src_delete(src_state);
             return 0;
         }
@@ -160,7 +158,6 @@ do_convertion(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio
     if (normalize && maxGainOut > 1.)
     {
         gain = 1. / maxGainOut;
-        std::cout << "clipped output... peak: " << maxGainOut << ". trying again w/ gain: " << gain << std::endl;
         return -1;
     }
     
@@ -241,12 +238,11 @@ extern "C"
         SF_INFO  sfinfo  = setup_sfinfo();
         SNDFILE* filein  = setup_filein(pathin, &sfinfo);
         if (filein == 0) return false;
-
+        
         // get sample rate ratio
         const double src_ratio = input->sampleRate / (double)sfinfo.samplerate;
         if (!src_is_valid_ratio(src_ratio))
         {
-            std::cout << "sample rate conversion ratio is invalid \n";
             sf_close(filein);
             return false;
         }
@@ -297,40 +293,3 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif // def __cplusplus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

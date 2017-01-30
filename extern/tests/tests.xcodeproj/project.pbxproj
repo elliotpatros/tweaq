@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B40203F21E3E986F00AB71A4 /* libsndfile.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */; };
+		B49311E21E3ED713004DD539 /* libsamplerate.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B49311E11E3ED713004DD539 /* libsamplerate.0.dylib */; };
 		B49CAB871E2F3F9E00C320BA /* tweaqapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */; };
 		B4D055A01E2ED5DE00F6AC11 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4D0559F1E2ED5DE00F6AC11 /* main.cpp */; };
 		B4D055B81E2F0AFD00F6AC11 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4D055B71E2F0AFD00F6AC11 /* CoreFoundation.framework */; };
@@ -36,6 +37,7 @@
 		B460FECF1E37E8C600B4B668 /* test_fade_in.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_in.h; sourceTree = "<group>"; };
 		B46B0D341E36C60A00C5C35E /* test_normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_normalize.h; sourceTree = "<group>"; };
 		B47F90D11E36D4D000307D7D /* test_deinterleave.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_deinterleave.h; sourceTree = "<group>"; };
+		B49311E11E3ED713004DD539 /* libsamplerate.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsamplerate.0.dylib; path = ../../../../../../../../usr/local/Cellar/libsamplerate/0.1.9/lib/libsamplerate.0.dylib; sourceTree = "<group>"; };
 		B49B77521E2F0E7600801E7C /* test_change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_change_gain.h; sourceTree = "<group>"; };
 		B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tweaqapi.cpp; path = ../../../tweaqapi.cpp; sourceTree = "<group>"; };
 		B49CAB861E2F3F9E00C320BA /* tweaqapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tweaqapi.h; path = ../../../tweaqapi.h; sourceTree = "<group>"; };
@@ -51,6 +53,7 @@
 			files = (
 				B4D055B81E2F0AFD00F6AC11 /* CoreFoundation.framework in Frameworks */,
 				B40203F21E3E986F00AB71A4 /* libsndfile.1.dylib in Frameworks */,
+				B49311E21E3ED713004DD539 /* libsamplerate.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +63,7 @@
 		B4D055931E2ED5DE00F6AC11 = {
 			isa = PBXGroup;
 			children = (
+				B49311E11E3ED713004DD539 /* libsamplerate.0.dylib */,
 				B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */,
 				B4D055B71E2F0AFD00F6AC11 /* CoreFoundation.framework */,
 				B4D0559E1E2ED5DE00F6AC11 /* tests */,

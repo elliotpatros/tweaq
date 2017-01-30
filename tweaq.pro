@@ -51,14 +51,7 @@ HEADERS  += mainwindow.h \
     fileimporter.h
 
 APP_QML_FILES.path  = Contents/Resources/extern
-APP_QML_FILES.files = \
-    $$PWD/extern/libchange_gain.so \
-    $$PWD/extern/libmix_to_mono.so \
-    $$PWD/extern/libnormalize.so \
-    $$PWD/extern/libdeinterleave.so \
-    $$PWD/extern/libfade_in.so \
-    $$PWD/extern/libfade_out.so \
-    $$PWD/extern/libfade_in_and_out.so
+APP_QML_FILES.files = $$files($$PWD/extern/*.so, false)
 
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 

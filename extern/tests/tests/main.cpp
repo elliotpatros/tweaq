@@ -38,40 +38,40 @@ void print_parameterlist(vector<Parameter> v)
 
 int main(int argc, const char * argv[])
 {
-//    // TEST _SETUP...
-//    vector<Parameter> v;
-//    int field = 0;
-//    while (true)
-//    {
-//        Parameter p;
-//        init_parameter(p);
-//        change_gain_setup(field, p);
-//        
-//        const int lastField = field;
-//        field += p.defaultValue != 0;
-//        field += p.nLabels != 0;
-//        
-//        if (field == lastField) break;
-//        v.emplace_back(p);
-//    }
-//    
-//    // ...printout results
-//    print_parameterlist(v);
-//    
-//    
-//    // TEST INPUT HANDLING...
-//    const char* responses[] = {"-3", "dB."};
-//    void* input = change_gain_handleInput(sizeof(responses) / sizeof(char*), responses);
-//    
-//    
-//    // TEST PROCESSING...
-//    bool success = change_gain_process("/Users/demo/Desktop/testin/quad.wav",
-//                                "/Users/demo/Desktop/testout/quad.wav",
-//                                input);
-//    
-//    // TEST CLEANUP...
-//    if (input != 0) free(input);
-//    cout << (success ? "it worked!" : "oh no... :-(") << endl;
+    // TEST _SETUP...
+    vector<Parameter> v;
+    int field = 0;
+    while (true)
+    {
+        Parameter p;
+        init_parameter(p);
+        convert_setup(field, p);
+        
+        const int lastField = field;
+        field += p.defaultValue != 0;
+        field += p.nLabels != 0;
+        
+        if (field == lastField) break;
+        v.emplace_back(p);
+    }
+    
+    // ...printout results
+    print_parameterlist(v);
+    
+    
+    // TEST INPUT HANDLING...
+    const char* responses[] = {"176400", "sinc (fast)", "32-bit PCM", "aiff"};
+    void* input = convert_handleInput(sizeof(responses) / sizeof(char*), responses);
+    
+    
+    // TEST PROCESSING...
+    bool success = convert_process("/Users/demo/Desktop/testin/quad.wav",
+                                   "/Users/demo/Desktop/testout/quad.wav",
+                                   input);
+    
+    // TEST CLEANUP...
+    if (input != 0) free(input);
+    cout << (success ? "it worked!" : "oh no... :-(") << endl;
 
     cout << "done\n";
     
