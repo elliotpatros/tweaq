@@ -81,7 +81,7 @@ void AF_Model::processAudioFiles(const ExternalProcess process, const QString ou
         if (file == nullptr || file->wasProcessed()) continue;
 
         const QString input = file->absolutePath();
-        const QString output = QString("%1/%2.%3").arg(outputDir, file->baseName(), file->extension());
+        const QString output = file->pathAtDirectory(outputDir);
         const bool success = process(input.toUtf8(), output.toUtf8(), args);
 
         file->wasProcessed(success);

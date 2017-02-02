@@ -96,6 +96,11 @@ QString AF_Properties::uniquePath(const QString folder) const
     return path;
 }
 
+QString AF_Properties::pathAtDirectory(const QString folder) const
+{
+    return QString("%1/%2.%3").arg(folder, baseName(), extension());
+}
+
 vector<QVariant> AF_Properties::audioFileProperties()
 {
     return
