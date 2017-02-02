@@ -27,8 +27,6 @@ struct AF_Properties
     QString duration() const;
     int sampleRate() const;
     QString parentDirectory() const;
-    QString uniquePath(const QString folder) const;
-    QString buildPath(const QString folder, const int nthCopy = 0) const;
     QString pathAtDirectory(const QString folder) const;
 
     // properties

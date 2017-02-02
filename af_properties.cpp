@@ -79,23 +79,6 @@ QString AF_Properties::parentDirectory() const
     return _data[ParentDirectory].toString();
 }
 
-QString AF_Properties::buildPath(const QString folder, const int nthCopy) const
-{
-    return (nthCopy > 0)
-        ? QString("%1/%2 (%3).%4").arg(folder, baseName(), QString::number(nthCopy), extension())
-        : QString("%1/%2.%3").arg(folder, baseName(), extension());
-}
-
-QString AF_Properties::uniquePath(const QString folder) const
-{
-    int nCopies = 0;
-    QString path = buildPath(folder);
-
-    while (QFileInfo(path).exists()) path = buildPath(folder, ++nCopies);
-
-    return path;
-}
-
 QString AF_Properties::pathAtDirectory(const QString folder) const
 {
     return QString("%1/%2.%3").arg(folder, baseName(), extension());
