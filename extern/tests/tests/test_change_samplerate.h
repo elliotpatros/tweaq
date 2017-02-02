@@ -1,5 +1,5 @@
 //#include "tweaqapi.h"
-//#include "ExternalHelpers.h"
+//#include <samplerate.h>
 //
 //// data
 //enum ParameterFields{
@@ -27,35 +27,66 @@
 //static const char* bit_depth_labels[] = {"32-bit float", "32-bit PCM", "24-bit PCM", "16-bit PCM", "8-bit PCM"};
 //static const char* format_labels[] = {"wav", "aiff", "flac"};
 //
-//// apply gain
-//static void
-//apply_gain(float* samples, const long nSamples, double gain, double& peakGain)
+//// format pathout
+//static char* change_extension(const char* pathout, const int format)
 //{
-//    for (long i = 0; i < nSamples; i++)
+//    // check that we actually have an input and insert
+//    if (pathout == 0) return 0;
+//    
+//    // get the extension of this format
+//    SF_FORMAT_INFO info;
+//    memset(&info, 0, sizeof(SF_FORMAT_INFO));
+//    info.format = format;
+//    
+//    if (sf_command(NULL, SFC_GET_FORMAT_INFO, &info, sizeof(SF_FORMAT_INFO)) != SF_ERR_NO_ERROR)
 //    {
-//        samples[i] *= gain;
-//        if (fabs(samples[i]) > peakGain)
-//        {
-//            peakGain = fabs(samples[i]);
-//        }
+//        return 0;
 //    }
+//    
+//    // find index from which the extension will be appended
+//    const size_t sizeof_pathout = strlen(pathout);
+//    const size_t sizeof_extension = strlen(info.extension);
+//    size_t insertFrom = sizeof_pathout;
+//    while (insertFrom-- > 0) if (pathout[insertFrom] == '.') break;
+//    insertFrom++; // include the '.' from the original pathout
+//    
+//    // allocate memory for output
+//    char* newPathout = (char*)calloc(insertFrom + sizeof_extension + 1, sizeof(char));
+//    if (newPathout == 0) return 0;
+//    
+//    if (strncpy(newPathout, pathout, insertFrom) == 0 ||
+//        strcat(newPathout, info.extension) == 0)
+//    {
+//        free_string(newPathout);
+//    }
+//    
+//    return newPathout;
 //}
 //
-//// convert format
-//static void
-//convert_format(Input* input, SF_INFO& sfinfo)
+//// apply gain
+//static double
+//apply_gain(float* data, long nFrames, int nChannels, double maxGain, double gain)
 //{
-//    sfinfo.samplerate = (int)input->sampleRate;
-//    sfinfo.format = input->format | input->bitDepth;
+//    const long nSamples = nFrames * nChannels;
+//    for (long i = 0; i < nSamples; i++)
+//    {
+//        data[i] *= gain;
+//        if (fabs(data[i]) > maxGain)
+//        {
+//            maxGain = fabs(data[i]);
+//        }
+//    }
+//    
+//    return maxGain;
 //}
 //
 //// convert sample rate
-//static double
-//convert_samplerate(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio, int nChannels, double gain)
+//static sf_count_t
+//do_convertion(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio, int nChannels, double& gain)
 //{
 //    // setup read and write buffers
-//    float* bufferin = (float*)malloc(nChannels * TQ_BUFFERSIZE * sizeof(float));
-//    float* bufferout = (float*)malloc(nChannels * TQ_BUFFERSIZE * sizeof(float));
+//    float* bufferin = (float*)malloc(nChannels * TQ_BUFFERSIZE);
+//    float* bufferout = (float*)malloc(nChannels * TQ_BUFFERSIZE);
 //    if (bufferin == 0 || bufferout == 0)
 //    {
 //        free(bufferin);
@@ -67,8 +98,9 @@
 //    SRC_STATE* src_state;
 //    SRC_DATA   src_data;
 //    int        error = SF_ERR_NO_ERROR;
-//    double     peakGain = 0.;
-//    sf_count_t nFramesWritten = 0;
+//    double     maxGainOut = 0.0;
+//    sf_count_t nFramesOut = 0;
+//    sf_count_t nFramesIn = TQ_BUFFERSIZE / nChannels;
 //    
 //    sf_seek(filein, 0, SEEK_SET);
 //    sf_seek(fileout, 0, SEEK_SET);
@@ -77,9 +109,8 @@
 //    if ((src_state = src_new(converter, nChannels, &error)) == 0)
 //    {
 //        std::cout << "sample rate converter could not be initialized\n";
-//        free(bufferin);
-//        free(bufferout);
-//        return -1.;
+//        src_delete(src_state);
+//        return 0;
 //    }
 //    
 //    src_data.end_of_input = 0;
@@ -87,7 +118,7 @@
 //    src_data.data_in = bufferin;
 //    src_data.data_out = bufferout;
 //    src_data.src_ratio = src_ratio;
-//    src_data.output_frames = TQ_BUFFERSIZE;
+//    src_data.output_frames = nFramesIn;
 //    
 //    // do convertion
 //    while (true)
@@ -95,11 +126,11 @@
 //        // if the input buffer is empty, refill it.
 //        if (src_data.input_frames == 0)
 //        {
-//            src_data.input_frames = sf_readf_float(filein, bufferin, TQ_BUFFERSIZE);
+//            src_data.input_frames = sf_readf_float(filein, bufferin, nFramesIn);
 //            src_data.data_in = bufferin;
 //            
 //            // the last read will not fill the buffer, so check on that
-//            if (src_data.input_frames < TQ_BUFFERSIZE)
+//            if (src_data.input_frames < nFramesIn)
 //            {
 //                src_data.end_of_input = SF_TRUE;
 //            }
@@ -109,84 +140,37 @@
 //        if ((error = src_process(src_state, &src_data)) != 0)
 //        {
 //            std::cout << "\nerror: " << src_strerror(error) << std::endl;
-//            peakGain = -1.;
-//            break;
+//            src_delete(src_state);
+//            return 0;
 //        }
 //        
 //        // check if we're done
-//        if (src_data.end_of_input && src_data.output_frames_gen == 0) break;
+//        if (src_data.end_of_input && src_data.output_frames_gen == 0)
+//        {
+//            break;
+//        }
 //        
 //        // apply gain
-//        apply_gain(src_data.data_out, src_data.output_frames_gen * nChannels, gain, peakGain);
+//        maxGainOut = apply_gain(src_data.data_out, src_data.output_frames_gen, nChannels, maxGainOut, gain);
 //        
 //        // write output
 //        sf_writef_float(fileout, bufferout, src_data.output_frames_gen);
-//        nFramesWritten += src_data.output_frames_gen;
+//        nFramesOut += src_data.output_frames_gen;
 //        src_data.data_in += src_data.input_frames_used * nChannels;
 //        src_data.input_frames -= src_data.input_frames_used;
 //    }
 //    
 //    // clean up
-//    free(bufferin);
-//    free(bufferout);
 //    src_delete(src_state);
 //    
-//    return peakGain;
-//}
-//
-//// normalize
-//static bool apply_af_gain(const char* pathin, const char* pathout, const double gain, Input* input)
-//{
-//    // should we convert the audio file in place?
-//    const bool convert_in_place = strcmp(pathin, pathout) == 0;
-//    
-//    // setup file in
-//    SF_INFO sfinfo = setup_sfinfo();
-//    SNDFILE* filein = sf_open(pathin, convert_in_place ? SFM_RDWR : SFM_READ, &sfinfo);
-//    if (filein == 0) return false;
-//
-//    // setup soundfile buffer
-//    const size_t buffersize = TQ_BUFFERSIZE * sfinfo.channels;
-//    double* buffer = (double*)malloc(buffersize * sizeof(double));
-//    if (buffer == 0)
+//    if (maxGainOut > 1.)
 //    {
-//        sf_close(filein);
-//        return false;
-//    }
-//
-//    // setup file out
-//    sf_seek(filein, 0, SEEK_SET);
-//    SNDFILE* fileout = filein;
-//    if (!convert_in_place)
-//    {
-//        convert_format(input, sfinfo);
-//        fileout = setup_fileout(pathout, &sfinfo);
-//        if (fileout == 0)
-//        {
-//            sf_close(filein);
-//            free(buffer);
-//            return false;
-//        }
+//        std::cout << "clipped output... peak: " << maxGainOut << ". trying again w/ gain: " << gain << std::endl;
+//        gain = 1. / maxGainOut;
+//        return -1;
 //    }
 //    
-//    // do dsp
-//    size_t samplesread;
-//    while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
-//    {
-//        for (size_t i = 0; i < samplesread; i++)
-//        {
-//            buffer[i] *= gain;
-//        }
-//        
-//        sf_write_double(fileout, buffer, samplesread);
-//    }
-//    
-//    // clean up
-//    sf_close(filein);
-//    if (!convert_in_place) sf_close(fileout);
-//    free(buffer);
-//    
-//    return true;
+//    return nFramesOut;
 //}
 //
 //#ifdef __cplusplus
@@ -285,72 +269,35 @@
 //            return false;
 //        }
 //        
-//        // do dsp
-//        bool success = false;
-//        if (!double_equals(src_ratio, 1.)) // do we actually need to convert sample rate?
+//        // convert audio file
+//        sf_count_t nFramesOut = 0;
+//        double gain = 1.;
+//        do
 //        {
-//            std::cout << "converting sample rate\n";
-//            
-//            // convert sample rate
-//            double gain = 0.5;
-//            double peakGain = 0.;
-//            bool clipped = false;
-//            while (true)
+//            // close (if it exists) and reopen output file
+//            SNDFILE* fileout = setup_fileout(newPathout, &sfinfo);
+//            if ((fileout = setup_fileout(newPathout, &sfinfo)) == 0)
 //            {
-//                // open output file
-//                SNDFILE* fileout = setup_fileout(newPathout, &sfinfo);
-//                if ((fileout = setup_fileout(newPathout, &sfinfo)) == 0)
-//                {
-//                    sf_close(filein);
-//                    free(newPathout);
-//                    return false;
-//                }
-//                
-//                // update the file header after every write
-//                sf_command(fileout, SFC_SET_UPDATE_HEADER_AUTO, 0, SF_TRUE);
-//                
-//                // make sure fileout is clipped by libsamplerate
-//                sf_command(fileout, SFC_SET_CLIPPING, 0, SF_TRUE);
-//                
-//                // do the conversion
-//                peakGain = convert_samplerate(filein, fileout, input->converter, src_ratio, sfinfo.channels, gain);
-//                sf_close(fileout);
-//                
-//                // did we clip? if not, let's move on.
-//                if (peakGain < 1.) break;
-//                
-//                gain = 1. / peakGain;
-//                clipped = true;
-//                std::cout << "we clipped. trying again with gain: " << gain << std::endl;
+//                nFramesOut = 0;
+//                break;
 //            }
 //            
-//            // how'd we do?
-//            success = peakGain > 0.;
+//            // update the file header after every write
+//            sf_command(fileout, SFC_SET_UPDATE_HEADER_AUTO, 0, SF_TRUE);
 //            
-//            // normalize audio file out to match audio file in, if we didn't fail and we didn't clip
-//            if (!clipped && success)
-//            {
-//                sf_close(filein);
-//                const double peakin = get_max_gain(pathin);
-//                const double fix =  peakin / peakGain;
-//                std::cout << "normalizing converted file by " << fix << std::endl;
-//                std::cout << "... peak was " << peakin << std::endl;
-//                std::cout << "... and is now " << peakGain << std::endl;
-//                
-//                success = apply_af_gain(newPathout, newPathout, fix, input);
-//            }
-//        }
-//        else // don't need to convert sample rate. just copy the samples over
-//        {
-//            std::cout << "no sample rate conversion needed. copying data.\n";
-//            sf_close(filein);
-//            success = apply_af_gain(pathin, newPathout, 1., input);
-//        }
-//
+//            // make sure fileout is clipped by libsamplerate
+//            sf_command(fileout, SFC_SET_CLIPPING, 0, SF_TRUE);
+//            
+//            nFramesOut = do_convertion(filein, fileout, input->converter, src_ratio, sfinfo.channels, gain);
+//            sf_close(fileout);
+//            
+//        } while (nFramesOut < 0);
+//        
 //        // cleanup
 //        free(newPathout);
+//        sf_close(filein);
 //        
-//        return success;
+//        return nFramesOut != 0;
 //    }
 //    
 //#ifdef __cplusplus

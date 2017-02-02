@@ -1,5 +1,7 @@
 #include "tweaqapi.h"
-#include <stdio.h> // for sscanf
+#include <stdio.h> // for sscanf, sprintf, etc
+#include <fcntl.h> // for file open flags
+#include <unistd.h> // for close(int file_descriptor)
 
 // helpers
 double string_to_double(const char* str)
@@ -104,6 +106,16 @@ void free_parameter(Parameter& p)
     p.nLabels = 0;
 }
 
+// conversions
+void clamp_double(double& val, const double min, const double max)
+{
+    val = (val > max) ? max : ((val < min) ? min : val);
+}
+
+bool double_equals(const double val, const double equals)
+{
+    return fabs(val - equals) < 0.00001;
+}
 
 // libsndfile stuff
 SF_INFO setup_sfinfo()
@@ -113,23 +125,14 @@ SF_INFO setup_sfinfo()
     return sfinfo;
 }
 
-SNDFILE* setup_filein(const char* path, SF_INFO* sfinfo)
-{
-    return sf_open(path, SFM_READ, sfinfo);
-}
-
-SNDFILE* setup_fileout(const char* path, SF_INFO* sfinfo)
-{
-    return sf_open(path, SFM_WRITE, sfinfo);
-}
-
 double get_max_gain(const char* path)
 {
     // setup libsndfile stuff
     SF_INFO sfinfo = setup_sfinfo();
-    SNDFILE* file = setup_filein(path, &sfinfo);
+    SNDFILE* file = sf_open(path, SFM_READ, &sfinfo);
     
     if (file == 0) return 1.;
+    sf_seek(file, 0, SEEK_SET);
     
     // setup audio buffer
     const size_t nChannels = sfinfo.channels;
@@ -148,8 +151,10 @@ double get_max_gain(const char* path)
     {
         for (size_t i = 0; i < samplesread; i++)
         {
-            const double sampleGain = fabs(buffer[i]);
-            if (sampleGain > maxGain) maxGain = sampleGain;
+            if (fabs(buffer[i]) > maxGain)
+            {
+                maxGain = fabs(buffer[i]);
+            }
         }
     }
     
@@ -160,9 +165,87 @@ double get_max_gain(const char* path)
     return (maxGain > 0.0000001) ? maxGain : 1.;
 }
 
-
-// conversions
-void clamp_double(double& val, const double min, const double max)
+char* change_extension(const char* path, const int format)
 {
-    val = (val > max) ? max : ((val < min) ? min : val);
+    // check that we actually have an input and insert
+    if (path == 0) return 0;
+    
+    // get the extension of this format
+    SF_FORMAT_INFO info;
+    memset(&info, 0, sizeof(SF_FORMAT_INFO));
+    info.format = format;
+    
+    if (sf_command(NULL, SFC_GET_FORMAT_INFO, &info, sizeof(SF_FORMAT_INFO)) != SF_ERR_NO_ERROR)
+    {
+        return 0;
+    }
+    
+    // find index from which the extension will be appended
+    const size_t sizeof_path = strlen(path);
+    const size_t sizeof_extension = strlen(info.extension);
+    size_t insertFrom = sizeof_path;
+    while (insertFrom-- > 0)
+    {
+        if (path[insertFrom] == '.')
+        {
+            insertFrom++; // include the '.' from the original path
+            break;
+        }
+    }
+    
+    // allocate memory for output
+    char* newPath = (char*)calloc(insertFrom + sizeof_extension + 1, 1);
+    if (newPath == 0) return 0;
+    
+    // 1) copy old path through the final '.'
+    // 2) append the new extension
+    if (strncpy(newPath, path, insertFrom) == 0 ||
+        strcat(newPath, info.extension) == 0)
+    {
+        free_string(newPath);
+    }
+    
+    return newPath;
+}
+
+// file stuff
+int file_exists(const char* path)
+{
+    return close(open(path, O_RDONLY | O_NOFOLLOW, S_IRUSR | S_IWUSR)) == 0;
+}
+
+char* unique_path(const char* path)
+{
+    if (path == 0) return 0;
+    const size_t pathlen = strlen(path);
+    
+    char* newpath;
+    if (!file_exists(path))
+    {
+        if ((newpath = (char*)calloc(pathlen + 1, 1)) == 0) return 0;
+        strcpy(newpath, path);
+        return newpath;
+    }
+    
+    size_t insertFrom = pathlen; // index of the extension separator ('.')
+    while (insertFrom-- > 0) if (path[insertFrom] == '.') break;
+    
+    if ((newpath = (char*)calloc(pathlen + strlen(" (999)") + 1, 1)) != 0 &&
+        strncpy(newpath, path, insertFrom) != 0)
+    {
+        for (int nthcopy = 1; nthcopy < 999; nthcopy++)
+        {
+            if (sprintf(newpath + insertFrom, " (%i)%s", nthcopy, path + insertFrom) < 0)
+            {
+                break;
+            }
+            else if (!file_exists(newpath))
+            {
+                return newpath;
+            }
+        }
+    }
+    
+    free(newpath);
+    return 0;
 }

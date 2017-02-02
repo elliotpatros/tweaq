@@ -1,34 +1,35 @@
-#include "tweaqapi.h"
-#include "ExternalHelpers.h"
+#include "fade_in_and_out.h"
+
+static const char*  timeTypes[] = {"milliseconds", "seconds", "samples"};
+static const char* curveNames[] = {"logarithmic", "exponential", "linear", "'S' curve", "none"};
+static const CurveType Curves[] = {curve_log, curve_exp, curve_lin, curve_s, curve_none};
+static const size_t nCurveTypes = sizeof(Curves) / sizeof(CurveType);
+
+// curves
+double curve_s(const double x)    {return -0.5 * cos(M_PI * x) + 0.5; }
+double curve_lin(const double x)  {return x; }
+double curve_log(const double x)  {return 2. * x - x * x; }
+double curve_exp(const double x)  {return x * x; }
+double curve_none(const double x) {(void)x; return 1.; }
+
+void to_samples(double& time, const TimeType timeType, const double samplerate)
+{
+    switch (timeType)
+    {
+        case Milliseconds:
+            time *= samplerate * 0.001;
+            break;
+        case Seconds:
+            time *= samplerate;
+            break;
+        default: break;
+    }
+}
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif // def __cplusplus
-    
-    enum ParameterFields {
-        kDurationIn,
-        kTimeTypeIn,
-        kCurveTypeIn,
-        kDurationOut,
-        kTimeTypeOut,
-        kCurveTypeOut,
-        kNumParameters
-    };
-    
-    struct Input {
-        CurveType fadeIn;
-        CurveType fadeOut;
-        TimeType  timeTypeIn;
-        TimeType  timeTypeOut;
-        double    fadeDurationIn;
-        double    fadeDurationOut;
-    };
-    
-    static const char*  timeTypes[] = {"milliseconds", "seconds", "samples"};
-    static const char* curveNames[] = {"logarithmic", "exponential", "linear", "'S' curve", "none"};
-    static const CurveType Curves[] = {curve_log, curve_exp, curve_lin, curve_s, curve_none};
-    static const size_t nCurveTypes = sizeof(Curves) / sizeof(CurveType);
     
     void fade_in_and_out_setup(const int fieldNumber, Parameter& p)
     {
@@ -90,7 +91,7 @@ extern "C"
         
         // set fade table
         input->fadeIn = Curves[0];
-        for (int i = 1; i < nCurveTypes; i++)
+        for (size_t i = 1; i < nCurveTypes; i++)
         {
             if (strcmp(argv[kCurveTypeIn], curveNames[i]) == 0)
             {
@@ -100,7 +101,7 @@ extern "C"
         }
         
         input->fadeOut = Curves[0];
-        for (int i = 1; i < nCurveTypes; i++)
+        for (size_t i = 1; i < nCurveTypes; i++)
         {
             if (strcmp(argv[kCurveTypeOut], curveNames[i]) == 0)
             {
@@ -118,59 +119,48 @@ extern "C"
         Input* input = (Input*)args;
         
         // setup soundfile in
-        SF_INFO  sfinfo  = setup_sfinfo();
-        SNDFILE* filein  = setup_filein(pathin, &sfinfo);
+        SF_INFO  sfinfo = setup_sfinfo();
+        SNDFILE *filein = sf_open(pathin, SFM_READ, &sfinfo), *fileout = 0;
         if (filein == 0) return false;
         
         // get the fade duration in samples
         to_samples(input->fadeDurationIn, input->timeTypeIn, sfinfo.samplerate);
-        clip_double(input->fadeDurationIn, 0., sfinfo.frames - 1);
+        clamp_double(input->fadeDurationIn, 0., sfinfo.frames - 1);
         
         to_samples(input->fadeDurationOut, input->timeTypeOut, sfinfo.samplerate);
-        clip_double(input->fadeDurationOut, 0., sfinfo.frames - 1);
+        clamp_double(input->fadeDurationOut, 0., sfinfo.frames - 1);
         const double startFadeout = sfinfo.frames - (input->fadeDurationOut + 1.);
         
         // setup audiosample buffer
         const size_t nChannels = sfinfo.channels;
         const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-        double* buffer = (double*)calloc(buffersize, sizeof(double));
-        if (buffer == 0)
+        double* buffer;
+        if ((buffer = (double*)calloc(buffersize, sizeof(double))) != 0 &&
+            (fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) != 0)
         {
-            sf_close(filein);
-            return false;
-        }
-        
-        // setup soundfile out
-        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
-        if (fileout == 0)
-        {
-            sf_close(filein);
-            free(buffer);
-            return false;
-        }
-        
-        // do dsp
-        double framesread = 0.;
-        size_t samplesread;
-        while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
-        {
-            for (size_t sample = 0; sample < samplesread; framesread += 1.)
+            // do dsp
+            double framesread = 0.;
+            size_t samplesread;
+            while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
             {
-                const double fadeOutBy = (framesread > startFadeout)
-                ? (1. - input->fadeOut((framesread - startFadeout) / input->fadeDurationOut))
-                : 1.;
-                
-                const double fadeInBy = (framesread < input->fadeDurationIn)
-                ? input->fadeIn(framesread / input->fadeDurationIn)
-                : 1.;
-                
-                for (size_t channel = 0; channel < nChannels; channel++, sample++)
+                for (size_t sample = 0; sample < samplesread; framesread += 1.)
                 {
-                    buffer[sample] *= fadeInBy * fadeOutBy;
+                    const double fadeOutBy = (framesread > startFadeout)
+                    ? (1. - input->fadeOut((framesread - startFadeout) / input->fadeDurationOut))
+                    : 1.;
+                    
+                    const double fadeInBy = (framesread < input->fadeDurationIn)
+                    ? input->fadeIn(framesread / input->fadeDurationIn)
+                    : 1.;
+                    
+                    for (size_t channel = 0; channel < nChannels; channel++, sample++)
+                    {
+                        buffer[sample] *= fadeInBy * fadeOutBy;
+                    }
                 }
+                
+                sf_write_double(fileout, buffer, samplesread);
             }
-            
-            sf_write_double(fileout, buffer, samplesread);
         }
         
         // clean up

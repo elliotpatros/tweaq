@@ -160,8 +160,10 @@ void MainWindow::processAudioFiles()
 
     // process audio files on background thread
     QThread* thread = new QThread;
-    DSP_Worker* worker = new DSP_Worker(external, ui->lineEdit->path(), parameters, _audioFiles->rootItem());
+    DSP_Worker* worker = new DSP_Worker(external, ui->lineEdit->path(), parameters, _audioFiles);
     ProgressDialog* dialog = new ProgressDialog("processing audio files...", thread, this);
+    dialog->setMaximum(_audioFiles->rowCount());
+
     if (thread == nullptr || worker == nullptr || dialog == nullptr)
     {   // by standard, ok to delete nullptr
         delete thread;
@@ -175,17 +177,7 @@ void MainWindow::processAudioFiles()
     connect(thread, SIGNAL(started()), worker, SLOT(processAudioFiles()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), SLOT(redrawModelView()));
-    // todo: resetInternalData/update is way too heavy-handed. it's called here because
-    // i need to force the model to redraw itself. instead though, the process_audio
-    // function should be moved from the root item to the model, which can call dataChanged()
-    // for each item as it's processed (or for all at once at the end).
+    connect(_audioFiles, SIGNAL(progress(int)), dialog, SLOT(setValue(int)));
 
     thread->start();
-}
-
-void MainWindow::redrawModelView()
-{
-    _audioFiles->resetInternalData();
-    update();
 }

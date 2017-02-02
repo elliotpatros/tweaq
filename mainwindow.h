@@ -48,7 +48,7 @@ private slots:
     void importFolderDialog();
     void exportFolderDialog();
     void showExportFolder();
-    void redrawModelView();
+//    void redrawModelView();
 
 
 private:

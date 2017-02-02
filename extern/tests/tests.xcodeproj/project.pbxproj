@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B40203F21E3E986F00AB71A4 /* libsndfile.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */; };
+		B411B8641E42CC8000DBF03D /* fade_in.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B411B85B1E42C42C00DBF03D /* fade_in.cpp */; };
 		B49311E21E3ED713004DD539 /* libsamplerate.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B49311E11E3ED713004DD539 /* libsamplerate.0.dylib */; };
 		B49CAB871E2F3F9E00C320BA /* tweaqapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */; };
 		B4D055A01E2ED5DE00F6AC11 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4D0559F1E2ED5DE00F6AC11 /* main.cpp */; };
@@ -28,17 +29,25 @@
 
 /* Begin PBXFileReference section */
 		B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsndfile.1.dylib; path = ../../../../../../../../usr/local/Cellar/libsndfile/1.0.26/lib/libsndfile.1.dylib; sourceTree = "<group>"; };
-		B40203F31E3E989300AB71A4 /* test_convert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_convert.h; sourceTree = "<group>"; };
-		B407BE581E3598330067B7FC /* test_mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_mix_to_mono.h; sourceTree = "<group>"; };
-		B4363B771E3C213600059A3A /* test_fade_in_and_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_in_and_out.h; sourceTree = "<group>"; };
-		B456EC221E39889800D86B7E /* test_fade_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_out.h; sourceTree = "<group>"; };
-		B456EC231E39942C00D86B7E /* _old_test_fade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _old_test_fade.h; sourceTree = "<group>"; };
-		B45F06C41E395B9400E4B26F /* ExternalHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalHelpers.h; path = ../../src/ExternalHelpers.h; sourceTree = "<group>"; };
-		B460FECF1E37E8C600B4B668 /* test_fade_in.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_fade_in.h; sourceTree = "<group>"; };
-		B46B0D341E36C60A00C5C35E /* test_normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_normalize.h; sourceTree = "<group>"; };
-		B47F90D11E36D4D000307D7D /* test_deinterleave.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_deinterleave.h; sourceTree = "<group>"; };
+		B411B8461E4291B000DBF03D /* change_samplerate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = change_samplerate.cpp; path = ../../src/change_samplerate.cpp; sourceTree = "<group>"; };
+		B411B8471E4291B000DBF03D /* change_samplerate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = change_samplerate.h; path = ../../src/change_samplerate.h; sourceTree = "<group>"; };
+		B411B8491E42A6DC00DBF03D /* deinterleave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = deinterleave.cpp; path = ../../src/deinterleave.cpp; sourceTree = "<group>"; };
+		B411B84B1E42A6EF00DBF03D /* deinterleave.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = deinterleave.h; path = ../../src/deinterleave.h; sourceTree = "<group>"; };
+		B411B84C1E42B27600DBF03D /* normalize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = normalize.cpp; path = ../../src/normalize.cpp; sourceTree = "<group>"; };
+		B411B84E1E42B28700DBF03D /* normalize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = normalize.h; path = ../../src/normalize.h; sourceTree = "<group>"; };
+		B411B84F1E42B7D500DBF03D /* mix_to_mono.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mix_to_mono.cpp; path = ../../src/mix_to_mono.cpp; sourceTree = "<group>"; };
+		B411B8511E42B7E900DBF03D /* mix_to_mono.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mix_to_mono.h; path = ../../src/mix_to_mono.h; sourceTree = "<group>"; };
+		B411B8551E42BC5800DBF03D /* change_gain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = change_gain.cpp; path = ../../src/change_gain.cpp; sourceTree = "<group>"; };
+		B411B8571E42BC7100DBF03D /* change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = change_gain.h; path = ../../src/change_gain.h; sourceTree = "<group>"; };
+		B411B8581E42BE2A00DBF03D /* fade_in_and_out.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fade_in_and_out.cpp; path = ../../src/fade_in_and_out.cpp; sourceTree = "<group>"; };
+		B411B85A1E42BE5A00DBF03D /* fade_in_and_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fade_in_and_out.h; path = ../../src/fade_in_and_out.h; sourceTree = "<group>"; };
+		B411B85B1E42C42C00DBF03D /* fade_in.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fade_in.cpp; path = ../../src/fade_in.cpp; sourceTree = "<group>"; };
+		B411B85E1E42C48E00DBF03D /* fade_in.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fade_in.h; path = ../../src/fade_in.h; sourceTree = "<group>"; };
+		B411B85F1E42C8B100DBF03D /* fade_out.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fade_out.cpp; path = ../../src/fade_out.cpp; sourceTree = "<group>"; };
+		B411B8611E42C8D000DBF03D /* fade_out.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = fade_out.h; path = ../../src/fade_out.h; sourceTree = "<group>"; };
 		B49311E11E3ED713004DD539 /* libsamplerate.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsamplerate.0.dylib; path = ../../../../../../../../usr/local/Cellar/libsamplerate/0.1.9/lib/libsamplerate.0.dylib; sourceTree = "<group>"; };
-		B49B77521E2F0E7600801E7C /* test_change_gain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_change_gain.h; sourceTree = "<group>"; };
+		B4965FD81E412B1800CDDC5B /* convert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = convert.cpp; path = ../../src/convert.cpp; sourceTree = "<group>"; };
+		B4965FD91E412B1800CDDC5B /* convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = convert.h; path = ../../src/convert.h; sourceTree = "<group>"; };
 		B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tweaqapi.cpp; path = ../../../tweaqapi.cpp; sourceTree = "<group>"; };
 		B49CAB861E2F3F9E00C320BA /* tweaqapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tweaqapi.h; path = ../../../tweaqapi.h; sourceTree = "<group>"; };
 		B4D0559C1E2ED5DE00F6AC11 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,19 +91,27 @@
 		B4D0559E1E2ED5DE00F6AC11 /* tests */ = {
 			isa = PBXGroup;
 			children = (
-				B4363B771E3C213600059A3A /* test_fade_in_and_out.h */,
 				B4D0559F1E2ED5DE00F6AC11 /* main.cpp */,
-				B456EC231E39942C00D86B7E /* _old_test_fade.h */,
-				B460FECF1E37E8C600B4B668 /* test_fade_in.h */,
-				B456EC221E39889800D86B7E /* test_fade_out.h */,
 				B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */,
 				B49CAB861E2F3F9E00C320BA /* tweaqapi.h */,
-				B49B77521E2F0E7600801E7C /* test_change_gain.h */,
-				B407BE581E3598330067B7FC /* test_mix_to_mono.h */,
-				B46B0D341E36C60A00C5C35E /* test_normalize.h */,
-				B47F90D11E36D4D000307D7D /* test_deinterleave.h */,
-				B45F06C41E395B9400E4B26F /* ExternalHelpers.h */,
-				B40203F31E3E989300AB71A4 /* test_convert.h */,
+				B411B85F1E42C8B100DBF03D /* fade_out.cpp */,
+				B411B8611E42C8D000DBF03D /* fade_out.h */,
+				B411B85B1E42C42C00DBF03D /* fade_in.cpp */,
+				B411B85E1E42C48E00DBF03D /* fade_in.h */,
+				B411B8581E42BE2A00DBF03D /* fade_in_and_out.cpp */,
+				B411B85A1E42BE5A00DBF03D /* fade_in_and_out.h */,
+				B411B8551E42BC5800DBF03D /* change_gain.cpp */,
+				B411B8571E42BC7100DBF03D /* change_gain.h */,
+				B411B84F1E42B7D500DBF03D /* mix_to_mono.cpp */,
+				B411B8511E42B7E900DBF03D /* mix_to_mono.h */,
+				B411B84C1E42B27600DBF03D /* normalize.cpp */,
+				B411B84E1E42B28700DBF03D /* normalize.h */,
+				B411B8491E42A6DC00DBF03D /* deinterleave.cpp */,
+				B411B84B1E42A6EF00DBF03D /* deinterleave.h */,
+				B4965FD81E412B1800CDDC5B /* convert.cpp */,
+				B4965FD91E412B1800CDDC5B /* convert.h */,
+				B411B8461E4291B000DBF03D /* change_samplerate.cpp */,
+				B411B8471E4291B000DBF03D /* change_samplerate.h */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -157,6 +174,7 @@
 			files = (
 				B4D055A01E2ED5DE00F6AC11 /* main.cpp in Sources */,
 				B49CAB871E2F3F9E00C320BA /* tweaqapi.cpp in Sources */,
+				B411B8641E42CC8000DBF03D /* fade_in.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,6 +263,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/local/Cellar/libsndfile/1.0.26/include,
 					/usr/local/Cellar/libsamplerate/0.1.9/include,
+					"$(PROJECT_DIR)../src/",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -263,6 +282,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/local/Cellar/libsndfile/1.0.26/include,
 					/usr/local/Cellar/libsamplerate/0.1.9/include,
+					"$(PROJECT_DIR)../src/",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

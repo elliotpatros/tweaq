@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "tests/main.cpp"
-            timestampString = "507434830.574033"
+            timestampString = "507693752.952889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "46"
-            endingLineNumber = "46"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "main(int argc, const char * argv[])"
             landmarkType = "7">
          </BreakpointContent>
@@ -169,14 +169,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_convert.h"
-            timestampString = "507441725.42395"
+            filePath = "../src/convert.cpp"
+            timestampString = "507678987.555168"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
-            landmarkName = "convert_setup(const int fieldNumber, Parameter&amp; p)"
-            landmarkType = "7">
+            startingLineNumber = "312"
+            endingLineNumber = "312">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -185,28 +183,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_convert.h"
-            timestampString = "507441725.42395"
+            filePath = "../src/convert.cpp"
+            timestampString = "507678987.555168"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "convert_setup(const int fieldNumber, Parameter&amp; p)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "tests/test_convert.h"
-            timestampString = "507441725.42395"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "200"
-            endingLineNumber = "200"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
             landmarkName = "convert_handleInput(int argc, const char* argv[])"
             landmarkType = "7">
          </BreakpointContent>
@@ -217,8 +199,8 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_convert.h"
-            timestampString = "507441725.42395"
+            filePath = "../src/convert.cpp"
+            timestampString = "507678987.555168"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "237"
@@ -233,13 +215,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_convert.h"
-            timestampString = "507441725.42395"
+            filePath = "../src/deinterleave.cpp"
+            timestampString = "507687083.677891"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "285"
-            endingLineNumber = "285"
-            landmarkName = "convert_process(const char* pathin, const char* pathout, void* args)"
+            startingLineNumber = "5"
+            endingLineNumber = "5"
+            landmarkName = "insertChannelNumber(const char* input, const size_t channel, char*&amp; output)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -249,13 +231,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_convert.h"
-            timestampString = "507441725.42395"
+            filePath = "../src/deinterleave.cpp"
+            timestampString = "507687274.122055"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
-            landmarkName = "do_convertion(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio, int nChannels, double&amp; gain, bool normalize)"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "deinterleave_process(const char* pathin, const char* pathout, void* args)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -265,13 +247,61 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "tests/test_convert.h"
-            timestampString = "507441169.727752"
+            filePath = "../src/normalize.cpp"
+            timestampString = "507688793.579498"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
-            landmarkName = "change_extension(const char* pathout, const int format)"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "normalize_process(const char* pathin, const char* pathout, void* args)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/normalize.cpp"
+            timestampString = "507688844.28668"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "normalize_process(const char* pathin, const char* pathout, void* args)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/mix_to_mono.cpp"
+            timestampString = "507689528.609605"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "mix_to_mono_process(const char* pathin, const char* pathout, void* args)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/change_gain.cpp"
+            timestampString = "507690416.13235"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "change_gain_process(const char* pathin, const char* pathout, void* args)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

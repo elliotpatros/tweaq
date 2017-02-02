@@ -1,28 +1,35 @@
-#include "tweaqapi.h"
-#include "ExternalHelpers.h"
+#include "fade_in.h"
+
+static const char*  timeTypes[] = {"milliseconds", "seconds", "samples"};
+static const char* curveNames[] = {"logarithmic", "exponential", "linear", "'S' curve"};
+static const CurveType Curves[] = {curve_log, curve_exp, curve_lin, curve_s};
+static const size_t nCurveTypes = sizeof(Curves) / sizeof(CurveType);
+
+// curves
+double curve_s(const double x)    {return -0.5 * cos(M_PI * x) + 0.5; }
+double curve_lin(const double x)  {return x; }
+double curve_log(const double x)  {return 2. * x - x * x; }
+double curve_exp(const double x)  {return x * x; }
+double curve_none(const double x) {(void)x; return 1.; }
+
+void to_samples(double& time, const TimeType timeType, const double samplerate)
+{
+    switch (timeType)
+    {
+        case Milliseconds:
+            time *= samplerate * 0.001;
+            break;
+        case Seconds:
+            time *= samplerate;
+            break;
+        default: break;
+    }
+}
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif // def __cplusplus
-    
-    enum ParameterFields {
-        kDuration,
-        kTimeType,
-        kCurveType,
-        kNumParameters
-    };
-    
-    struct Input {
-        CurveType curve;
-        TimeType  timeType;
-        double    fadeDuration;
-    };
-    
-    static const char*  timeTypes[] = {"milliseconds", "seconds", "samples"};
-    static const char* curveNames[] = {"logarithmic", "exponential", "linear", "'S' curve"};
-    static const CurveType Curves[] = {curve_log, curve_exp, curve_lin, curve_s};
-    static const size_t nCurveTypes = sizeof(Curves) / sizeof(CurveType);
     
     void fade_in_setup(const int fieldNumber, Parameter& p)
     {
@@ -64,12 +71,12 @@ extern "C"
         }
         
         // set fade table
-        input->curve = Curves[0];
-        for (int i = 1; i < nCurveTypes; i++)
+        input->fade = Curves[0];
+        for (size_t i = 1; i < nCurveTypes; i++)
         {
             if (strcmp(argv[kCurveType], curveNames[i]) == 0)
             {
-                input->curve = Curves[i];
+                input->fade = Curves[i];
                 break;
             }
         }
@@ -83,58 +90,41 @@ extern "C"
         Input* input = (Input*)args;
         
         // setup soundfile in
-        SF_INFO  sfinfo  = setup_sfinfo();
-        SNDFILE* filein  = setup_filein(pathin, &sfinfo);
+        SF_INFO  sfinfo = setup_sfinfo();
+        SNDFILE *filein = sf_open(pathin, SFM_READ, &sfinfo), *fileout = 0;
         if (filein == 0) return false;
         
         // get the fade duration in samples
-        if (input->timeType == Milliseconds)
-        {
-            input->fadeDuration *= sfinfo.samplerate * 0.001;
-        }
-        else if (input->timeType == Seconds)
-        {
-            input->fadeDuration *= sfinfo.samplerate;
-        }
-        if (input->fadeDuration > sfinfo.frames)
-        {
-            input->fadeDuration = sfinfo.frames - 1;
-        }
+        to_samples(input->fadeDuration, input->timeType, sfinfo.samplerate);
+        clamp_double(input->fadeDuration, 0, sfinfo.frames - 1);
         
         // setup audiosample buffer
         const size_t nChannels = sfinfo.channels;
         const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-        double* buffer = (double*)calloc(buffersize, sizeof(double));
-        if (buffer == 0)
+        double* buffer;
+        if ((buffer = (double*)calloc(buffersize, sizeof(double))) != 0 &&
+            (fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) != 0)
         {
-            sf_close(filein);
-            return false;
-        }
-        
-        // setup soundfile out
-        SNDFILE* fileout = setup_fileout(pathout, &sfinfo);
-        if (fileout == 0)
-        {
-            sf_close(filein);
-            free(buffer);
-            return false;
-        }
-        
-        // do dsp
-        size_t samplesread, totalFramesRead = 0;
-        while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
-        {
-            for (size_t sample = 0; sample < samplesread; totalFramesRead++)
+            // do dsp
+            double framesread = 0.;
+            size_t samplesread;
+            while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
             {
-                const double fadeBy = input->curve((double)totalFramesRead / input->fadeDuration);
-                for (size_t channel = 0; channel < nChannels; channel++, sample++)
+                for (size_t sample = 0; sample < samplesread; framesread += 1.)
                 {
-                    buffer[sample] *= fadeBy;
+                    const double fadeBy = (framesread < input->fadeDuration)
+                    ? input->fade(framesread / input->fadeDuration)
+                    : 1.;
+                    
+                    for (size_t channel = 0; channel < nChannels; channel++, sample++)
+                    {
+                        buffer[sample] *= fadeBy;
+                    }
+                    
                 }
                 
+                sf_write_double(fileout, buffer, samplesread);
             }
-            
-            sf_write_double(fileout, buffer, samplesread);
         }
         
         // clean up

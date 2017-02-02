@@ -1,33 +1,25 @@
-#include "tweaqapi.h"
+#include "deinterleave.h"
 
 void insertChannelNumber(const char* input, const size_t channel, char*& output)
-{   // output should be uninitialized and null
+{
+    size_t input_len = strlen(input);
     
-    // check that we actually have an input and insert
-    if (input == 0 || output != 0) return;
-    
-    // make string to insert
-    char insert[8] = {'\0'};
-    sprintf(insert, "-ch%02lu", channel + 1);
-    
-    // find index to separate input
-    const size_t inputLength = strlen(input);
-    const size_t insertLength = strlen(insert);
-    
-    size_t insertIndex = inputLength;
-    while (insertIndex-- > 0) if (input[insertIndex] == '.') break;
-    
-    // allocate memory for output
-    if ((output = (char*)calloc(inputLength + insertLength + 1, sizeof(char))) == 0) return;
-    
-    // 1) copy first part of input to output
-    // 2) append string 'insert'
-    // 3) append the rest of input
-    if (strncpy(output, input, insertIndex) == 0 ||
-        strcat(output, insert) == 0 ||
-        strcat(output, input + insertIndex) == 0)
+    if (input == 0 ||
+        output != 0 ||
+        channel > 99 ||
+        (output = (char*)calloc(input_len + strlen("-ch99") + 1, 1)) == 0)
     {
-        free_string(output);
+        return;
+    }
+    
+    size_t insertFrom = input_len;
+    while (insertFrom-- > 0) if (input[insertFrom] == '.') break;
+    
+    if (strncpy(output, input, insertFrom) == 0 ||
+        sprintf(output + insertFrom, "-ch%02lu%s", channel + 1, input + insertFrom) < 0)
+    {
+        free(output);
+        output = 0;
         return;
     }
 }
@@ -39,19 +31,25 @@ extern "C"
     
     void deinterleave_setup(const int fieldNumber, Parameter& p)
     {
+        (void)fieldNumber;
+        (void)p;
         return; // no parameters
     }
     
     void* deinterleave_handleInput(int argc, const char* argv[])
     {
+        (void)argc;
+        (void)argv;
         return 0; // no parameters
     }
     
     bool deinterleave_process(const char* pathin, const char* pathout, void* args)
     {
+        (void)args;
+        
         // setup libsndfile stuff
         SF_INFO sfinfo  = setup_sfinfo();
-        SNDFILE* filein = setup_filein(pathin, &sfinfo);
+        SNDFILE* filein = sf_open(pathin, SFM_READ, &sfinfo);
         if (filein == 0) return false;
         
         // get pathin's channel count
@@ -75,7 +73,7 @@ extern "C"
             // reopen input file
             if (filein == 0)
             {
-                filein = setup_filein(pathin, &sfinfo);
+                filein = sf_open(pathin, SFM_READ, &sfinfo);
                 if (filein == 0)
                 {
                     free(bufferin);
@@ -104,7 +102,7 @@ extern "C"
             
             // open output soundfile
             sfinfo.channels = 1;
-            SNDFILE* fileout = setup_fileout(mono_pathout, &sfinfo);
+            SNDFILE* fileout = sf_open(mono_pathout, SFM_WRITE, &sfinfo);
             if (fileout == 0)
             {
                 free(bufferin);

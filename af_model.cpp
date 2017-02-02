@@ -68,6 +68,29 @@ void AF_Model::removeAListOfRows(const vector<int> rows)
     resort();
 }
 
+void AF_Model::processAudioFiles(const ExternalProcess process, const QString outputDir, void* args)
+{
+    const size_t nChildren = rowCount();
+    for (size_t i = 0; i < nChildren; i++)
+    {
+        if (QThread::currentThread()->isInterruptionRequested()) return;
+
+        emit progress(i);
+
+        AF_Item* const file = _rootItem->child(i);
+        if (file == nullptr || file->wasProcessed()) continue;
+
+        const QString input = file->absolutePath();
+        const QString output = file->uniquePath(outputDir);
+        const bool success = process(input.toUtf8(), output.toUtf8(), args);
+
+        file->wasProcessed(success);
+    }
+
+    emit progress(nChildren);
+    beginResetModel();
+    endResetModel();
+}
 
 // gets
 AF_Item* AF_Model::rootItem() const

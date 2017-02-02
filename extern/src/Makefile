@@ -7,8 +7,8 @@ so: change_gain.so mix_to_mono.so normalize.so deinterleave.so \
 CC = clang
 
 # compiler flags
-CFLAGS = -c -O2 -flto -fPIC -dead_strip -Wall -I../../
-LIBFLAGS = -O2 -flto -dead_strip -lsndfile.1 -lsamplerate.0
+CFLAGS = -c -O2 -flto -fPIC -Wpointer-arith -W -Wall -Wpedantic -I../../
+LIBFLAGS = -O2 -flto -Wpointer-arith -dead_strip -lsndfile.1 -lsamplerate.0
 
 # recipe
 %.so: %.cpp

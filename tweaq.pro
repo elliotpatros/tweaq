@@ -61,12 +61,20 @@ ICON = icons/tweaq_icon.icns
 
 DISTFILES += License
 
+QMAKE_CXXFLAGS += -W -Wall -Wpedantic
+
 # release flags
 CONFIG(release, debug|release) {
 QMAKE_CXXFLAGS += -Wpointer-arith -fno-exceptions -O2 -flto
 macx: LIBS += -Wpointer-arith -dead_strip -fno-exceptions -O2 -flto
 }
 
+# libsndfile
 macx: LIBS += -L/usr/local/Cellar/libsndfile/1.0.26/lib/ -lsndfile.1
 INCLUDEPATH += /usr/local/Cellar/libsndfile/1.0.26/include
 DEPENDPATH += /usr/local/Cellar/libsndfile/1.0.26/include
+
+# libsamplerate
+macx: LIBS += -L/usr/local/Cellar/libsamplerate/0.1.9/lib/ -lsamplerate.0
+INCLUDEPATH += /usr/local/Cellar/libsamplerate/0.1.9/include
+DEPENDPATH += /usr/local/Cellar/libsamplerate/0.1.9/include
