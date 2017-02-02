@@ -36,19 +36,22 @@ extern "C"
     
     bool change_gain_process(const char* pathin, const char* pathout, void* args)
     {
-        if (args == 0) return false;
+        bool success = false;
+        if (args == 0) return success;
         Input* input = (Input*)args;
         
         // open file to read
         SF_INFO  sfinfo = setup_sfinfo();
         SNDFILE *filein = sf_open(pathin, SFM_READ, &sfinfo), *fileout = 0;
-        if (filein == 0) return false;
+        if (filein == 0) return success;
         
         // setup read buffer (size must be a multiple of the number of channels)
         const int buffersize = TQ_BUFFERSIZE * sfinfo.channels;
-        double* buffer;
+        double* buffer = 0;
+        char* unique_pathout = 0;
         if ((buffer = (double*)calloc(buffersize, sizeof(double))) != 0 &&
-            (fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) != 0)
+            (unique_pathout = unique_path(pathout)) != 0 &&
+            (fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo)) != 0)
         {
             // dsp
             size_t samplesread;
@@ -61,12 +64,15 @@ extern "C"
                 
                 sf_write_double(fileout, buffer, samplesread);
             }
+            
+            success = true;
         }
         
         // clean up
         sf_close(filein);
         sf_close(fileout);
         free(buffer);
+        free(unique_pathout);
         
         return true;
     }

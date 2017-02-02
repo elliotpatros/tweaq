@@ -114,7 +114,7 @@ void clamp_double(double& val, const double min, const double max)
 
 bool double_equals(const double val, const double equals)
 {
-    return fabs(val - equals) < 0.00001;
+    return fabs(val - equals) < 0.00000001;
 }
 
 // libsndfile stuff

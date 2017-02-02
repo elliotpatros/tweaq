@@ -115,13 +115,14 @@ extern "C"
     
     bool fade_in_and_out_process(const char* pathin, const char* pathout, void* args)
     {
-        if (args == 0) return false;
+        bool success = false;
+        if (args == 0) return success;
         Input* input = (Input*)args;
         
         // setup soundfile in
         SF_INFO  sfinfo = setup_sfinfo();
         SNDFILE *filein = sf_open(pathin, SFM_READ, &sfinfo), *fileout = 0;
-        if (filein == 0) return false;
+        if (filein == 0) return success;
         
         // get the fade duration in samples
         to_samples(input->fadeDurationIn, input->timeTypeIn, sfinfo.samplerate);
@@ -134,9 +135,11 @@ extern "C"
         // setup audiosample buffer
         const size_t nChannels = sfinfo.channels;
         const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-        double* buffer;
+        double* buffer = 0;
+        char* unique_pathout = 0;
         if ((buffer = (double*)calloc(buffersize, sizeof(double))) != 0 &&
-            (fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) != 0)
+            (unique_pathout = unique_path(pathout)) != 0 &&
+            (fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo)) != 0)
         {
             // do dsp
             double framesread = 0.;
@@ -161,14 +164,17 @@ extern "C"
                 
                 sf_write_double(fileout, buffer, samplesread);
             }
+            
+            success = true;
         }
         
         // clean up
         sf_close(filein);
         sf_close(fileout);
         free(buffer);
+        free(unique_pathout);
         
-        return true;
+        return success;
     }
     
 #ifdef __cplusplus

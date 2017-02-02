@@ -50,8 +50,8 @@ HEADERS  += mainwindow.h \
     combobox.h \
     fileimporter.h
 
-APP_QML_FILES.path  = Contents/Resources/extern
-APP_QML_FILES.files = $$files($$PWD/extern/*.so, false)
+APP_QML_FILES.path  = Contents/Resources
+APP_QML_FILES.files = $$PWD/extern
 
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 

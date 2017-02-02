@@ -53,13 +53,14 @@ extern "C"
     
     bool mix_to_mono_process(const char* pathin, const char* pathout, void* args)
     {
-        if (args == 0) return false;
+        bool success = false;
+        if (args == 0) return success;
         Input* input = (Input*)args;
         
         // setup libsndfile stuff
         SF_INFO  sfinfo = setup_sfinfo();
         SNDFILE *filein = sf_open(pathin, SFM_READ, &sfinfo), *fileout = 0;
-        if (filein == 0) return false;
+        if (filein == 0) return success;
         
         // get number of input channels
         const size_t nChannels = sfinfo.channels;
@@ -68,9 +69,11 @@ extern "C"
         // allocate buffers for input and output
         const size_t buffersize = TQ_BUFFERSIZE * nChannels;
         double bufferout[TQ_BUFFERSIZE];
-        double* bufferin;
+        double* bufferin = 0;
+        char* unique_pathout = 0;
         if ((bufferin = (double*)calloc(buffersize, sizeof(double))) != 0 &&
-            (fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) != 0)
+            (unique_pathout = unique_path(pathout)) != 0 &&
+            (fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo)) != 0)
         {
             const double gain = calculate_gain(input, nChannels);
             size_t samplesread;
@@ -92,14 +95,17 @@ extern "C"
                 
                 sf_write_double(fileout, bufferout, nFrames);
             }
+            
+            success = true;
         }
         
         // clean up
         sf_close(filein);
         sf_close(fileout);
         free(bufferin);
+        free(unique_pathout);
         
-        return true;
+        return success;
     }
     
     

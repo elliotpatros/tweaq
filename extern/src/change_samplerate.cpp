@@ -3,14 +3,14 @@
 static const char* sr_labels[] = {"44100", "48000", "96000", "11025", "22050", "88200", "176400", "192000"};
 static const char* sr_quality_labels[] = {"sinc (best quality)", "sinc (medium quality)", "sinc (fast)", "sample/hold", "linear (fastest)"};
 
-void src_apply_gain(float* samples, const long nSamples, double gain, double& peakGain)
+void src_apply_gain(float* samples, const long nSamples, double gain, double& maxGain)
 {
     for (long i = 0; i < nSamples; i++)
     {
         samples[i] *= gain;
-        if (fabs(samples[i]) > peakGain)
+        if (fabs(samples[i]) > maxGain)
         {
-            peakGain = fabs(samples[i]);
+            maxGain = fabs(samples[i]);
         }
     }
 }
@@ -24,14 +24,14 @@ double do_src(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio
     {
         free(bufferin);
         free(bufferout);
-        return 0;
+        return -1.;
     }
     
     // setup converter data
     SRC_STATE* src_state;
     SRC_DATA   src_data;
     int        error = SF_ERR_NO_ERROR;
-    double     peakGain = 0.;
+    double     maxGain = 0.;
     sf_count_t nFramesWritten = 0;
     
     sf_seek(filein, 0, SEEK_SET);
@@ -71,7 +71,7 @@ double do_src(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio
         // check errors
         if ((error = src_process(src_state, &src_data)) != 0)
         {
-            peakGain = -1.;
+            maxGain = -1.;
             break;
         }
         
@@ -82,7 +82,7 @@ double do_src(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio
         }
         
         // apply gain
-        src_apply_gain(src_data.data_out, src_data.output_frames_gen * nChannels, gain, peakGain);
+        src_apply_gain(src_data.data_out, src_data.output_frames_gen * nChannels, gain, maxGain);
         
         // write output
         sf_writef_float(fileout, bufferout, src_data.output_frames_gen);
@@ -96,7 +96,7 @@ double do_src(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio
     free(bufferout);
     src_delete(src_state);
     
-    return peakGain;
+    return maxGain;
 }
 
 // convert format
@@ -110,11 +110,11 @@ bool setup_format_out(Input* input, SF_INFO& sfinfo)
 bool tq_apply_gain(const char* pathin, const char* pathout, const double gain, Input* input)
 {
     // should we convert the audio file in place?
-    const bool convert_in_place = strcmp(pathin, pathout) == 0;
+    const bool process_in_place = strcmp(pathin, pathout) == 0;
     
     // setup file in
-    SF_INFO sfinfo = setup_sfinfo();
-    SNDFILE* filein = sf_open(pathin, convert_in_place ? SFM_RDWR : SFM_READ, &sfinfo);
+    SF_INFO  sfinfo = setup_sfinfo();
+    SNDFILE* filein = sf_open(pathin, process_in_place ? SFM_RDWR : SFM_READ, &sfinfo);
     if (filein == 0) return false;
     
     // setup soundfile buffer
@@ -129,7 +129,7 @@ bool tq_apply_gain(const char* pathin, const char* pathout, const double gain, I
     // setup file out
     sf_seek(filein, 0, SEEK_SET);
     SNDFILE* fileout = filein;
-    if (!convert_in_place)
+    if (!process_in_place)
     {
         if (!setup_format_out(input, sfinfo) ||
             (fileout = sf_open(pathout, SFM_WRITE, &sfinfo)) == 0)
@@ -207,70 +207,77 @@ extern "C"
     
     bool change_samplerate_process(const char* pathin, const char* pathout, void* args)
     {
-        if (args == 0) return false;
+        bool success = false;
+        if (args == 0) return success;
         Input* input = (Input*)args;
         
         // open file to read
-        SF_INFO  sfinfo  = setup_sfinfo();
-        SNDFILE* filein  = sf_open(pathin, SFM_READ, &sfinfo);
-        if (filein == 0) return false;
+        SF_INFO  sfinfo = setup_sfinfo();
+        SNDFILE* filein = sf_open(pathin, SFM_READ, &sfinfo);
+        if (filein == 0) return success;
         
-        // get sample rate ratio and the new pathout name
+        // get sample rate ratio, unique output name, and update sfinfo
         const double src_ratio = input->sampleRate / (double)sfinfo.samplerate;
+        char* unique_pathout = 0;
         if (!src_is_valid_ratio(src_ratio) ||
-            !setup_format_out(input, sfinfo))
+            !setup_format_out(input, sfinfo) ||
+            (unique_pathout = unique_path(pathout)) == 0)
         {
             sf_close(filein);
-            return false;
+            free(unique_pathout);
+            return success;
         }
         
         // do dsp
-        bool success = false;
         if (!double_equals(src_ratio, 1.)) // do we actually need to convert sample rate?
         {
             // convert sample rate
             double gain = 0.5;
-            double peakGain = 0.;
+            double maxGain = 0.;
             bool clipped = false;
             while (true)
             {
-                // open output file
-                SNDFILE* fileout = sf_open(pathout, SFM_WRITE, &sfinfo);
-                if (fileout == 0) break;
-                
-                // update the file header after every write
-                // make sure fileout is clipped by libsamplerate
-                sf_command(fileout, SFC_SET_UPDATE_HEADER_AUTO, 0, SF_TRUE);
-                sf_command(fileout, SFC_SET_CLIPPING, 0, SF_TRUE);
+                // 1) open output file
+                // 2) auto-update the file header after every write
+                // 3) make sure fileout is clipped by libsamplerate
+                SNDFILE* fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo);
+                if (fileout == 0 ||
+                    sf_command(fileout, SFC_SET_UPDATE_HEADER_AUTO, 0, SF_TRUE) != SF_TRUE ||
+                    sf_command(fileout, SFC_SET_CLIPPING, 0, SF_TRUE) != SF_TRUE)
+                {
+                    sf_close(fileout);
+                    break;
+                }
                 
                 // do the conversion
-                peakGain = do_src(filein, fileout, input->converter, src_ratio, sfinfo.channels, gain);
+                maxGain = do_src(filein, fileout, input->converter, src_ratio, sfinfo.channels, gain);
                 sf_close(fileout);
                 
                 // did we clip? if not, let's move on.
-                if (peakGain < 1.) break;
-                gain = 1. / peakGain;
+                if (maxGain < 1.) break;
+                gain = 1. / maxGain;
                 clipped = true;
             }
             
             // how'd we do?
-            success = peakGain > 0.;
+            success = maxGain > 0.;
             
             // normalize audio file out to match audio file in, if we didn't fail and we didn't clip
-            if (!clipped && success)
+            if (success && !clipped)
             {
                 sf_close(filein);
-                success = tq_apply_gain(pathout, pathout, get_max_gain(pathin) / peakGain, input);
+                success = tq_apply_gain(unique_pathout, unique_pathout, get_max_gain(pathin) / maxGain, input);
             }
         }
         else // don't need to convert sample rate. just copy the samples over
         {
             sf_close(filein);
-            success = tq_apply_gain(pathin, pathout, 1., input);
+            success = tq_apply_gain(pathin, unique_pathout, 1., input);
         }
         
         // cleanup
         sf_close(filein);
+        free(unique_pathout);
         return success;
     }
     

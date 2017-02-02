@@ -81,7 +81,7 @@ void AF_Model::processAudioFiles(const ExternalProcess process, const QString ou
         if (file == nullptr || file->wasProcessed()) continue;
 
         const QString input = file->absolutePath();
-        const QString output = file->uniquePath(outputDir);
+        const QString output = QString("%1/%2.%3").arg(outputDir, file->baseName(), file->extension());
         const bool success = process(input.toUtf8(), output.toUtf8(), args);
 
         file->wasProcessed(success);
@@ -153,7 +153,7 @@ QModelIndex AF_Model::parent(const QModelIndex& index) const
 
 int AF_Model::rowCount(const QModelIndex& parent) const
 {
-    return parent.isValid() ? 0 : itemAtParentIndex(parent)->nChildren();
+    return parent.isValid() ? 0 : _rootItem->nChildren();
 }
 
 int AF_Model::columnCount(const QModelIndex& parent) const
