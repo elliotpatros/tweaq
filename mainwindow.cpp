@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget* const parent) :
     ui->treeView->hideColumn(AF_Properties::AbsolutePath);
 
     // setup combo box dsp
-    ui->comboBoxDSP->setTitle("dsp...");
+    ui->comboBoxDSP->setTitle("choose dsp...");
     ui->comboBoxDSP->addItems(_externals->processNames());
 
     // setup combo box remove
@@ -160,8 +160,10 @@ void MainWindow::processAudioFiles()
 
     // process audio files on background thread
     QThread* thread = new QThread;
-    DSP_Worker* worker = new DSP_Worker(external, ui->lineEdit->path(), parameters, _audioFiles->rootItem());
+    DSP_Worker* worker = new DSP_Worker(external, ui->lineEdit->path(), parameters, _audioFiles);
     ProgressDialog* dialog = new ProgressDialog("processing audio files...", thread, this);
+    dialog->setMaximum(_audioFiles->rowCount());
+
     if (thread == nullptr || worker == nullptr || dialog == nullptr)
     {   // by standard, ok to delete nullptr
         delete thread;
@@ -175,11 +177,7 @@ void MainWindow::processAudioFiles()
     connect(thread, SIGNAL(started()), worker, SLOT(processAudioFiles()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), _audioFiles, SLOT(resetInternalData()));
-    // todo: resetInternalData() is too heavy-handed. it's called here because
-    // i need to force the model to redraw itself. instead though, the process_audio
-    // function should be moved from the root item to the model, which can call dataChanged()
-    // for each item as it's processed (or for all at once at the end).
+    connect(_audioFiles, SIGNAL(progress(int)), dialog, SLOT(setValue(int)));
 
     thread->start();
 }

@@ -8,6 +8,8 @@ vector<QString> LibSF::_validExtensions = LibSF::generateValidExtensions();
 QString LibSF::extension(const int format)
 {
     SF_FORMAT_INFO info;
+    memset(&info, 0, sizeof(SF_FORMAT_INFO));
+
     if (formatExtension(format, &info))
     {
         return QString(info.extension);

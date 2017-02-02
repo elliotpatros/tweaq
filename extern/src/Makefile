@@ -1,13 +1,14 @@
 # targets
 so: change_gain.so mix_to_mono.so normalize.so deinterleave.so \
-	fade_in.so fade_out.so fade_in_and_out.so
+	fade_in.so fade_out.so fade_in_and_out.so \
+	change_samplerate.so convert.so
 
 # the compiler
 CC = clang
 
 # compiler flags
-CFLAGS = -c -O2 -flto -fPIC -Wall -I../../
-LIBFLAGS = -O2 -flto -L../../StaticLibs/libsndfile/lib -lsndfile
+CFLAGS = -c -O2 -flto -fPIC -Wpointer-arith -W -Wall -Wpedantic -I../../
+LIBFLAGS = -O2 -flto -Wpointer-arith -dead_strip -lsndfile.1 -lsamplerate.0
 
 # recipe
 %.so: %.cpp

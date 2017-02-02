@@ -12,6 +12,7 @@
 
 // tweaq classes
 #include "fileimporter.h"
+#include "progressdialog.h"
 
 // mvc stuff
 #include <QModelIndex>
@@ -32,6 +33,7 @@ public:
     void removeAllRows();
     void removeFinishedRows();
     void removeSelectedRows(const QModelIndexList list);
+    void processAudioFiles(const ExternalProcess process, const QString outputDir, void* args);
 
     // gets
     QSortFilterProxyModel* sortProxy() const;
@@ -46,6 +48,10 @@ public:
     QModelIndex parent(const QModelIndex& index) const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
     int columnCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
+
+
+signals:
+    void progress(int);
 
 
 public slots:

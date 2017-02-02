@@ -5,7 +5,7 @@
 #include "tweaq.h"
 
 // base class
-#include "sndfile.hh"
+#include <sndfile.hh>
 
 // Qt classes
 #include <QFileInfo>

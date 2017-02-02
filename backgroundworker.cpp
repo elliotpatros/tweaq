@@ -5,7 +5,7 @@ BackgroundWorker::BackgroundWorker(QObject* parent) :
     QObject(parent)
 {
     // don't allocate any new resources here (w/ new or similar)
-    // or they'll belong to the calling thread (probably gui thread)
+    // or they'll belong to the calling thread
     disconnect();
     connect(this, SIGNAL(finished()), SLOT(deleteLater()));
 }
@@ -39,22 +39,23 @@ void ImportWorker::importUrlsAsAudioFiles()
 
 
 // process audio files
-DSP_Worker::DSP_Worker(ExternalInterface* const external,
+DSP_Worker::DSP_Worker(const ExternalInterface* const external,
                        const QString destination,
                        const vector<QString> userInput,
-                       AF_Item* root,
+                       AF_Model* model,
                        QObject* parent) :
     BackgroundWorker(parent),
     _external(external),
     _destination(destination),
     _userInput(userInput),
-    _root(root) {}
+    _model(model) {}
 
 
 void DSP_Worker::processAudioFiles()
 {
     void* arguments = _external->handleInput(_userInput);
-    _root->processAudioFiles(_external->process(), _destination, arguments);
+    _model->processAudioFiles(_external->process(), _destination, arguments);
+//    _root->processAudioFiles(_external->process(), _destination, arguments);
     free(arguments); // by standard, ok to free nullptr
     emit finished();
 }

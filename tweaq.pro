@@ -5,7 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = tweaq
 TEMPLATE = app
 
-CONFIG += release
+CONFIG += debug
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -50,25 +50,18 @@ HEADERS  += mainwindow.h \
     combobox.h \
     fileimporter.h
 
-APP_QML_FILES.path  = Contents/Resources/extern
-APP_QML_FILES.files = \
-    $$PWD/extern/libchange_gain.so \
-    $$PWD/extern/libmix_to_mono.so \
-    $$PWD/extern/libnormalize.so \
-    $$PWD/extern/libdeinterleave.so \
-    $$PWD/extern/libfade_in.so \
-    $$PWD/extern/libfade_out.so \
-    $$PWD/extern/libfade_in_and_out.so
+APP_QML_FILES.path  = Contents/Resources
+APP_QML_FILES.files = $$PWD/extern
 
 QMAKE_BUNDLE_DATA += APP_QML_FILES
 
-FORMS    += mainwindow.ui
+FORMS += mainwindow.ui
 
 ICON = icons/tweaq_icon.icns
 
 DISTFILES += License
 
-macx: LIBS += -L$$PWD/staticlibs/libsndfile/lib/ -lsndfile.1
+QMAKE_CXXFLAGS += -W -Wall -Wpedantic
 
 # release flags
 CONFIG(release, debug|release) {
@@ -76,5 +69,12 @@ QMAKE_CXXFLAGS += -Wpointer-arith -fno-exceptions -O2 -flto
 macx: LIBS += -Wpointer-arith -dead_strip -fno-exceptions -O2 -flto
 }
 
-INCLUDEPATH += $$PWD/staticlibs/libsndfile/include
-DEPENDPATH += $$PWD/staticlibs/libsndfile/include
+# libsndfile
+macx: LIBS += -L/usr/local/Cellar/libsndfile/1.0.26/lib/ -lsndfile.1
+INCLUDEPATH += /usr/local/Cellar/libsndfile/1.0.26/include
+DEPENDPATH += /usr/local/Cellar/libsndfile/1.0.26/include
+
+# libsamplerate
+macx: LIBS += -L/usr/local/Cellar/libsamplerate/0.1.9/lib/ -lsamplerate.0
+INCLUDEPATH += /usr/local/Cellar/libsamplerate/0.1.9/include
+DEPENDPATH += /usr/local/Cellar/libsamplerate/0.1.9/include

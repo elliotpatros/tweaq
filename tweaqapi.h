@@ -1,13 +1,13 @@
-#ifndef _TWEAQAPI_H
-#define _TWEAQAPI_H
+#ifndef TWEAQAPI_H_
+#define TWEAQAPI_H_
 
 // includes
-#include <stdarg.h>     // variadic stuff
-#include <string.h>     // strlen, strcpy
 #include <stdlib.h>     // *alloc, free
+#include <string.h>     // strlen, strcpy
 #include <math.h>       // math stuff
 #include <float.h>      // FLT_EPSILON
-#include "sndfile.h"    // libsndfile
+#include <sndfile.h>    // libsndfile
+#include <samplerate.h> // libsamplerate
 
 // defines
 #define TQ_BUFFERSIZE 4096
@@ -23,7 +23,7 @@ struct Parameter {
     char** labels;
     int    nLabels;
 };
-
+    
 // external api functions
 typedef void  (*ExternalSetup)(const int field, Parameter& p);
 typedef void* (*ExternalHandleInput)(int argc, const char* argv[]);
@@ -46,15 +46,19 @@ void free_parameter(Parameter& p);
     
 // libsndfile stuff
 SF_INFO  setup_sfinfo();
-SNDFILE* setup_filein(const char* path, SF_INFO* sfinfo);
-SNDFILE* setup_fileout(const char* path, SF_INFO* sfinfo);
 double   get_max_gain(const char* path);
+char*    change_extension(const char* path, const int format);
     
 // conversions
 void clamp_double(double& val, const double min, const double max);
+bool double_equals(const double val, const double equals);
+    
+// file stuff
+int file_exists(const char* path);
+char* unique_path(const char* path);
     
 #ifdef __cplusplus
 }
 #endif // __cplusplus
 
-#endif // _TWEAQAPI_H
+#endif // TWEAQAPI_H_ defined

@@ -1,5 +1,5 @@
 # mac osx stuff
-.DS_Store
+*.DS_Store
 
 # Qt stuff
 *.pro.user

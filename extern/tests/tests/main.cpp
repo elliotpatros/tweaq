@@ -9,14 +9,15 @@
 #include <iostream>
 #include <vector>
 
-#include "tweaqapi.h"
-#include "test_change_gain.h"
-//#include "test_mix_to_mono.h"
-//#include "test_normalize.h"
-//#include "test_deinterleave.h"
-//#include "test_fade_in.h"
-//#include "test_fade_out.h"
-//#include "test_fade_in_and_out.h"
+//#include "change_gain.h"
+//#include "fade_in.h"
+//#include "fade_out.h"
+//#include "fade_in_and_out.h"
+//#include "mix_to_mono.h"
+//#include "normalize.h"
+//#include "deinterleave.h"
+//#include "change_samplerate.h"
+#include "convert.h"
 
 using std::cout;
 using std::endl;
@@ -44,7 +45,7 @@ int main(int argc, const char * argv[])
     {
         Parameter p;
         init_parameter(p);
-        change_gain_setup(field, p);
+        convert_setup(field, p);
         
         const int lastField = field;
         field += p.defaultValue != 0;
@@ -59,19 +60,20 @@ int main(int argc, const char * argv[])
     
     
     // TEST INPUT HANDLING...
-    const char* responses[] = {"-3", "dB."};
-    void* input = change_gain_handleInput(sizeof(responses) / sizeof(char*), responses);
+    const char* responses[] = {"96000", "sinc (fast)", "24-bit PCM", "aiff"};
+    void* input = convert_handleInput(sizeof(responses) / sizeof(char*), responses);
     
     
     // TEST PROCESSING...
-    bool success = change_gain_process("/Users/demo/Desktop/testin/quad.wav",
-                                "/Users/demo/Desktop/testout/quad.wav",
-                                input);
+    bool success = convert_process("/Users/demo/Desktop/desktop/testin/quad.wav",
+                                       "/Users/demo/Desktop/desktop/testout/quad.wav",
+                                       input);
     
     // TEST CLEANUP...
     if (input != 0) free(input);
     cout << (success ? "it worked!" : "oh no... :-(") << endl;
-    
+
+    cout << "done\n";
     
     return 0;
 }

@@ -12,7 +12,7 @@
 
 // tweaq classes
 #include "fileimporter.h"
-#include "af_item.h"
+#include "af_model.h"
 #include "externalinterface.h"
 
 class BackgroundWorker : public QObject
@@ -57,10 +57,10 @@ class DSP_Worker : public BackgroundWorker
     Q_OBJECT
 
 public:
-    explicit DSP_Worker(ExternalInterface* const external,
+    explicit DSP_Worker(const ExternalInterface* const external,
                         const QString destination,
                         const vector<QString> userInput,
-                        AF_Item *root,
+                        AF_Model* model,
                         QObject* parent = nullptr);
 
 
@@ -69,10 +69,10 @@ public slots:
 
 
 private:
-    ExternalInterface* const _external;
+    const ExternalInterface* const _external;
     const QString _destination;
     const vector<QString> _userInput;
-    AF_Item* _root;
+    AF_Model* _model;
 };
 
 #endif // BACKGROUNDWORKER_H

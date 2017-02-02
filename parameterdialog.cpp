@@ -53,6 +53,14 @@ vector<QString> ParameterDialog::entries() const
 // sets
 int ParameterDialog::show(vector<ParameterHandle> handles)
 {
+//    auto HRule = [this]
+//    {
+//        QFrame* rule = new QFrame(this);
+//        rule->setFrameShape(QFrame::HLine);
+//        rule->setFrameShadow(QFrame::Sunken);
+//        return rule;
+//    };
+
     // add parameter fields to layout
     for (const auto& handle : handles)
     {   // setup a new line editor and combo box

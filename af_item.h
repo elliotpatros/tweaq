@@ -26,10 +26,10 @@ public:
     AF_Item& operator=(const AF_Item& other);
 
     // sets
-    void processAudioFiles(const ExternalProcess process, const QString outputDir, void* args);
     void appendChildren(const FileList list);
     void removeChildren(const vector<int> list = vector<int>());
     void filterDuplicates(FileList& list) const;
+    void wasProcessed(const bool succeeded);
 
     // gets
     bool hasUnprocessedChildren() const;
@@ -41,6 +41,7 @@ public:
     QVariant statusColor() const;
     QVariant data(const int column) const;
     vector<int> processedChildren() const;
+    bool wasProcessed() const;
 
 
 private:
@@ -51,7 +52,6 @@ private:
     // helpers
     void copy(const AF_Item &other);
     bool childIndexIsValid(const int index) const;
-    bool wasProcessed() const;
 };
 
 #endif // AF_ITEM_H

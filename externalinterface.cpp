@@ -41,7 +41,7 @@ void* ExternalInterface::handleInput(const vector<QString> responses) const
     if (argc < 1) return nullptr;
 
     char** argv = (char**)calloc(argc, sizeof(char*));
-    if (argv == nullptr) return nullptr;
+    if (argv == nullptr) return argv;
 
     for (int i = 0; i < argc; i++)
     {
