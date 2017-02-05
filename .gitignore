@@ -1,5 +1,6 @@
 # mac osx stuff
 *.DS_Store
+*.xcuserstate
 
 # Qt stuff
 *.pro.user
