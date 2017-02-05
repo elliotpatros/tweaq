@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		B40203F21E3E986F00AB71A4 /* libsndfile.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B40203F11E3E986F00AB71A4 /* libsndfile.1.dylib */; };
+		B45F356C1E46AEC200F99F64 /* mix_to_mono.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B411B84F1E42B7D500DBF03D /* mix_to_mono.cpp */; };
 		B49311E21E3ED713004DD539 /* libsamplerate.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B49311E11E3ED713004DD539 /* libsamplerate.0.dylib */; };
 		B49CAB871E2F3F9E00C320BA /* tweaqapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B49CAB851E2F3F9E00C320BA /* tweaqapi.cpp */; };
 		B4D055A01E2ED5DE00F6AC11 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4D0559F1E2ED5DE00F6AC11 /* main.cpp */; };
 		B4D055B81E2F0AFD00F6AC11 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4D055B71E2F0AFD00F6AC11 /* CoreFoundation.framework */; };
-		B4D591941E43BDA600098C90 /* convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4965FD81E412B1800CDDC5B /* convert.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -174,7 +174,7 @@
 			files = (
 				B4D055A01E2ED5DE00F6AC11 /* main.cpp in Sources */,
 				B49CAB871E2F3F9E00C320BA /* tweaqapi.cpp in Sources */,
-				B4D591941E43BDA600098C90 /* convert.cpp in Sources */,
+				B45F356C1E46AEC200F99F64 /* mix_to_mono.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

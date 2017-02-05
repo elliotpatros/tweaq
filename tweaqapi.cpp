@@ -114,7 +114,7 @@ void clamp_double(double& val, const double min, const double max)
 
 bool double_equals(const double val, const double equals)
 {
-    return fabs(val - equals) < 0.00000001;
+    return fabs(val - equals) < 0.0000001;
 }
 
 // libsndfile stuff
@@ -165,6 +165,15 @@ double get_max_gain(const char* path)
     return (maxGain > 0.0000001) ? maxGain : 1.;
 }
 
+double get_samplerate(const char* path)
+{
+    SF_INFO  sfinfo = setup_sfinfo();
+    SNDFILE* filein = sf_open(path, SFM_READ, &sfinfo);
+    if (filein == 0) return -1;
+    sf_close(filein);
+    return (double)sfinfo.samplerate;
+}
+
 char* change_extension(const char* path, const int format)
 {
     // check that we actually have an input and insert
@@ -176,22 +185,18 @@ char* change_extension(const char* path, const int format)
     info.format = format;
     
     if (sf_command(NULL, SFC_GET_FORMAT_INFO, &info, sizeof(SF_FORMAT_INFO)) != SF_ERR_NO_ERROR)
-    {
         return 0;
-    }
     
     // find index from which the extension will be appended
     const size_t sizeof_path = strlen(path);
     const size_t sizeof_extension = strlen(info.extension);
     size_t insertFrom = sizeof_path;
     while (insertFrom-- > 0)
-    {
         if (path[insertFrom] == '.')
         {
             insertFrom++; // include the '.' from the original path
             break;
         }
-    }
     
     // allocate memory for output
     char* newPath = (char*)calloc(insertFrom + sizeof_extension + 1, 1);
@@ -236,13 +241,9 @@ char* unique_path(const char* path)
         for (int nthcopy = 1; nthcopy < 999; nthcopy++)
         {
             if (sprintf(newpath + insertFrom, " (%i)%s", nthcopy, path + insertFrom) < 0)
-            {
                 break;
-            }
             else if (!file_exists(newpath))
-            {
                 return newpath;
-            }
         }
     }
     

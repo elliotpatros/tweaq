@@ -1,23 +1,15 @@
-//
-//  main.cpp
-//  tests
-//
-//  Created by demo on 1/17/17.
-//  Copyright (c) 2017 demo. All rights reserved.
-//
-
 #include <iostream>
 #include <vector>
 
 //#include "change_gain.h"
+//#include "fade_in_and_out.h"
 //#include "fade_in.h"
 //#include "fade_out.h"
-//#include "fade_in_and_out.h"
-//#include "mix_to_mono.h"
+#include "mix_to_mono.h"
 //#include "normalize.h"
 //#include "deinterleave.h"
 //#include "change_samplerate.h"
-#include "convert.h"
+//#include "convert.h" // do this next
 
 using std::cout;
 using std::endl;
@@ -45,7 +37,7 @@ int main(int argc, const char * argv[])
     {
         Parameter p;
         init_parameter(p);
-        convert_setup(field, p);
+        mix_to_mono_setup(field, p);
         
         const int lastField = field;
         field += p.defaultValue != 0;
@@ -60,19 +52,18 @@ int main(int argc, const char * argv[])
     
     
     // TEST INPUT HANDLING...
-    const char* responses[] = {"96000", "sinc (fast)", "24-bit PCM", "aiff"};
-    void* input = convert_handleInput(sizeof(responses) / sizeof(char*), responses);
+    const char* responses[] = {"-3 dB."};
+    void* input = mix_to_mono_handleInput(sizeof(responses) / sizeof(char*), responses);
     
     
     // TEST PROCESSING...
-    bool success = convert_process("/Users/demo/Desktop/desktop/testin/quad.wav",
-                                       "/Users/demo/Desktop/desktop/testout/quad.wav",
-                                       input);
+    bool success = mix_to_mono_process("/Users/demo/Desktop/desktop/testin/quad.wav",
+                                   "/Users/demo/Desktop/desktop/testout/quad.wav",
+                                   input);
     
     // TEST CLEANUP...
-    if (input != 0) free(input);
+    free(input);
     cout << (success ? "it worked!" : "oh no... :-(") << endl;
-
     cout << "done\n";
     
     return 0;

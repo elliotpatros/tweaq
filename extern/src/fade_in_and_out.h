@@ -32,8 +32,8 @@ enum ParameterFields {
 };
 
 struct Input {
-    CurveType fadeIn;
-    CurveType fadeOut;
+    CurveType fadein;
+    CurveType fadeout;
     TimeType  timeTypeIn;
     TimeType  timeTypeOut;
     double    fadeDurationIn;

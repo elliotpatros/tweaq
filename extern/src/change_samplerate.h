@@ -5,7 +5,7 @@
 
 struct Input {
     // sample rate conversion
-    double sampleRate;
+    double samplerate;
     int converter;
 };
 
@@ -15,10 +15,10 @@ enum ParameterFields{
     kNumParameters
 };
 
-void src_apply_gain(float* samples, const long nSamples, double gain, double& peakGain);
-double do_src(SNDFILE* filein, SNDFILE* fileout, int converter, double src_ratio, int nChannels, double gain);
-bool setup_format_out(Input* input, SF_INFO& sfinfo);
-bool tq_apply_gain(const char* pathin, const char* pathout, const double gain, Input* input);
+void src_apply_gain(float* samples, const long nSamples, double gain, double& maxGain);
+double do_src(const char* pathin, const char* pathout, const double gain, Input* input);
+bool validate_format_out(Input* input, SF_INFO& sfinfo);
+bool post_apply_gain(const char* pathin, const char* pathout, const double gain, Input* input);
 
 #ifdef __cplusplus
 extern "C"

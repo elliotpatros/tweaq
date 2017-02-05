@@ -47,6 +47,7 @@ void free_parameter(Parameter& p);
 // libsndfile stuff
 SF_INFO  setup_sfinfo();
 double   get_max_gain(const char* path);
+double get_samplerate(const char* path);
 char*    change_extension(const char* path, const int format);
     
 // conversions

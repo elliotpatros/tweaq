@@ -4,6 +4,7 @@
 #include "tweaqapi.h"
 
 void insertChannelNumber(const char* input, const size_t channel, char*& output);
+char* get_pathout(const char* pathout, const size_t channel, const size_t nChannels);
 
 #ifdef __cplusplus
 extern "C"

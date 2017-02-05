@@ -61,60 +61,53 @@ extern "C"
     {
         if (argc != kNumParameters) return 0;
         
-        Input* input = (Input*)malloc(sizeof(Input));
+        Input* input = (Input*)calloc(1, sizeof(Input));
         if (input == 0) return input;
         
         // get duration as double
         input->fadeDurationIn = string_to_double(argv[kDurationIn]);
         input->fadeDurationOut = string_to_double(argv[kDurationOut]);
         
-        // get time type (ms, sec, samples)
-        input->timeTypeIn = (TimeType)0;
+        // get fade in time type (ms, sec, samples) (default: ms)
         for (int i = 1; i < NumTimeTypes; i++)
-        {
             if (strcmp(argv[kTimeTypeIn], timeTypes[i]) == 0)
             {
                 input->timeTypeIn = (TimeType)i;
                 break;
             }
-        }
-        
-        input->timeTypeOut = (TimeType)0;
+
+        // get fade out time type (ms, sec, samples) (default: ms)
         for (int i = 1; i < NumTimeTypes; i++)
-        {
             if (strcmp(argv[kTimeTypeOut], timeTypes[i]) == 0)
             {
                 input->timeTypeOut = (TimeType)i;
                 break;
             }
-        }
         
-        // set fade table
-        input->fadeIn = Curves[0];
+        // set fade in function
+        input->fadein = Curves[0];
         for (size_t i = 1; i < nCurveTypes; i++)
-        {
             if (strcmp(argv[kCurveTypeIn], curveNames[i]) == 0)
             {
-                input->fadeIn = Curves[i];
+                input->fadein = Curves[i];
                 break;
             }
-        }
         
-        input->fadeOut = Curves[0];
+        // set fade out function
+        input->fadeout = Curves[0];
         for (size_t i = 1; i < nCurveTypes; i++)
-        {
             if (strcmp(argv[kCurveTypeOut], curveNames[i]) == 0)
             {
-                input->fadeOut = Curves[i];
+                input->fadeout = Curves[i];
                 break;
             }
-        }
         
         return input;
     }
     
     bool fade_in_and_out_process(const char* pathin, const char* pathout, void* args)
     {
+        // parse arguments from user
         bool success = false;
         if (args == 0) return success;
         Input* input = (Input*)args;
@@ -124,51 +117,52 @@ extern "C"
         SNDFILE *filein = sf_open(pathin, SFM_READ, &sfinfo), *fileout = 0;
         if (filein == 0) return success;
         
-        // get the fade duration in samples
+        // convert fade durations (in and out) to samples
         to_samples(input->fadeDurationIn, input->timeTypeIn, sfinfo.samplerate);
         clamp_double(input->fadeDurationIn, 0., sfinfo.frames - 1);
-        
         to_samples(input->fadeDurationOut, input->timeTypeOut, sfinfo.samplerate);
         clamp_double(input->fadeDurationOut, 0., sfinfo.frames - 1);
-        const double startFadeout = sfinfo.frames - (input->fadeDurationOut + 1.);
         
-        // setup audiosample buffer
+        // get the sample to start fading out, and setup counter for current frame
+        const double startFadeout = sfinfo.frames - (input->fadeDurationOut + 1.);
+        double framesread = 0.;
+        
+        // setup buffer and pathout
         const size_t nChannels = sfinfo.channels;
         const size_t buffersize = TQ_BUFFERSIZE * nChannels;
-        double* buffer = 0;
-        char* unique_pathout = 0;
-        if ((buffer = (double*)calloc(buffersize, sizeof(double))) != 0 &&
-            (unique_pathout = unique_path(pathout)) != 0 &&
-            (fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo)) != 0)
+        double* buffer = (double*)malloc(buffersize * sizeof(double));
+        char* unique_pathout = unique_path(pathout);
+        if (buffer == 0 || unique_pathout == 0) goto clean_up;
+        
+        // open file to write
+        if ((fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo)) == 0)
+            goto clean_up;
+        
+        // dsp (fade in and out)
+        size_t samplesread;
+        while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
         {
-            // do dsp
-            double framesread = 0.;
-            size_t samplesread;
-            while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
+            for (size_t sample = 0; sample < samplesread; framesread += 1.)
             {
-                for (size_t sample = 0; sample < samplesread; framesread += 1.)
-                {
-                    const double fadeOutBy = (framesread > startFadeout)
-                    ? (1. - input->fadeOut((framesread - startFadeout) / input->fadeDurationOut))
-                    : 1.;
-                    
-                    const double fadeInBy = (framesread < input->fadeDurationIn)
-                    ? input->fadeIn(framesread / input->fadeDurationIn)
-                    : 1.;
-                    
-                    for (size_t channel = 0; channel < nChannels; channel++, sample++)
-                    {
-                        buffer[sample] *= fadeInBy * fadeOutBy;
-                    }
-                }
+                const double fadeout = (framesread > startFadeout)
+                ? (1. - input->fadeout((framesread - startFadeout) / input->fadeDurationOut))
+                : 1.;
                 
-                sf_write_double(fileout, buffer, samplesread);
+                const double fadein = (framesread < input->fadeDurationIn)
+                ? input->fadein(framesread / input->fadeDurationIn)
+                : 1.;
+                
+                for (size_t channel = 0; channel < nChannels; channel++, sample++)
+                    buffer[sample] *= fadein * fadeout;
             }
             
-            success = true;
+            if (sf_write_double(fileout, buffer, samplesread) != (sf_count_t)samplesread)
+                goto clean_up;
         }
         
-        // clean up
+        // done
+        success = true;
+    clean_up:
         sf_close(filein);
         sf_close(fileout);
         free(buffer);

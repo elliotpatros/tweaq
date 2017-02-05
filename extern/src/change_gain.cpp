@@ -25,17 +25,18 @@ extern "C"
     {
         if (argc != kNumParameters) return 0;
         
-        Input* arg = (Input*)malloc(sizeof(Input));
-        if (arg == 0) return arg;
+        Input* input = (Input*)calloc(1, sizeof(Input));
+        if (input == 0) return 0;
         
-        arg->gain = string_to_double(argv[kGain]);
-        if (strcmp(argv[kGainLabel], "dB.") == 0) dB_to_gain(arg->gain);
+        input->gain = string_to_double(argv[kGain]);
+        if (strcmp(argv[kGainLabel], "dB.") == 0) dB_to_gain(input->gain);
         
-        return arg;
+        return input;
     }
     
     bool change_gain_process(const char* pathin, const char* pathout, void* args)
     {
+        // parse arguments from user
         bool success = false;
         if (args == 0) return success;
         Input* input = (Input*)args;
@@ -45,36 +46,36 @@ extern "C"
         SNDFILE *filein = sf_open(pathin, SFM_READ, &sfinfo), *fileout = 0;
         if (filein == 0) return success;
         
-        // setup read buffer (size must be a multiple of the number of channels)
-        const int buffersize = TQ_BUFFERSIZE * sfinfo.channels;
-        double* buffer = 0;
-        char* unique_pathout = 0;
-        if ((buffer = (double*)calloc(buffersize, sizeof(double))) != 0 &&
-            (unique_pathout = unique_path(pathout)) != 0 &&
-            (fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo)) != 0)
+        // setup buffer and pathout
+        const size_t buffersize = TQ_BUFFERSIZE * sfinfo.channels;
+        double* buffer = (double*)malloc(buffersize * sizeof(double));
+        char* unique_pathout = unique_path(pathout);
+        if (buffer == 0 || unique_pathout == 0) goto clean_up;
+        
+        // open file to write
+        if ((fileout = sf_open(unique_pathout, SFM_WRITE, &sfinfo)) == 0)
+            goto clean_up;
+        
+        // dsp (change gain)
+        size_t samplesread;
+        while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
         {
-            // dsp
-            size_t samplesread;
-            while ((samplesread = sf_read_double(filein, buffer, buffersize)) != 0)
-            {   // process the read buffer and write it to disk
-                for (size_t i = 0; i < samplesread; ++i)
-                {
-                    buffer[i] *= input->gain;
-                }
-                
-                sf_write_double(fileout, buffer, samplesread);
-            }
+            for (size_t i = 0; i < samplesread; i++)
+                buffer[i] *= input->gain;
             
-            success = true;
+            if (sf_write_double(fileout, buffer, samplesread) != (sf_count_t)samplesread)
+                goto clean_up;
         }
         
-        // clean up
+        // done
+        success = true;
+    clean_up:
         sf_close(filein);
         sf_close(fileout);
         free(buffer);
         free(unique_pathout);
         
-        return true;
+        return success;
     }
     
 #ifdef __cplusplus
